@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('license_number');
             $table->string('vehicle_name');
             $table->text('address')->nullable();
-            $table->integer('rate');
+            $table->integer('rate')->nullable();
             $table->timestamps();
         });
     }
