@@ -18,9 +18,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'admin_id', 
+        'operator_id', 
+        'driver_id', 
+        'name', 
+        'username', 
+        'email', 
+        'password', 
+        'role_id'
     ];
 
     /**
@@ -42,4 +47,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
+
+    public function operator()
+    {
+        return $this->belongsTo(Operator::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }
