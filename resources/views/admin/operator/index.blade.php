@@ -57,36 +57,40 @@
                                                 <th>Alamat</th>
                                                 <th>Nama Kendaraan</th>
                                                 <th>Rate</th>
-                                                <th>
-                                                <th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>78890865</td>
-                                            <td><label class="badge badge-warning">In progress</label></td>
-                                            <td>
-                                                <a href="{{ route('operator.detail') }}">
-                                                    <button type="button" class="btn btn-inverse-success btn-icon">
-                                                        <i class="ti-eye"></i>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Dave</td>
+                                                <td>53275535</td>
+                                                <td>Dave</td>
+                                                <td>53275535</td>
+                                                <td>Dave</td>
+                                                <td>53275535</td>
+                                                <td>78890865</td>
+                                                <td class="rate" data-rate="4.5">
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('operator.detail') }}">
+                                                        <button type="button" class="btn btn-inverse-success btn-icon">
+                                                            <i class="ti-eye"></i>
+                                                        </button>
+                                                    </a>
+                                                    <a href="{{ route('operator.edit') }}">
+                                                        <button type="button"
+                                                            class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                            <i class="ti-pencil"></i>
+                                                        </button>
+                                                    </a>
+                                                    <button type="button" class="btn btn-inverse-danger btn-icon">
+                                                        <i class="ti-trash"></i>
                                                     </button>
-                                                </a>
-                                                <a href="{{ route('operator.edit') }}">
-                                                <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                                </a>
-                                                <button type="button" class="btn btn-inverse-danger btn-icon">
-                                                    <i class="ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
+                                            <!-- Add more rows as needed -->
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>

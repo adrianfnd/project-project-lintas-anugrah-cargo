@@ -50,4 +50,26 @@
         .bindPopup('Lokasi Anda')
         .openPopup();
 </script>
+{{-- Bintang Operator --}}
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        function convertRateToStars(rate) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rate) {
+                    stars += '<span class="star">★</span>';
+                } else {
+                    stars += '<span class="star">☆</span>';
+                }
+            }
+            return stars;
+        }
+
+        document.querySelectorAll('.rate').forEach((element) => {
+            const rateValue = parseFloat(element.getAttribute('data-rate'));
+            const stars = convertRateToStars(rateValue);
+            element.innerHTML = stars;
+        });
+    });
+</script>
 <!-- End custom js for this page-->
