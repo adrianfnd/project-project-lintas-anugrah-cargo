@@ -52,31 +52,21 @@
                                 <label for="driverPhone">Nomor HP</label>
                                 <p id="driverPhone">#</p>
                             </div>
-                            <!-- Nomor Lisensi -->
+                            <!-- Nomor SIM -->
                             <div class="form-group">
-                                <label for="driverLicense">Nomor Lisensi</label>
+                                <label for="driverLicense">Nomor SIM</label>
                                 <p id="driverLicense">#</p>
-                            </div>
-                            <!-- Nama Kendaraan -->
-                            <div class="form-group">
-                                <label for="vehicleName">Nama Kendaraan</label>
-                                <p id="vehicleName">#</p>
                             </div>
                             <!-- Alamat -->
                             <div class="form-group">
-                                <label for="driverAddress">Alamat</label>
-                                <p id="driverAddress">#</p>
+                                <label for="address">Alamat</label>
+                                <p id="address">#</p>
                             </div>
-                            <!-- Rate -->
+                            <!-- Negara -->
                             <div class="form-group">
-                                <label for="driverRate">Rate</label>
-                                <p id="driverRate">#</p>
-                            </div>
-                            <!-- Lokasi -->
-                            <div class="form-group">
-                                <label for="mapid">Lokasi</label>
-                                <div id="mapid" style="height: 400px;"></div>
-                            </div>
+                                <label for="country">Negara</label>
+                                <p id="country">#</p>
+                            </div> 
                             <a href="{{ route('driver.index') }}" class="btn btn-light">Cancel</a>
                         </div>
                     </div>

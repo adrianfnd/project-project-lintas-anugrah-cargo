@@ -52,8 +52,8 @@
                                                 <th>Nama</th>
                                                 <th>Gambar</th>
                                                 <th>Nomor Hp</th>
-                                                <th>Nomor Lisensi</th>
-                                                <th>Nama Kendaraan</th>
+                                                <th>Alamat</th>
+                                                <th>Negara</th>
                                                 <th>Alamat</th>
                                                 <th>Nama Kendaraan</th>
                                                 <th>Rate</th>
