@@ -30,34 +30,67 @@
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
-                                    @foreach ($drivers as $driver)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $driver->name }}</td>
-                                            <td><img src="{{ asset('storage/drivers/' . $driver->image) }}" alt="Gambar"
-                                                    width="100"></td>
-                                            <td>{{ $driver->phone_number }}</td>
-                                            <td>{{ $driver->license_number }}</td>
-                                            <td>{{ $driver->vehicle_name }}</td>
-                                            <td>{{ $driver->address }}</td>
-                                            <td>
-                                                <a href="{{ route('admin.driver.detail', $driver->id) }}">
-                                                    <button type="button" class="btn btn-inverse-success btn-icon">
-                                                        <i class="ti-eye"></i>
+                                    <tbody>
+                                        @foreach ($drivers as $driver)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $driver->name }}</td>
+                                                <td><img src="{{ asset('storage/drivers/' . $driver->image) }}"
+                                                        alt="Gambar" width="100"></td>
+                                                <td>{{ $driver->phone_number }}</td>
+                                                <td>{{ $driver->license_number }}</td>
+                                                <td>{{ $driver->vehicle_name }}</td>
+                                                <td>{{ $driver->address }}</td>
+                                                <td>
+                                                    <a href="{{ route('admin.driver.detail', $driver->id) }}">
+                                                        <button type="button" class="btn btn-inverse-success btn-icon">
+                                                            <i class="ti-eye"></i>
+                                                        </button>
+                                                    </a>
+                                                    <a href="{{ route('admin.driver.edit', $driver->id) }}">
+                                                        <button type="button"
+                                                            class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                            <i class="ti-pencil"></i>
+                                                        </button>
+                                                    </a>
+                                                    <button type="button" class="btn btn-inverse-danger btn-icon"
+                                                        data-toggle="modal" data-target="#deleteModal{{ $driver->id }}">
+                                                        <i class="ti-trash"></i>
                                                     </button>
-                                                </a>
-                                                <a href="{{ route('admin.driver.edit', $driver->id) }}">
-                                                    <button type="button"
-                                                        class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                        <i class="ti-pencil"></i>
-                                                    </button>
-                                                </a>
-                                                <button type="button" class="btn btn-inverse-danger btn-icon">
-                                                    <i class="ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                </td>
+                                            </tr>
+
+                                            <!-- Modal Konfirmasi Hapus -->
+                                            <div class="modal fade" id="deleteModal{{ $driver->id }}" tabindex="-1"
+                                                role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus
+                                                                Data Driver</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Apakah Anda yakin ingin menghapus data driver ini?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Batal</button>
+                                                            <form action="{{ route('admin.driver.destroy', $driver->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -89,6 +122,23 @@
                 text: errorMessage,
                 showConfirmButton: false,
                 timer: 2000
+            });
+        }
+
+        function deleteDriver(driverId) {
+            Swal.fire({
+                title: 'Konfirmasi Hapus Data Driver',
+                text: "Apakah Anda yakin ingin menghapus data driver ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location = "{{ url('admin/driver') }}/" + driverId;
+                }
             });
         }
     </script>
