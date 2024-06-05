@@ -10,11 +10,4 @@ class AdminController extends Controller
     {
         return view('admin.dashboard');
     }
-
-    public function main()
-    {
-       
-        return view('layouts.main');
-
-    }
 }
