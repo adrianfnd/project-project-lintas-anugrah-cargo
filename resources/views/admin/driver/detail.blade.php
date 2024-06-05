@@ -6,40 +6,53 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Detail Data Driver</h4>
-                    <div class="form-sample">
-                        <!-- Nama -->
-                        <div class="form-group">
-                            <label for="driverName">Nama</label>
-                            <p id="driverName">#</p>
-                        </div>
+                    <div class="row">
                         <!-- Gambar -->
-                        <div class="form-group">
-                            <label for="driverImage">Gambar</label>
-                            <div class="input-group col-xs-12">
-                                <img src="#" class="img-fluid" alt="Driver Image">
+                        <div class="col-md-4 d-flex justify-content-center align-items-center">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <img src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/250' }}"
+                                        class="img-fluid" alt="Driver Image"
+                                        style="border-radius: 50%; object-fit: cover; border: 3px solid #ccc;"
+                                        width="250">
+                                </div>
                             </div>
                         </div>
-                        <!-- Nomor HP -->
-                        <div class="form-group">
-                            <label for="driverPhone">Nomor HP</label>
-                            <p id="driverPhone">#</p>
+                        <!-- Form -->
+                        <div class="col-md-8">
+                            <div class="form-sample">
+                                <div class="form-group">
+                                    <label for="driverUsername">Username</label>
+                                    <p id="driverUsername">{{ $user->username }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverEmail">Email</label>
+                                    <p id="driverEmail">{{ $user->email }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverName">Name</label>
+                                    <p id="driverName">{{ $driver->name }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverPhone">Nomor HP</label>
+                                    <p id="driverPhone">{{ $driver->phone_number }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverLicense">Nomor Plan Kendaraan</label>
+                                    <p id="driverLicense">{{ $driver->license_number }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vehicleName">Nama Kendaraan</label>
+                                    <p id="vehicleName">{{ $driver->vehicle_name }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverAddress">Alamat</label>
+                                    <p id="driverAddress">{{ $driver->address }}</p>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.driver.index') }}" class="btn btn-light">Cancel</a>
+                            <a href="{{ route('admin.driver.edit', $driver->id) }}" class="btn btn-primary">Edit</a>
                         </div>
-                        <!-- Nomor SIM -->
-                        <div class="form-group">
-                            <label for="driverLicense">Nomor SIM</label>
-                            <p id="driverLicense">#</p>
-                        </div>
-                        <!-- Alamat -->
-                        <div class="form-group">
-                            <label for="address">Alamat</label>
-                            <p id="address">#</p>
-                        </div>
-                        <!-- Negara -->
-                        <div class="form-group">
-                            <label for="country">Negara</label>
-                            <p id="country">#</p>
-                        </div>
-                        <a href="{{ route('admin.driver.index') }}" class="btn btn-light">Cancel</a>
                     </div>
                 </div>
             </div>

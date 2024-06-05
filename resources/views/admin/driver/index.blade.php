@@ -22,12 +22,16 @@
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama</th>
-                                            <th>Gambar</th>
+                                            <th>
+                                                <center>Foto Driver</center>
+                                            </th>
                                             <th>Nomor Hp</th>
                                             <th>Nomor SIM</th>
                                             <th>Nama Kendaraan</th>
                                             <th>Alamat</th>
-                                            <th>Aksi</th>
+                                            <th>
+                                                <center>Aksi</center>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -35,28 +39,38 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $driver->name }}</td>
-                                                <td><img src="{{ asset('storage/drivers/' . $driver->image) }}"
-                                                        alt="Gambar" width="100"></td>
+                                                <td>
+                                                    <center><img
+                                                            src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/75' }}"
+                                                            alt="Foto Driver" class="img-fluid rounded-circle"
+                                                            style="object-fit: cover; width: 75px; height: 75px;">
+                                                    </center>
+                                                </td>
                                                 <td>{{ $driver->phone_number }}</td>
                                                 <td>{{ $driver->license_number }}</td>
                                                 <td>{{ $driver->vehicle_name }}</td>
                                                 <td>{{ $driver->address }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.driver.detail', $driver->id) }}">
-                                                        <button type="button" class="btn btn-inverse-success btn-icon">
-                                                            <i class="ti-eye"></i>
-                                                        </button>
-                                                    </a>
-                                                    <a href="{{ route('admin.driver.edit', $driver->id) }}">
+                                                    <center>
+                                                        <a href="{{ route('admin.driver.detail', $driver->id) }}">
+                                                            <button type="button"
+                                                                class="btn btn-inverse-success btn-rounded btn-icon">
+                                                                <i class="ti-eye"></i>
+                                                            </button>
+                                                        </a>
+                                                        <a href="{{ route('admin.driver.edit', $driver->id) }}">
+                                                            <button type="button"
+                                                                class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                                <i class="ti-pencil"></i>
+                                                            </button>
+                                                        </a>
                                                         <button type="button"
-                                                            class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                            <i class="ti-pencil"></i>
+                                                            class="btn btn-inverse-danger btn-rounded btn-icon"
+                                                            data-toggle="modal"
+                                                            data-target="#deleteModal{{ $driver->id }}">
+                                                            <i class="ti-trash"></i>
                                                         </button>
-                                                    </a>
-                                                    <button type="button" class="btn btn-inverse-danger btn-icon"
-                                                        data-toggle="modal" data-target="#deleteModal{{ $driver->id }}">
-                                                        <i class="ti-trash"></i>
-                                                    </button>
+                                                    </center>
                                                 </td>
                                             </tr>
 

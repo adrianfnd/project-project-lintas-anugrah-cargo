@@ -24,9 +24,13 @@ class DriverAdminController extends Controller
         return view('admin.driver.create');
     }
 
-    public function detail()
+    public function detail($id)
     {
-        return view('admin.driver.detail');
+        $driver = Driver::findOrFail($id);
+
+        $user = User::where('driver_id', $driver->id)->firstOrFail();
+
+        return view('admin.driver.detail', compact('driver', 'user'));
     }
 
     public function store(Request $request)
@@ -61,7 +65,7 @@ class DriverAdminController extends Controller
         $user->driver_id = $driver->id;
         $user->name = $request->name;
         $user->username = $request->username;
-        $user->email = $request->phone_number;
+        $user->email = $request->email;
         $user->email_verified_at = now();
         $user->password = bcrypt($request->phone_number);
         $user->role_id = 3;
@@ -81,35 +85,42 @@ class DriverAdminController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required',
-            'phone_number' => 'required|unique:drivers,phone_number,'.$id,
-            'license_number' => 'required|unique:drivers,license_number,'.$id,
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'vehicle_name' => 'required',
-            'address' => 'required',
-        ]);
-
         $driver = Driver::findOrFail($id);
 
+        $user = User::where('driver_id', $driver->id)->firstOrFail();
+
+        $request->validate([
+            'username' => 'required|unique:users,username,'.$user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'password' => 'nullable|min:8',
+            'password_confirmation' => 'nullable|same:password',
+
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'phone_number' => 'required|unique:drivers,phone_number,'.$id,
+            'license_number' => 'required|unique:drivers,license_number,'.$id,
+            'vehicle_name' => 'required|string|max:255',
+            'address' => 'required|string|max:255'
+        ]);
+
+        $driver->name = $request->name;
         if ($request->hasFile('image')) {
             Storage::delete('public/drivers/' . $driver->image);
             $imageName = $request->file('image')->store('public/drivers');
             $driver->image = basename($imageName);
         }
-
-        $driver->name = $request->name;
         $driver->phone_number = $request->phone_number;
         $driver->license_number = $request->license_number;
         $driver->vehicle_name = $request->vehicle_name;
         $driver->address = $request->address;
-        $driver->rate = $request->rate;
         $driver->save();
 
-        $user = User::where('driver_id', $driver->id)->firstOrFail();
         $user->name = $request->name;
         $user->username = $request->username;
-        $user->email = $request->phone_number;
+        $user->email = $request->email;
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
+        }
         $user->save();
 
         return redirect()->route('admin.driver.index')->with('success', 'Data Driver berhasil diupdate.');
