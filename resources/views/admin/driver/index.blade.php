@@ -21,12 +21,12 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Nama</th>
                                             <th>
                                                 <center>Foto Driver</center>
                                             </th>
+                                            <th>Nama</th>
                                             <th>Nomor Hp</th>
-                                            <th>Nomor SIM</th>
+                                            <th>Nomor Kendaraan</th>
                                             <th>Nama Kendaraan</th>
                                             <th>Alamat</th>
                                             <th>
@@ -38,7 +38,6 @@
                                         @foreach ($drivers as $driver)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $driver->name }}</td>
                                                 <td>
                                                     <center><img
                                                             src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/75' }}"
@@ -46,6 +45,7 @@
                                                             style="object-fit: cover; width: 75px; height: 75px;">
                                                     </center>
                                                 </td>
+                                                <td>{{ $driver->name }}</td>
                                                 <td>{{ $driver->phone_number }}</td>
                                                 <td>{{ $driver->license_number }}</td>
                                                 <td>{{ $driver->vehicle_name }}</td>
