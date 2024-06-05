@@ -42,12 +42,12 @@
                                         <td>78890865</td>
                                         <td><label class="badge badge-warning">In progress</label></td>
                                         <td>
-                                            <a href="{{ route('admin.operator.detail') }}">
+                                            <a href="{{ route('admin.operator.detail', $operator->id) }}">
                                                 <button type="button" class="btn btn-inverse-success btn-icon">
                                                     <i class="ti-eye"></i>
                                                 </button>
                                             </a>
-                                            <a href="{{ route('admin.operator.edit') }}">
+                                            <a href="{{ route('admin.operator.edit', $operator->id) }}">
                                                 <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
                                                     <i class="ti-pencil"></i>
                                                 </button>

@@ -13,8 +13,7 @@
                                 <div class="input-group">
                                     <img src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/250' }}"
                                         class="img-fluid" alt="Driver Image"
-                                        style="border-radius: 50%; object-fit: cover; border: 3px solid #ccc;"
-                                        width="250">
+                                        style="border-radius: 50%; object-fit: cover; border: 3px solid #ccc; width: 250px; height: 250px;">
                                 </div>
                             </div>
                         </div>
@@ -50,8 +49,10 @@
                                     <p id="driverAddress">{{ $driver->address }}</p>
                                 </div>
                             </div>
-                            <a href="{{ route('admin.driver.index') }}" class="btn btn-light">Cancel</a>
-                            <a href="{{ route('admin.driver.edit', $driver->id) }}" class="btn btn-primary">Edit</a>
+                            <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
+                                <a href="{{ route('admin.driver.index') }}" class="btn btn-light">Back</a>
+                                <a href="{{ route('admin.driver.edit', $driver->id) }}" class="btn btn-primary">Edit</a>
+                            </div>
                         </div>
                     </div>
                 </div>

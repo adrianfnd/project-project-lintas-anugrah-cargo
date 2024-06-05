@@ -138,22 +138,5 @@
                 timer: 2000
             });
         }
-
-        function deleteDriver(driverId) {
-            Swal.fire({
-                title: 'Konfirmasi Hapus Data Driver',
-                text: "Apakah Anda yakin ingin menghapus data driver ini?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location = "{{ url('admin/driver') }}/" + driverId;
-                }
-            });
-        }
     </script>
 @endsection
