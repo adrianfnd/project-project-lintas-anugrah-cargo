@@ -28,7 +28,9 @@ Route::post('forgot-password', [AuthController::class, 'sendResetLink'])->name('
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    // Dashboard
+    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
     // Operator CRUD
     Route::get('operators', [OperatorAdminController::class, 'index'])->name('admin.operator.index');
     Route::get('operators/create', [OperatorAdminController::class, 'create'])->name('admin.operator.create');

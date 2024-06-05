@@ -39,7 +39,7 @@
                             <label for="country">Negara</label>
                             <p id="country">#</p>
                         </div>
-                        <a href="{{ route('driver.index') }}" class="btn btn-light">Cancel</a>
+                        <a href="{{ route('admin.driver.index') }}" class="btn btn-light">Cancel</a>
                     </div>
                 </div>
             </div>

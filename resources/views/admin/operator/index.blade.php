@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <p class="card-title">List Data Operator</p>
                     <p class="card-description">
-                        <a href="{{ route('operator.create') }}">
+                        <a href="{{ route('admin.operator.create') }}">
                             <button type="button" class="btn btn-primary btn-icon-text">
                                 <i class="bi bi-plus btn-icon-prepend"></i>
                                 Tambah Data
@@ -42,12 +42,12 @@
                                         <td>78890865</td>
                                         <td><label class="badge badge-warning">In progress</label></td>
                                         <td>
-                                            <a href="{{ route('operator.detail') }}">
+                                            <a href="{{ route('admin.operator.detail') }}">
                                                 <button type="button" class="btn btn-inverse-success btn-icon">
                                                     <i class="ti-eye"></i>
                                                 </button>
                                             </a>
-                                            <a href="{{ route('operator.edit') }}">
+                                            <a href="{{ route('admin.operator.edit') }}">
                                                 <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
                                                     <i class="ti-pencil"></i>
                                                 </button>

@@ -32,7 +32,7 @@
                             <label for="mapid">Lokasi</label>
                             <div id="mapid" style="height: 400px;"></div>
                         </div>
-                        <a href="{{ route('operator.index') }}" class="btn btn-light">Cancel</a>
+                        <a href="{{ route('admin.operator.index') }}" class="btn btn-light">Cancel</a>
                     </div>
                 </div>
             </div>

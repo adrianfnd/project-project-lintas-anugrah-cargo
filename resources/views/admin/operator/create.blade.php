@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Form Data Operator</h4>
-                    <form class="forms-sample" method="POST" action="{{ route('operator.store') }}">
+                    <form class="forms-sample" method="POST" action="{{ route('admin.operator.store') }}">
                         @csrf
                         <div class="form-group">
                             <label for="Username">Username</label>
@@ -82,7 +82,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                        <a href="{{ route('operator.index') }}" class="btn btn-light">Cancel</a>
+                        <a href="{{ route('admin.operator.index') }}" class="btn btn-light">Cancel</a>
                     </form>
                 </div>
             </div>

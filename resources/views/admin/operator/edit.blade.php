@@ -31,7 +31,7 @@
                             <div id="mapid" style="height: 400px;"></div>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                        <a href="{{ route('operator.index') }}" class="btn btn-light">Cancel</a>
+                        <a href="{{ route('admin.operator.index') }}" class="btn btn-light">Cancel</a>
                     </form>
                 </div>
             </div>

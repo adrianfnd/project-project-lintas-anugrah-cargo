@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <p class="card-title">List Data Operator</p>
                     <p class="card-description">
-                        <a href="{{ route('driver.create') }}">
+                        <a href="{{ route('admin.driver.create') }}">
                             <button type="button" class="btn btn-primary btn-icon-text">
                                 <i class="bi bi-plus btn-icon-prepend"></i>
                                 Tambah Data
@@ -41,12 +41,12 @@
                                         <td>Dave</td>
                                         <td><label class="badge badge-warning">In progress</label></td>
                                         <td>
-                                            <a href="{{ route('driver.detail') }}">
+                                            <a href="{{ route('admin.driver.detail') }}">
                                                 <button type="button" class="btn btn-inverse-success btn-icon">
                                                     <i class="ti-eye"></i>
                                                 </button>
                                             </a>
-                                            <a href="{{ route('driver.edit') }}">
+                                            <a href="{{ route('admin.driver.edit') }}">
                                                 <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
                                                     <i class="ti-pencil"></i>
                                                 </button>
