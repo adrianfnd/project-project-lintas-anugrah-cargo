@@ -68,21 +68,24 @@
                         <div class="form-group">
                             <label for="mapid">Region</label>
                             <div class="input-group mb-2">
-                                <input type="text" id="searchbox" placeholder="Search location" class="form-control">
+                                <input type="text" id="searchbox" placeholder="Search location" class="form-control"
+                                    required value="{{ old('region') }}">
                                 <div class="input-group-append">
                                     <button type="button" id="searchbutton" class="btn btn-primary">Search</button>
                                 </div>
                             </div>
                             <div id="mapid" style="height: 400px;"></div>
-                            <input type="hidden" id="region" name="region" required>
+                            <input type="hidden" id="region" name="region" required value="{{ old('region') }}">
                             @error('region')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                            <input type="hidden" id="region_latitude" name="region_latitude" required>
+                            <input type="hidden" id="region_latitude" name="region_latitude" required
+                                value="{{ old('region_latitude') }}">
                             @error('region_latitude')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                            <input type="hidden" id="region_longitude" name="region_longitude" required>
+                            <input type="hidden" id="region_longitude" name="region_longitude" required
+                                value="{{ old('region_longitude') }}">
                             @error('region_longitude')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -95,8 +98,11 @@
             </div>
         </div>
     </div>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <script>
-        var map = L.map('mapid').setView([51.505, -0.09], 13);
+        var map = L.map('mapid').setView([-6.263, 106.781], 10);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -109,9 +115,17 @@
         var searchBox = document.getElementById('searchbox');
         var searchButton = document.getElementById('searchbutton');
 
+        function updateLocationInfo(lat, lon, display_name) {
+            document.getElementById('region').value = display_name;
+            document.getElementById('region_latitude').value = lat;
+            document.getElementById('region_longitude').value = lon;
+
+            searchBox.value = display_name;
+        }
+
         searchButton.addEventListener('click', function() {
             var location = searchBox.value;
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.length > 0) {
@@ -123,11 +137,13 @@
 
                         map.setView([lat, lon], 13);
 
-                        document.getElementById('region').value = display_name;
-                        document.getElementById('region_latitude').value = lat;
-                        document.getElementById('region_longitude').value = lon;
+                        updateLocationInfo(lat, lon, display_name);
                     } else {
-                        alert('Location not found');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lokasi Tidak Ditemukan',
+                            text: 'Mohon maaf, lokasi yang anda cari tidak ditemukan.',
+                        });
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -139,17 +155,16 @@
             var lat = position.lat;
             var lon = position.lng;
 
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
+                )
                 .then(response => response.json())
                 .then(data => {
                     var display_name = data.display_name;
 
-                    document.getElementById('region').value = display_name;
-                    document.getElementById('region_latitude').value = lat;
-                    document.getElementById('region_longitude').value = lon;
+                    updateLocationInfo(lat, lon, display_name);
 
                     marker.bindPopup(display_name).openPopup();
-                    searchBox.value = display_name;
                 })
                 .catch(error => console.error('Error:', error));
         });
