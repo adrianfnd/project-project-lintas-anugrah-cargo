@@ -52,11 +52,9 @@
                                                 <th>Nama</th>
                                                 <th>Gambar</th>
                                                 <th>Nomor Hp</th>
-                                                <th>Nomor Lisensi</th>
-                                                <th>Nama Kendaraan</th>
+                                                <th>SIM</th>
                                                 <th>Alamat</th>
-                                                <th>Nama Kendaraan</th>
-                                                <th>Rate</th>
+                                                <th>Negara</th>
                                                 <th>
                                                 <th>
                                             </tr>
@@ -64,12 +62,11 @@
                                         <tr>
                                             <td>1</td>
                                             <td>Dave</td>
-                                            <td>53275535</td>
+                                            <td><img src="#" alt="Gambar" width="100"></td>
                                             <td>Dave</td>
-                                            <td>53275535</td>
+                                            <td>eee</td>
+                                            <td>dddd</td>
                                             <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>78890865</td>
                                             <td><label class="badge badge-warning">In progress</label></td>
                                             <td>
                                                 <a href="{{ route('driver.detail') }}">
