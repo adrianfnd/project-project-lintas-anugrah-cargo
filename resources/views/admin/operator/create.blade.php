@@ -67,8 +67,12 @@
 
                         <div class="form-group">
                             <label for="mapid">Region</label>
-                            <input type="text" id="searchbox" placeholder="Search location" class="form-control mb-2">
-                            <button type="button" id="searchbutton" class="btn btn-primary mb-2">Search</button>
+                            <div class="input-group mb-2">
+                                <input type="text" id="searchbox" placeholder="Search location" class="form-control">
+                                <div class="input-group-append">
+                                    <button type="button" id="searchbutton" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
                             <div id="mapid" style="height: 400px;"></div>
                             <input type="hidden" id="region" name="region" required>
                             @error('region')
@@ -98,6 +102,10 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        var marker = L.marker([51.505, -0.09], {
+            draggable: true
+        }).addTo(map);
+
         var searchBox = document.getElementById('searchbox');
         var searchButton = document.getElementById('searchbutton');
 
@@ -111,9 +119,7 @@
                         var lon = data[0].lon;
                         var display_name = data[0].display_name;
 
-                        L.marker([lat, lon]).addTo(map)
-                            .bindPopup(display_name)
-                            .openPopup();
+                        marker.setLatLng([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
 
                         map.setView([lat, lon], 13);
 
@@ -123,6 +129,27 @@
                     } else {
                         alert('Location not found');
                     }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        marker.on('dragend', function(event) {
+            var marker = event.target;
+            var position = marker.getLatLng();
+            var lat = position.lat;
+            var lon = position.lng;
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    var display_name = data.display_name;
+
+                    document.getElementById('region').value = display_name;
+                    document.getElementById('region_latitude').value = lat;
+                    document.getElementById('region_longitude').value = lon;
+
+                    marker.bindPopup(display_name).openPopup();
+                    searchBox.value = display_name;
                 })
                 .catch(error => console.error('Error:', error));
         });
