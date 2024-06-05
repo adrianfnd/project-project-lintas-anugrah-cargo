@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Driver;
+use App\Models\User;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class DriverAdminController extends Controller
@@ -31,10 +35,11 @@ class DriverAdminController extends Controller
             'username' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'password_confirmation' => 'required|same:password',
 
             'name' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'phone_number' => 'requiredstring|max:255||unique:drivers',
+            'phone_number' => 'required|string|max:255||unique:drivers',
             'license_number' => 'required|string|max:255|unique:drivers',
             'vehicle_name' => 'required|string|max:255',
             'address' => 'required|string|max:255'
@@ -43,7 +48,7 @@ class DriverAdminController extends Controller
         $imageName = $request->file('image')->store('public/drivers');
 
         $driver = new Driver();
-        $user->created_by = auth()->user()->id;
+        $driver->created_by = auth()->user()->admin_id;
         $driver->name = $request->name;
         $driver->image = basename($imageName);
         $driver->phone_number = $request->phone_number;
@@ -65,7 +70,7 @@ class DriverAdminController extends Controller
         return redirect()->route('admin.driver.index')->with('success', 'Data Driver berhasil ditambahkan.');
     }
 
-    public function edit()
+    public function edit($id)
     {
         $driver = Driver::findOrFail($id);
 
@@ -83,7 +88,6 @@ class DriverAdminController extends Controller
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'vehicle_name' => 'required',
             'address' => 'required',
-            'rate' => 'required|integer',
         ]);
 
         $driver = Driver::findOrFail($id);

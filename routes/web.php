@@ -33,23 +33,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     
     // Operator CRUD
     Route::get('operators', [OperatorAdminController::class, 'index'])->name('admin.operator.index');
-    Route::get('operators/create', [OperatorAdminController::class, 'create'])->name('admin.operator.create');
-    Route::get('operators/detail', [OperatorAdminController::class, 'detail'])->name('admin.operator.detail');
+    Route::get('operators-create', [OperatorAdminController::class, 'create'])->name('admin.operator.create');
+    Route::get('operators-detail-{id}', [OperatorAdminController::class, 'detail'])->name('admin.operator.detail');
     Route::post('operators', [OperatorAdminController::class, 'store'])->name('admin.operator.store');
-    Route::get('operators/{id}/edit', [OperatorAdminController::class, 'edit'])->name('admin.operator.edit');
-    Route::get('operators/edit', [OperatorAdminController::class, 'edit'])->name('admin.operator.edit');
-    Route::put('operators/{id}', [OperatorAdminController::class, 'update'])->name('admin.operator.update');
-    Route::delete('operators/{id}', [OperatorAdminController::class, 'destroy'])->name('admin.operator.destroy');
+    Route::get('operators-edit-{id}', [OperatorAdminController::class, 'edit'])->name('admin.operator.edit');
+    Route::put('operators-{id}', [OperatorAdminController::class, 'update'])->name('admin.operator.update');
+    Route::delete('operators-{id}', [OperatorAdminController::class, 'destroy'])->name('admin.operator.destroy');
 
     // Driver CRUD
     Route::get('drivers', [DriverAdminController::class, 'index'])->name('admin.driver.index');
-    Route::get('drivers/create', [DriverAdminController::class, 'create'])->name('admin.driver.create');
-    Route::get('drivers/detail', [DriverAdminController::class, 'detail'])->name('admin.driver.detail');
+    Route::get('drivers-create', [DriverAdminController::class, 'create'])->name('admin.driver.create');
+    Route::get('drivers-detail-{id}', [DriverAdminController::class, 'detail'])->name('admin.driver.detail');
     Route::post('drivers', [DriverAdminController::class, 'store'])->name('admin.driver.store');
-    Route::get('drivers/{id}/edit', [DriverAdminController::class, 'edit'])->name('driver.edit');
-    Route::get('drivers/edit', [DriverAdminController::class, 'edit'])->name('admin.driver.edit');
-    Route::put('drivers/{id}', [DriverAdminController::class, 'update'])->name('admin.driver.update');
-    Route::delete('drivers/{id}', [DriverAdminController::class, 'destroy'])->name('admin.driver.destroy');
+    Route::get('drivers-edit-{id}', [DriverAdminController::class, 'edit'])->name('admin.driver.edit');
+    Route::put('drivers-{id}', [DriverAdminController::class, 'update'])->name('admin.driver.update');
+    Route::delete('drivers-{id}', [DriverAdminController::class, 'destroy'])->name('admin.driver.destroy');
 });
 
 // Operator routes

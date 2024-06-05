@@ -27,7 +27,7 @@ class AuthController extends Controller
             $user = Auth::user()->load('role');
 
             if ($user->role->name == 'admin') {
-                return redirect()->route('operator.index');
+                return redirect()->route('admin.operator.index');
             } elseif ($user->role->name == 'operator') {
                 return redirect()->route('operator.dashboard');
             } elseif ($user->role->name == 'driver') {

@@ -5,7 +5,7 @@
         <div class="col-13 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <p class="card-title">List Data Operator</p>
+                    <p class="card-title">List Data Driver</p>
                     <p class="card-description">
                         <a href="{{ route('admin.driver.create') }}">
                             <button type="button" class="btn btn-primary btn-icon-text">
@@ -17,45 +17,47 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="table-responsive">
-                                <table id="example" class="display expandable-table" style="width:100%">
+                                <table class="display expandable-table" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama</th>
                                             <th>Gambar</th>
                                             <th>Nomor Hp</th>
-                                            <th>SIM</th>
+                                            <th>Nomor SIM</th>
+                                            <th>Nama Kendaraan</th>
                                             <th>Alamat</th>
-                                            <th>Negara</th>
-                                            <th>
-                                            <th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Dave</td>
-                                        <td><img src="#" alt="Gambar" width="100"></td>
-                                        <td>Dave</td>
-                                        <td>eee</td>
-                                        <td>dddd</td>
-                                        <td>Dave</td>
-                                        <td><label class="badge badge-warning">In progress</label></td>
-                                        <td>
-                                            <a href="{{ route('admin.driver.detail') }}">
-                                                <button type="button" class="btn btn-inverse-success btn-icon">
-                                                    <i class="ti-eye"></i>
+                                    @foreach ($drivers as $driver)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $driver->name }}</td>
+                                            <td><img src="{{ asset('storage/drivers/' . $driver->image) }}" alt="Gambar"
+                                                    width="100"></td>
+                                            <td>{{ $driver->phone_number }}</td>
+                                            <td>{{ $driver->license_number }}</td>
+                                            <td>{{ $driver->vehicle_name }}</td>
+                                            <td>{{ $driver->address }}</td>
+                                            <td>
+                                                <a href="{{ route('admin.driver.detail', $driver->id) }}">
+                                                    <button type="button" class="btn btn-inverse-success btn-icon">
+                                                        <i class="ti-eye"></i>
+                                                    </button>
+                                                </a>
+                                                <a href="{{ route('admin.driver.edit', $driver->id) }}">
+                                                    <button type="button"
+                                                        class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                        <i class="ti-pencil"></i>
+                                                    </button>
+                                                </a>
+                                                <button type="button" class="btn btn-inverse-danger btn-icon">
+                                                    <i class="ti-trash"></i>
                                                 </button>
-                                            </a>
-                                            <a href="{{ route('admin.driver.edit') }}">
-                                                <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                            </a>
-                                            <button type="button" class="btn btn-inverse-danger btn-icon">
-                                                <i class="ti-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </table>
                             </div>
                         </div>
@@ -64,4 +66,30 @@
             </div>
         </div>
     </div>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script>
+        var successMessage = '{{ session('success') }}';
+        var errorMessage = '{{ session('error') }}';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: successMessage,
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: errorMessage,
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+    </script>
 @endsection
