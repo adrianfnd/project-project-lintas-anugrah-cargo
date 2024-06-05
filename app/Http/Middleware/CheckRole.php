@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class RolesMiddleware
+class CheckRole
 {
     /**
      * Handle an incoming request.
@@ -17,7 +18,13 @@ class RolesMiddleware
      */
     public function handle(Request $request, Closure $next, $role)
     {
-        if ($request->user() && $request->user()->role()->first()->name === $role) {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user()->load('role');
+
+        if ($user->role->name == $role) {
             return $next($request);
         }
 

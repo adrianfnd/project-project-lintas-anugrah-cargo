@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive">
-                                    <table id="example" class="display expandable-table" style="width:100%">
+                                    <table class="display expandable-table" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
@@ -53,42 +53,54 @@
                                                 <th>Gambar</th>
                                                 <th>Nomor Hp</th>
                                                 <th>Nomor Lisensi</th>
-                                                <th>Nama Kendaraan</th>
                                                 <th>Alamat</th>
-                                                <th>Nama Kendaraan</th>
                                                 <th>Rate</th>
-                                                <th>
-                                                <th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>Dave</td>
-                                            <td>53275535</td>
-                                            <td>78890865</td>
-                                            <td><label class="badge badge-warning">In progress</label></td>
-                                            <td>
-                                                <a href="{{ route('operator.detail') }}">
-                                                    <button type="button" class="btn btn-inverse-success btn-icon">
-                                                        <i class="ti-eye"></i>
-                                                    </button>
-                                                </a>
-                                                <a href="{{ route('operator.edit') }}">
-                                                <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                                </a>
-                                                <button type="button" class="btn btn-inverse-danger btn-icon">
-                                                    <i class="ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <tbody>
+                                            @foreach ($operators as $key => $operator)
+                                                <tr>
+                                                    <td>{{ $operators->firstItem() + $key }}</td>
+                                                    <td>{{ $operator->name }}</td>
+                                                    <td>{{ $operator->gambar }}</td>
+                                                    <td>{{ $operator->nomor_hp }}</td>
+                                                    <td>{{ $operator->nomor_lisensi }}</td>
+                                                    <td>{{ $operator->alamat }}</td>
+                                                    <td>
+                                                        <label class="badge badge-warning">In progress</label>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ route('operator.detail', $operator->id) }}">
+                                                            <button type="button" class="btn btn-inverse-success btn-icon">
+                                                                <i class="ti-eye"></i>
+                                                            </button>
+                                                        </a>
+                                                        <a href="{{ route('operator.edit', $operator->id) }}">
+                                                            <button type="button"
+                                                                class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                                <i class="ti-pencil"></i>
+                                                            </button>
+                                                        </a>
+                                                        <button type="button" class="btn btn-inverse-danger btn-icon">
+                                                            <i class="ti-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
+                                <!-- Pagination -->
+                                <div class="clearfix"></div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination" style="color: #9f5aff!important">
+                                            {{ $operators->links('pagination::bootstrap-4') }}
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <!-- End Pagination -->
                             </div>
                         </div>
                     </div>

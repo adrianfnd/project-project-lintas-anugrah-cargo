@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Operator;
 
 class OperatorAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // $operators = Operator::all();
-
-        // return view('admin.operator.index', compact('operators'));
-        return view('admin.operator.index');
+        $operators = Operator::paginate(10);
+    
+        return view('admin.operator.index', compact('operators'));
     }
-
     public function create()
     {
         return view('admin.operator.create');
@@ -25,43 +24,43 @@ class OperatorAdminController extends Controller
         return view('admin.operator.detail');
     }
 
-//     public function store(Request $request)
-//     {
-//         $request->validate([
-//             'username' => 'required|unique:users',
-//             'email' => 'required|email|unique:users',
-//             'password' => 'required|min:8',
+    public function store(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|unique:users',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
 
-//             'name' => 'required|string|max:255',
-//             'phone_number' => 'required|string|max:255|unique:operators',
-//             'address' => 'required|string|max:255',
-//             'region' => 'required|string|max:255',
-//             'region_latitude' => 'required|string|max:255',
-//             'region_longitude' => 'required|string|max:255',
-//         ]);
+            'nama' => 'required|string|max:255',
+            'nomor_hp' => 'required|string|max:255',
+            'alamat' => 'required|string|max:255',
+            'region' => 'required|string|max:255',
+        ]);
 
-//         $operator = new Operator();
-//         $operator->created_by = auth()->user()->id;
-//         $operator->name = $request->name;
-//         $operator->phone_number = $request->phone_number;
-//         $operator->address = $request->address;
-//         $operator->region = $request->region;
-//         $operator->region_latitude = $request->region_latitude;
-//         $operator->region_longitude = $request->region_longitude;
-//         $operator->save();
+        $operator = new Operator();
+        // $operator->created_by = auth()->user()->id;
+        $operator->created_by = "8ab471b9-3fa6-4419-bcd9-e49571a8ac59";
+        $operator->name = $request->nama;
+        $operator->phone_number = $request->nomor_hp;
+        $operator->address = $request->alamat;
+        $operator->region = $request->region;
+        $operator->region_latitude = $request->region_latitude;
+        $operator->region_longitude = $request->region_longitude;
+        $operator->save();
 
-//         $user = new User();
-//         $user->operator_id = $operator->id;
-//         $user->name = $request->name;
-//         $user->username = $request->username;
-//         $user->email = $request->phone_number;
-//         $user->email_verified_at = now();
-//         $user->password = bcrypt($request->phone_number);
-//         $user->role_id = 2;
-//         $user->save();
+        $user = new User();
+        $user->operator_id = $operator->id;
+        $user->name = $request->nama;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->email_verified_at = now();
+        $user->password = bcrypt($request->password);
+        $user->role_id = 2;
+        $user->save();
 
-//         return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil ditambahkan.');
-//     }
+        return redirect()->route('operator.index')->with('success', 'Data Operator berhasil ditambahkan.');
+    }
+
 
     public function edit()
     {
