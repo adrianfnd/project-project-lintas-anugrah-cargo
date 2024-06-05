@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>PT. Lintas Anugerah Cargo</title>
+    <title>Lintas Anugerah Cargo</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('skydash') }}/vendors/feather/feather.css">
     <link rel="stylesheet" href="{{ asset('skydash') }}/vendors/ti-icons/css/themify-icons.css">
