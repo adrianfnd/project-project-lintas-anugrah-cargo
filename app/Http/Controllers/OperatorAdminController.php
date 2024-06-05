@@ -21,7 +21,11 @@ class OperatorAdminController extends Controller
 
     public function detail()
     {
-        return view('admin.operator.detail');
+        $operator = Operator::findOrFail($id);
+
+        $user = User::where('operator_id', $operator->id)->firstOrFail();
+
+        return view('admin.operator.detail', compact('operator', 'user'));
     }
 
     public function store(Request $request)
@@ -30,19 +34,19 @@ class OperatorAdminController extends Controller
             'username' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'password_confirmation' => 'required|same:password',
 
-            'nama' => 'required|string|max:255',
-            'nomor_hp' => 'required|string|max:255',
-            'alamat' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
             'region' => 'required|string|max:255',
         ]);
 
         $operator = new Operator();
-        // $operator->created_by = auth()->user()->id;
-        $operator->created_by = "8ab471b9-3fa6-4419-bcd9-e49571a8ac59";
-        $operator->name = $request->nama;
-        $operator->phone_number = $request->nomor_hp;
-        $operator->address = $request->alamat;
+        $operator->created_by = auth()->user()->admin_id;
+        $operator->name = $request->name;
+        $operator->phone_number = $request->phone_number;
+        $operator->address = $request->address;
         $operator->region = $request->region;
         $operator->region_latitude = $request->region_latitude;
         $operator->region_longitude = $request->region_longitude;
@@ -50,7 +54,7 @@ class OperatorAdminController extends Controller
 
         $user = new User();
         $user->operator_id = $operator->id;
-        $user->name = $request->nama;
+        $user->name = $request->name;
         $user->username = $request->username;
         $user->email = $request->email;
         $user->email_verified_at = now();
@@ -58,53 +62,62 @@ class OperatorAdminController extends Controller
         $user->role_id = 2;
         $user->save();
 
-        return redirect()->route('operator.index')->with('success', 'Data Operator berhasil ditambahkan.');
+        return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil ditambahkan.');
     }
 
 
-    public function edit()
+    public function edit($id)
     {
-        // $operator = Operator::findOrFail($id);
+        $operator = Operator::findOrFail($id);
 
-        // $user = User::where('operator_id', $operator->id)->firstOrFail();
+        $user = User::where('operator_id', $operator->id)->firstOrFail();
 
-        // return view('admin.operator.edit', compact('operator', 'user'));
-        return view('admin.operator.edit');
+        return view('admin.operator.edit', compact('operator', 'user'));
     }
 
-//     public function update(Request $request, $id)
-//     {
-//         $request->validate([
-//             'name' => 'required',
-//             'phone_number' => 'required|unique:operators,phone_number,'.$id,
-//             'address' => 'required',
-//             'region' => 'required',
-//         ]);
+    public function update(Request $request, $id)
+    {
+        $operator = Operator::findOrFail($id);
 
-//         $operator = Operator::findOrFail($id);
-//         $operator->name = $request->name;
-//         $operator->phone_number = $request->phone_number;
-//         $operator->address = $request->address;
-//         $operator->region = $request->region;
-//         $operator->region_latitude = $request->region_latitude;
-//         $operator->region_longitude = $request->region_longitude;
-//         $operator->save();
+        $user = User::where('operator_id', $operator->id)->firstOrFail();
 
-//         $user = User::where('operator_id', $operator->id)->firstOrFail();
-//         $user->name = $request->name;
-//         $user->username = $request->username;
-//         $user->email = $request->phone_number;
-//         $user->save();
+        $request->validate([
+            'username' => 'required|unique:users,username,'.$user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'password' => 'nullable|min:8',
+            'password_confirmation' => 'nullable|same:password',
 
-//         return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil diupdate.');
-//     }
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:255|unique:operators,phone_number,'.$id,
+            'address' => 'required|string|max:255',
+            'region' => 'required|string|max:255',
+        ]);
 
-//     public function destroy($id)
-//     {
-//         $driver = Operator::findOrFail($id);
+        $operator->name = $request->name;
+        $operator->phone_number = $request->phone_number;
+        $operator->address = $request->address;
+        $operator->region = $request->region;
+        $operator->region_latitude = $request->region_latitude;
+        $operator->region_longitude = $request->region_longitude;
+        $operator->save();
 
-//         $driver->delete();
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->phone_number;
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
+        }
+        $user->save();
 
-//         return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil dihapus.');
-//     }
+        return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil diupdate.');
+    }
+
+    public function destroy($id)
+    {
+        $driver = Operator::findOrFail($id);
+
+        $driver->delete();
+
+        return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil dihapus.');
+    }
 }

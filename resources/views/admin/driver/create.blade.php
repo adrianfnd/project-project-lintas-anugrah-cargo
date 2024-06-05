@@ -78,7 +78,7 @@
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="inputLicenseNumber">Nomor Plan Kendaraan</label>
+                            <label for="inputLicenseNumber">Nomor Plat Kendaraan</label>
                             <input type="text" class="form-control" id="inputLicenseNumber" name="license_number"
                                 placeholder="License Number" value="{{ old('license_number') }}">
                             @if ($errors->has('license_number'))

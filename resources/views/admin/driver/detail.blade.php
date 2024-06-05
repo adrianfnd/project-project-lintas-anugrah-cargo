@@ -37,7 +37,7 @@
                                     <p id="driverPhone">{{ $driver->phone_number }}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label for="driverLicense">Nomor Plan Kendaraan</label>
+                                    <label for="driverLicense">Nomor Plat Kendaraan</label>
                                     <p id="driverLicense">{{ $driver->license_number }}</p>
                                 </div>
                                 <div class="form-group">

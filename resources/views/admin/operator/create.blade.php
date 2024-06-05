@@ -5,61 +5,64 @@
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Form Data Operator</h4>
+                    <h4 class="card-title" style="margin-bottom: 50px">Form Tambah Data Operator</h4>
                     <form class="forms-sample" method="POST" action="{{ route('admin.operator.store') }}">
                         @csrf
                         <div class="form-group">
-                            <label for="Username">Username</label>
-                            <input type="text" class="form-control" id="Username" placeholder="Username" name="username"
-                                required>
-                            @error('username')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="inputUsername">Username</label>
+                            <input type="text" class="form-control" id="inputUsername" name="username"
+                                placeholder="Username" value="{{ old('username') }}">
+                            @if ($errors->has('username'))
+                                <span class="text-danger">{{ $errors->first('username') }}</span>
+                            @endif
                         </div>
-
                         <div class="form-group">
-                            <label for="Email">Email</label>
-                            <input type="email" class="form-control" id="Email" placeholder="Email" name="email"
-                                required>
-                            @error('email')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="inputEmail">Email</label>
+                            <input type="email" class="form-control" id="inputEmail" name="email" placeholder="Email"
+                                value="{{ old('email') }}">
+                            @if ($errors->has('email'))
+                                <span class="text-danger">{{ $errors->first('email') }}</span>
+                            @endif
                         </div>
-
                         <div class="form-group">
-                            <label for="Password">Password</label>
-                            <input type="password" class="form-control" id="Password" placeholder="Password"
-                                name="password" required>
-                            @error('password')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="inputPassword">Password</label>
+                            <input type="password" class="form-control" id="inputPassword" name="password"
+                                placeholder="Password">
+                            @if ($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                            @endif
                         </div>
-
                         <div class="form-group">
-                            <label for="Nama">Nama</label>
-                            <input type="text" class="form-control" id="Nama" placeholder="Nama" name="nama"
-                                required>
-                            @error('nama')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="inputPasswordConfirmation">Password Confirmation</label>
+                            <input type="password" class="form-control" id="inputPasswordConfirmation"
+                                name="password_confirmation" placeholder="Password Confirmation">
+                            @if ($errors->has('password_confirmation'))
+                                <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
+                            @endif
                         </div>
-
                         <div class="form-group">
-                            <label for="Nomor HP">Nomor HP</label>
-                            <input type="phone" class="form-control" id="Nomor HP" placeholder="Nomor HP" name="nomor_hp"
-                                required>
-                            @error('nomor_hp')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="inputName">Nama</label>
+                            <input type="text" class="form-control" id="inputName" name="name" placeholder="Name"
+                                value="{{ old('name') }}">
+                            @if ($errors->has('name'))
+                                <span class="text-danger">{{ $errors->first('name') }}</span>
+                            @endif
                         </div>
-
                         <div class="form-group">
-                            <label for="Alamat">Alamat</label>
-                            <input type="text" class="form-control" id="Alamat" placeholder="Alamat" name="alamat"
-                                required>
-                            @error('alamat')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="inputPhone">Nomor HP</label>
+                            <input type="text" class="form-control" id="inputPhone" name="phone_number"
+                                placeholder="Phone Number" value="{{ old('phone_number') }}">
+                            @if ($errors->has('phone_number'))
+                                <span class="text-danger">{{ $errors->first('phone_number') }}</span>
+                            @endif
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress">Alamat</label>
+                            <input type="text" class="form-control" id="inputAddress" name="address"
+                                placeholder="Address" value="{{ old('address') }}">
+                            @if ($errors->has('address'))
+                                <span class="text-danger">{{ $errors->first('address') }}</span>
+                            @endif
                         </div>
 
                         <div class="form-group">

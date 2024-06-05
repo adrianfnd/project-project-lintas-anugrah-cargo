@@ -22,53 +22,78 @@
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama</th>
-                                            <th>Gambar</th>
-                                            <th>Nomor Hp</th>
-                                            <th>Nomor Lisensi</th>
-                                            <th>Nama Kendaraan</th>
                                             <th>Alamat</th>
-                                            <th>Rate</th>
-                                            <th>Actions</th>
+                                            <th>Region</th>
+                                            <th>
+                                                <center>Aksi</center>
+                                            </th>
                                         </tr>
                                     </thead>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Dave</td>
-                                        <td>53275535</td>
-                                        <td>Dave</td>
-                                        <td>53275535</td>
-                                        <td>Dave</td>
-                                        <td>53275535</td>
-                                        <td>78890865</td>
-                                        <td><label class="badge badge-warning">In progress</label></td>
-                                        <td>
-                                            <a href="{{ route('admin.operator.detail', $operator->id) }}">
-                                                <button type="button" class="btn btn-inverse-success btn-icon">
-                                                    <i class="ti-eye"></i>
-                                                </button>
-                                            </a>
-                                            <a href="{{ route('admin.operator.edit', $operator->id) }}">
-                                                <button type="button" class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                            </a>
-                                            <button type="button" class="btn btn-inverse-danger btn-icon">
-                                                <i class="ti-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <tbody>
+                                        @foreach ($operators as $operator)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $operator->name }}</td>
+                                                <td>{{ $operator->address }}</td>
+                                                <td>{{ $operator->region }}</td>
+                                                <td>
+                                                    <center>
+                                                        <a href="{{ route('admin.operator.detail', $operator->id) }}">
+                                                            <button type="button"
+                                                                class="btn btn-inverse-success btn-rounded btn-icon">
+                                                                <i class="ti-eye"></i>
+                                                            </button>
+                                                        </a>
+                                                        <a href="{{ route('admin.operator.edit', $operator->id) }}">
+                                                            <button type="button"
+                                                                class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                                <i class="ti-pencil"></i>
+                                                            </button>
+                                                        </a>
+                                                        <button type="button"
+                                                            class="btn btn-inverse-danger btn-rounded btn-icon"
+                                                            data-toggle="modal"
+                                                            data-target="#deleteModal{{ $operator->id }}">
+                                                            <i class="ti-trash"></i>
+                                                        </button>
+                                                    </center>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Modal Konfirmasi Hapus -->
+                                            <div class="modal fade" id="deleteModal{{ $operator->id }}" tabindex="-1"
+                                                role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus
+                                                                Data Operator</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Apakah Anda yakin ingin menghapus data operator ini?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Batal</button>
+                                                            <form
+                                                                action="{{ route('admin.operator.destroy', $operator->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
-                            <!-- Pagination -->
-                            <div class="clearfix"></div>
-                            <div class="d-flex justify-content-end mt-3">
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination" style="color: #9f5aff!important">
-                                        {{ $operators->links('pagination::bootstrap-4') }}
-                                    </ul>
-                                </nav>
-                            </div>
-                            <!-- End Pagination -->
                         </div>
                     </div>
                 </div>
