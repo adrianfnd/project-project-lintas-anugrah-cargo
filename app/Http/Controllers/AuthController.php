@@ -29,12 +29,20 @@ class AuthController extends Controller
             if ($user->role->name == 'admin') {
                 return redirect()->route('admin.operator.index');
             } elseif ($user->role->name == 'operator') {
+                dd('Operator is under development');
                 return redirect()->route('operator.dashboard');
             } elseif ($user->role->name == 'driver') {
+                dd('Driver is under development');
                 return redirect()->route('driver.dashboard');
             }
         }
     
         return back()->withErrors(['credentials' => 'Password atau Username yang anda masukkan salah']);
-    }    
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login');
+    }
 }

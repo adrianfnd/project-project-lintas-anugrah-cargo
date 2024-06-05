@@ -19,10 +19,14 @@ use App\Http\Controllers\DriverAdminController;
 |
 */
 
+Route::get('/', function () {
+    return view('auth.login');
+});
+
 // Auth
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.action');
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('forgot.password');
 Route::post('forgot-password', [AuthController::class, 'sendResetLink'])->name('forgot.password.post');
 

@@ -102,15 +102,26 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <script>
-        var map = L.map('mapid').setView([-6.263, 106.781], 10);
+        var oldLatitude = "{{ old('region_latitude') }}";
+        var oldLongitude = "{{ old('region_longitude') }}";
+        var oldDisplayName = "{{ old('region') }}";
+
+        var mapCenter = oldLatitude && oldLongitude ? [oldLatitude, oldLongitude] : [-6.263, 106.781];
+        var mapZoom = oldLatitude && oldLongitude ? 13 : 10;
+
+        var map = L.map('mapid').setView(mapCenter, mapZoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        var marker = L.marker([51.505, -0.09], {
+        var marker = L.marker(mapCenter, {
             draggable: true
         }).addTo(map);
+
+        if (oldDisplayName) {
+            marker.bindPopup(oldDisplayName).openPopup();
+        }
 
         var searchBox = document.getElementById('searchbox');
         var searchButton = document.getElementById('searchbutton');

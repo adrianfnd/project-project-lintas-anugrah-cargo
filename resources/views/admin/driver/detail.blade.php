@@ -7,7 +7,6 @@
                 <div class="card-body">
                     <h4 class="card-title">Detail Data Driver</h4>
                     <div class="row">
-                        <!-- Gambar -->
                         <div class="col-md-4 d-flex justify-content-center align-items-center">
                             <div class="form-group">
                                 <div class="input-group">
@@ -17,7 +16,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Form -->
                         <div class="col-md-8">
                             <div class="form-sample">
                                 <div class="form-group">

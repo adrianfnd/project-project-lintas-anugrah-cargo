@@ -19,7 +19,7 @@ class OperatorAdminController extends Controller
         return view('admin.operator.create');
     }
 
-    public function detail()
+    public function detail($id)
     {
         $operator = Operator::findOrFail($id);
 
@@ -103,7 +103,7 @@ class OperatorAdminController extends Controller
 
         $user->name = $request->name;
         $user->username = $request->username;
-        $user->email = $request->phone_number;
+        $user->email = $request->email;
         if ($request->password) {
             $user->password = bcrypt($request->password);
         }
