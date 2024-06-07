@@ -12,6 +12,11 @@ use App\Http\Controllers\DriverOperatorController;
 use App\Http\Controllers\PaketOperatorController;
 use App\Http\Controllers\SuratJalanOperatorController;
 
+use App\Http\Controllers\DashboardDriverController;
+use App\Http\Controllers\SuratJalanDriverController;
+use App\Http\Controllers\MapTrackingDriverController;
+use App\Http\Controllers\RiwayatPaketDriverController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -92,4 +97,20 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 
 // Driver routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () {
+     // Dashboard
+     Route::get('dashboard', [DashboardDriverController::class, 'index'])->name('driver.dashboard');
+
+     // Surat Jalan
+     Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
+     Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
+     Route::post('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'antarPaket'])->name('driver.suratjalan.antar');
+ 
+     // Map Tracking
+     Route::get('maptracking/{id}', [MapTrackingDriverController::class, 'showTrackingMap'])->name('driver.maptracking.show');
+     Route::post('maptracking/{id}/checkpoint', [MapTrackingDriverController::class, 'checkpoint'])->name('driver.maptracking.checkpoint');
+     Route::post('maptracking/{id}/complete', [MapTrackingDriverController::class, 'completeDelivery'])->name('driver.maptracking.complete');
+
+     // Riwayat Paket
+     Route::get('riwayatpakets', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayatpaket.index');
+     Route::get('riwayatpakets-detail-{id}', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayatpaket.detail');
 });
