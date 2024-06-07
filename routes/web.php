@@ -7,6 +7,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OperatorAdminController;
 use App\Http\Controllers\DriverAdminController;
 
+use App\Http\Controllers\PaketOperatorController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +58,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 // Operator routes
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function () {
+    // Paket CRUD
+    Route::get('pakets', [PaketOperatorController::class, 'index'])->name('operator.paket.index');
+    Route::get('pakets-create', [PaketOperatorController::class, 'create'])->name('operator.paket.create');
+    Route::get('pakets-detail-{id}', [PaketOperatorController::class, 'detail'])->name('operator.paket.detail');
+    Route::post('pakets', [PaketOperatorController::class, 'store'])->name('operator.paket.store');
+    Route::get('pakets-edit-{id}', [PaketOperatorController::class, 'edit'])->name('operator.paket.edit');
+    Route::put('pakets-{id}', [PaketOperatorController::class, 'update'])->name('operator.paket.update');
+    Route::delete('pakets-{id}', [PaketOperatorController::class, 'destroy'])->name('operator.paket.destroy');
 });
 
 // Driver routes
