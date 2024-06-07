@@ -7,8 +7,10 @@ use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\OperatorAdminController;
 use App\Http\Controllers\DriverAdminController;
 
+use App\Http\Controllers\DashboardOperatorController;
+use App\Http\Controllers\DriverOperatorController;
 use App\Http\Controllers\PaketOperatorController;
-
+use App\Http\Controllers\SuratJalanOperatorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,12 +65,7 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 
     // Driver
     Route::get('drivers', [DriverOperatorController::class, 'index'])->name('operator.driver.index');
-    Route::get('drivers-create', [DriverOperatorController::class, 'create'])->name('operator.driver.create');
     Route::get('drivers-detail-{id}', [DriverOperatorController::class, 'detail'])->name('operator.driver.detail');
-    Route::post('drivers', [DriverOperatorController::class, 'store'])->name('operator.driver.store');
-    Route::get('drivers-edit-{id}', [DriverOperatorController::class, 'edit'])->name('operator.driver.edit');
-    Route::put('drivers-{id}', [DriverOperatorController::class, 'update'])->name('operator.driver.update');
-    Route::delete('drivers-{id}', [DriverOperatorController::class, 'destroy'])->name('operator.driver.destroy');
 
     // Paket
     Route::get('pakets', [PaketOperatorController::class, 'index'])->name('operator.paket.index');
@@ -87,6 +84,10 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
     Route::get('suratjalans-edit-{id}', [SuratJalanController::class, 'edit'])->name('operator.suratjalan.edit');
     Route::put('suratjalans-{id}', [SuratJalanController::class, 'update'])->name('operator.suratjalan.update');
     Route::delete('suratjalans-{id}', [SuratJalanController::class, 'destroy'])->name('operator.suratjalan.destroy');
+
+    // Riwayat Paket
+    Route::get('riwayatpakets', [RiwayatPaketController::class, 'index'])->name('operator.riwayatpaket.index');
+    Route::get('riwayatpakets-detail-{id}', [RiwayatPaketController::class, 'detail'])->name('operator.riwayatpaket.detail');
 });
 
 // Driver routes
