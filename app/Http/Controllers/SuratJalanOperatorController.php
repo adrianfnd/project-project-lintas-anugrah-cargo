@@ -19,6 +19,7 @@ class SuratJalanController extends Controller
     public function create()
     {
         $drivers = Driver::all();
+        
         $pakets = Paket::all();
 
         return view('operator.suratjalan.create', compact('drivers', 'pakets'));
