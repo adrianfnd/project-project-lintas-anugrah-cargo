@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\OperatorAdminController;
 use App\Http\Controllers\DriverAdminController;
 
@@ -35,7 +35,7 @@ Route::post('forgot-password', [AuthController::class, 'sendResetLink'])->name('
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // Dashboard
-    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('dashboard', [DashboardAdminController::class, 'dashboard'])->name('admin.dashboard');
     
     // Operator
     Route::get('operators', [OperatorAdminController::class, 'index'])->name('admin.operator.index');
