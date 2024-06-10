@@ -24,6 +24,46 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        .info-wrapper {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+        .info-header {
+            display: flex;
+            align-items: center;
+            background: #4b49ac;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .info-icon {
+            margin-right: 10px;
+        }
+        .info-content {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        .profile-pic {
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .delivery-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+    </style>
 </head>
 
 <body>

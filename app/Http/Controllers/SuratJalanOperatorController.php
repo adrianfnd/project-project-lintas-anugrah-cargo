@@ -7,89 +7,95 @@ use App\Models\SuratJalan;
 use App\Models\Driver;
 use App\Models\Paket;
 
-class SuratJalanController extends Controller
+class SuratJalanOperatorController extends Controller
 {
     public function index()
     {
-        $suratjalans = SuratJalan::with(['driver', 'paket'])->paginate(10);
+        // $suratjalans = SuratJalan::with(['driver', 'paket'])->paginate(10);
 
-        return view('operator.suratjalan.index', compact('suratjalans'));
+        // return view('operator.suratjalan.index', compact('suratjalans'));
+        return view('operator.suratjalan.index');
+
     }
 
     public function create()
     {
-        $drivers = Driver::all();
+        // $drivers = Driver::all();
         
-        $pakets = Paket::all();
+        // $pakets = Paket::all();
 
-        return view('operator.suratjalan.create', compact('drivers', 'pakets'));
+        // return view('operator.suratjalan.create', compact('drivers', 'pakets'));
+        return view('operator.suratjalan.create');
     }
 
-    public function detail($id)
+    public function detail()
     {
-        $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
+        // $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
 
-        return view('operator.suratjalan.detail', compact('suratjalan'));
+        // return view('operator.suratjalan.detail', compact('suratjalan'));
+        return view('operator.suratjalan.detail');
+
     }
 
-    public function store(Request $request)
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'driver_id' => 'required|exists:drivers,id',
+    //         'paket_id' => 'required|exists:pakets,id',
+    //         'status' => 'required|string|max:255'
+    //     ]);
+
+    //     $paket = Paket::findOrFail($request->paket_id);
+
+    //     $suratjalan = new SuratJalan();
+    //     $suratjalan->driver_id = $request->driver_id;
+    //     $suratjalan->paket_id = $request->paket_id;
+    //     $suratjalan->status = $request->status;
+    //     $suratjalan->latitude = $paket->sender_latitude;
+    //     $suratjalan->longitude = $paket->sender_longitude;
+    //     $suratjalan->save();
+
+    //     return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil ditambahkan.');
+    // }
+
+    public function edit()
     {
-        $request->validate([
-            'driver_id' => 'required|exists:drivers,id',
-            'paket_id' => 'required|exists:pakets,id',
-            'status' => 'required|string|max:255'
-        ]);
+        // $suratjalan = SuratJalan::findOrFail($id);
+        // $drivers = Driver::all();
+        // $pakets = Paket::all();
 
-        $paket = Paket::findOrFail($request->paket_id);
-
-        $suratjalan = new SuratJalan();
-        $suratjalan->driver_id = $request->driver_id;
-        $suratjalan->paket_id = $request->paket_id;
-        $suratjalan->status = $request->status;
-        $suratjalan->latitude = $paket->sender_latitude;
-        $suratjalan->longitude = $paket->sender_longitude;
-        $suratjalan->save();
-
-        return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil ditambahkan.');
+        // return view('operator.suratjalan.edit', compact('suratjalan', 'drivers', 'pakets'));
+        return view('operator.suratjalan.edit');
     }
 
-    public function edit($id)
-    {
-        $suratjalan = SuratJalan::findOrFail($id);
-        $drivers = Driver::all();
-        $pakets = Paket::all();
+    // public function update(Request $request, $id)
+    // {
+    //     $suratjalan = SuratJalan::findOrFail($id);
 
-        return view('operator.suratjalan.edit', compact('suratjalan', 'drivers', 'pakets'));
-    }
+    //     $request->validate([
+    //         'driver_id' => 'required|exists:drivers,id',
+    //         'paket_id' => 'required|exists:pakets,id',
+    //         'status' => 'required|string|max:255'
+    //     ]);
 
-    public function update(Request $request, $id)
-    {
-        $suratjalan = SuratJalan::findOrFail($id);
+    //     $paket = Paket::findOrFail($request->paket_id);
 
-        $request->validate([
-            'driver_id' => 'required|exists:drivers,id',
-            'paket_id' => 'required|exists:pakets,id',
-            'status' => 'required|string|max:255'
-        ]);
+    //     $suratjalan->driver_id = $request->driver_id;
+    //     $suratjalan->paket_id = $request->paket_id;
+    //     $suratjalan->status = $request->status;
+    //     $suratjalan->latitude = $paket->sender_latitude;
+    //     $suratjalan->longitude = $paket->sender_longitude;
+    //     $suratjalan->save();
 
-        $paket = Paket::findOrFail($request->paket_id);
+    //     return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil diupdate.');
+    // }
 
-        $suratjalan->driver_id = $request->driver_id;
-        $suratjalan->paket_id = $request->paket_id;
-        $suratjalan->status = $request->status;
-        $suratjalan->latitude = $paket->sender_latitude;
-        $suratjalan->longitude = $paket->sender_longitude;
-        $suratjalan->save();
-
-        return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil diupdate.');
-    }
-
-    public function destroy($id)
-    {
-        $suratjalan = SuratJalan::findOrFail($id);
+    // public function destroy($id)
+    // {
+    //     $suratjalan = SuratJalan::findOrFail($id);
         
-        $suratjalan->delete();
+    //     $suratjalan->delete();
 
-        return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil dihapus.');
-    }
+    //     return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil dihapus.');
+    // }
 }

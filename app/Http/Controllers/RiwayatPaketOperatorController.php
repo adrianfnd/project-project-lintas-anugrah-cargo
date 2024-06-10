@@ -8,19 +8,21 @@ use App\Models\Driver;
 use App\Models\Paket;
 use App\Models\SuratJalan;
 
-class RiwayatPaketController extends Controller
+class RiwayatPaketOperatorController extends Controller
 {
     public function index()
     {
-        $riwayatpakets = RiwayatPaket::with(['driver', 'paket', 'suratJalan'])->paginate(10);
+    //     $riwayatpakets = RiwayatPaket::with(['driver', 'paket', 'suratJalan'])->paginate(10);
         
-        return view('operator.riwayatpaket.index', compact('riwayatpakets'));
-    }
+    //     return view('operator.riwayatpaket.index', compact('riwayatpakets'));
+    return view('operator.riwayatpaket.index');
+}
 
-    public function detail($id)
+    public function detail()
     {
-        $riwayatpaket = RiwayatPaket::with(['driver', 'paket', 'suratJalan'])->findOrFail($id);
+        // $riwayatpaket = RiwayatPaket::with(['driver', 'paket', 'suratJalan'])->findOrFail($id);
         
-        return view('operator.riwayatpaket.detail', compact('riwayatpaket'));
+        // return view('operator.riwayatpaket.detail', compact('riwayatpaket'));
+        return view('operator.riwayatpaket.detail');
     }
 }

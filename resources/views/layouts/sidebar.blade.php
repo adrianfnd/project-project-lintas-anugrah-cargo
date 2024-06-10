@@ -29,20 +29,62 @@
     @elseif (Auth::user()->role->name == 'driver')
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('dashboard') }}">
+                <a class="nav-link" href="{{ route('driver.dashboard')}}">
                     <i class="icon-grid menu-icon"></i>
                     <span class="menu-title">Dashboard</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.suratjalan.index') }}">
+                    <i class="feather icon-mail menu-icon"></i>
+                    <span class="menu-title">Surat Jalan</span>
+                </a>
+            </li>   
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.maptracking.show') }}">
+                    <i class="feather icon-map menu-icon"></i>
+                    <span class="menu-title">Map Tracking</span>
+                </a>
+            </li> 
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.riwayatpaket.index') }}">
+                    <i class="ti-time menu-icon"></i>
+                    <span class="menu-title">Riwayat Paket</span>
+                </a>
+            </li> 
         </ul>
     @elseif (Auth::user()->role->name == 'operator')
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('dashboard') }}">
-                    <i class="icon-grid menu-icon"></i>
-                    <span class="menu-title">Dashboard</span>
-                </a>
-            </li>
-        </ul>
+    <ul class="nav">
+        <li class="nav-item">
+             <a class="nav-link" href="{{ route('operator.dashboard') }}"> 
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('operator.paket.index') }}">
+                <i class="ti-package menu-icon"></i>
+                <span class="menu-title">Data Paket</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('operator.driver.index') }}">
+                <i class="feather icon-mail menu-icon"></i>
+                <span class="menu-title">Data Driver</span>
+            </a>
+        </li> 
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('operator.suratjalan.index') }}">
+                <i class="feather icon-mail menu-icon"></i>
+                <span class="menu-title">Surat Jalan</span>
+            </a>
+        </li>   
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('operator.riwayatpaket.index') }}">
+                <i class="ti-time menu-icon"></i>
+                <span class="menu-title">Riwayat Paket</span>
+            </a>
+        </li>   
+    </ul>
     @endif
 </nav>
