@@ -13,19 +13,17 @@ class DriverOperatorController extends Controller
 {
     public function index()
     {
-    //    $drivers = Driver::paginate(10);
+       $drivers = Driver::paginate(10);
 
-    //    return view('operator.driver.index', compact('drivers'));
-        return view('operator.driver.index');
+       return view('operator.driver.index', compact('drivers'));
     }
 
-    public function detail()
+    public function detail($id)
     {
-        // $driver = Driver::findOrFail($id);
+        $driver = Driver::findOrFail($id);
 
-        // $user = User::where('driver_id', $driver->id)->firstOrFail();
+        $user = User::where('driver_id', $driver->id)->firstOrFail();
 
-        // return view('operator.driver.detail', compact('driver', 'user'));
-        return view('operator.driver.detail');
+        return view('operator.driver.detail', compact('driver', 'user'));
     }
 }

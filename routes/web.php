@@ -72,8 +72,7 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 
         // Driver
         Route::get('drivers', [DriverOperatorController::class, 'index'])->name('operator.driver.index');
-        // Route::get('drivers-detail-{id}', [DriverOperatorController::class, 'detail'])->name('operator.driver.detail');
-        Route::get('drivers-detail', [DriverOperatorController::class, 'detail'])->name('operator.driver.detail');
+        Route::get('drivers-detail-{id}', [DriverOperatorController::class, 'detail'])->name('operator.driver.detail');
 
         //Paket
         Route::get('pakets', [PaketOperatorController::class, 'index'])->name('operator.paket.index');

@@ -15,31 +15,52 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Created By</th>
-                                            <th>Name</th>
-                                            <th>Image</th>
-                                            <th>Phone Number</th>
-                                            <th>License Number</th>
-                                            <th>Vehicle Name</th>
-                                            <th>Address</th>
-                                            <th>Rate</th>
+                                            <th>
+                                                <center>Foto Driver</center>
+                                            </th>
+                                            <th>
+                                                <center>Rate</center>
+                                            </th>
+                                            <th>Nama</th>
+                                            <th>Nomor Hp</th>
+                                            <th>Nomor Kendaraan</th>
+                                            <th>Nama Kendaraan</th>
+                                            <th>Alamat</th>
                                             <th>
                                                 <center>Aksi</center>
                                             </th>
                                         </tr>
                                     </thead>
-                                    {{-- <tbody>
+                                    <tbody>
                                         @foreach ($drivers as $driver)
                                             <tr>
-                                                <td>{{ $driver->created_by }}</td>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>
+                                                    <center><img
+                                                            src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/75' }}"
+                                                            alt="Foto Driver" class="img-fluid rounded-circle"
+                                                            style="object-fit: cover; width: 75px; height: 75px;">
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        @if (is_null($driver->rate))
+                                                            <span>No rating available</span>
+                                                        @else
+                                                            @for ($i = 0; $i < $driver->rate; $i++)
+                                                                <i class="fas fa-star"></i>
+                                                            @endfor
+                                                            @for ($i = $driver->rate; $i < 5; $i++)
+                                                                <i class="far fa-star"></i>
+                                                            @endfor
+                                                        @endif
+                                                    </center>
+                                                </td>
                                                 <td>{{ $driver->name }}</td>
-                                                <td><img src="{{ $driver->image }}" alt="Image"
-                                                        style="width: 50px; height: auto;"></td>
                                                 <td>{{ $driver->phone_number }}</td>
                                                 <td>{{ $driver->license_number }}</td>
                                                 <td>{{ $driver->vehicle_name }}</td>
                                                 <td>{{ $driver->address }}</td>
-                                                <td>{{ $driver->rate }}</td>
                                                 <td>
                                                     <center>
                                                         <a href="{{ route('operator.driver.detail', $driver->id) }}">
@@ -52,7 +73,7 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-                                    </tbody> --}}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

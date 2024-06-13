@@ -22,6 +22,7 @@
     <link rel="shortcut icon" href="{{ asset('Image') }}/favicon.ico" />
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
@@ -30,6 +31,7 @@
             background: white;
             border-top: 1px solid #eee;
         }
+
         .info-header {
             display: flex;
             align-items: center;
@@ -38,26 +40,32 @@
             padding: 10px;
             border-radius: 5px;
         }
+
         .info-icon {
             margin-right: 10px;
         }
+
         .info-content {
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
         }
+
         .profile {
             display: flex;
             align-items: center;
         }
+
         .profile-pic {
             border-radius: 50%;
             margin-right: 10px;
         }
+
         .profile-details {
             display: flex;
             flex-direction: column;
         }
+
         .delivery-details {
             display: flex;
             flex-direction: column;

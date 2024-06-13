@@ -10,8 +10,8 @@
                         <div class="col-md-4 d-flex justify-content-center align-items-center">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label>Driver Image</label>
-                                   <img src="{{--{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/250' }}--}}" 
+                                    <img src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/250' }}"
+                                        class="img-fluid" alt="Driver Image"
                                         style="border-radius: 50%; object-fit: cover; border: 3px solid #ccc; width: 250px; height: 250px;">
                                 </div>
                             </div>
@@ -19,32 +19,47 @@
                         <div class="col-md-8">
                             <div class="form-sample">
                                 <div class="form-group">
-                                    <label for="createdBy">Created By</label>
-                                    </div>
-                                <p id="createdBy">{{--{{ $driver->created_by }}--}}</p>
-                                <div class="form-group">
-                                    <label for="name">Name</label>
-                                    </div>
-                                <p id="name">{{--{{ $driver->name }}--}}</p>
-                                <div class="form-group">
-                                    <label for="phoneNumber">Phone Number</label>
-                                    </div>
-                                <p id="phoneNumber">{{--{{ $driver->phone_number }}--}}</p>
-                                <div class="form-group">
-                                    <label for="licenseNumber">License Number</label>
-                                    <p id="licenseNumber">{{--{{ $driver->license_number }}--}}</p>
+                                    <label for="driverRate">Rate</label>
+                                    <p id="driverRate">
+                                        @if (is_null($driver->rate))
+                                            <span>No rating available</span>
+                                        @else
+                                            @for ($i = 0; $i < $driver->rate; $i++)
+                                                <i class="fas fa-star"></i>
+                                            @endfor
+                                            @for ($i = $driver->rate; $i < 5; $i++)
+                                                <i class="far fa-star"></i>
+                                            @endfor
+                                        @endif
+                                    </p>
                                 </div>
                                 <div class="form-group">
-                                    <label for="vehicleName">Vehicle Name</label>
-                                    <p id="vehicleName">{{--{{ $driver->vehicle_name }}--}}</p>
+                                    <label for="driverUsername">Username</label>
+                                    <p id="driverUsername">{{ $user->username }}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <p id="address">{{--{{ $driver->address }}--}}</p>
+                                    <label for="driverEmail">Email</label>
+                                    <p id="driverEmail">{{ $user->email }}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label for="rate">Rate</label>
-                                    <p id="rate">{{--{{ $driver->rate }}--}}</p>
+                                    <label for="driverName">Name</label>
+                                    <p id="driverName">{{ $driver->name }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverPhone">Nomor HP</label>
+                                    <p id="driverPhone">{{ $driver->phone_number }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverLicense">Nomor Plat Kendaraan</label>
+                                    <p id="driverLicense">{{ $driver->license_number }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vehicleName">Nama Kendaraan</label>
+                                    <p id="vehicleName">{{ $driver->vehicle_name }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverAddress">Alamat</label>
+                                    <p id="driverAddress">{{ $driver->address }}</p>
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
