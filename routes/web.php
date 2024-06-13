@@ -75,32 +75,31 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
         // Route::get('drivers-detail-{id}', [DriverOperatorController::class, 'detail'])->name('operator.driver.detail');
         Route::get('drivers-detail', [DriverOperatorController::class, 'detail'])->name('operator.driver.detail');
 
-
         //Paket
         Route::get('pakets', [PaketOperatorController::class, 'index'])->name('operator.paket.index');
         Route::get('pakets-create', [PaketOperatorController::class, 'create'])->name('operator.paket.create');
-    // Route::get('pakets-detail-{id}', [PaketOperatorController::class, 'detail'])->name('operator.paket.detail');
+        Route::get('pakets-detail-{id}', [PaketOperatorController::class, 'detail'])->name('operator.paket.detail');
         Route::get('pakets-detail', [PaketOperatorController::class, 'detail'])->name('operator.paket.detail');
-    // Route::post('pakets', [PaketOperatorController::class, 'store'])->name('operator.paket.store');
-    // Route::get('pakets-edit-{id}', [PaketOperatorController::class, 'edit'])->name('operator.paket.edit');
+        Route::post('pakets', [PaketOperatorController::class, 'store'])->name('operator.paket.store');
+        Route::get('pakets-edit-{id}', [PaketOperatorController::class, 'edit'])->name('operator.paket.edit');
         Route::get('pakets-edit', [PaketOperatorController::class, 'edit'])->name('operator.paket.edit');
-    // Route::put('pakets-{id}', [PaketOperatorController::class, 'update'])->name('operator.paket.update');
-    // Route::delete('pakets-{id}', [PaketOperatorController::class, 'destroy'])->name('operator.paket.destroy');
+        Route::put('pakets-{id}', [PaketOperatorController::class, 'update'])->name('operator.paket.update');
+        Route::delete('pakets-{id}', [PaketOperatorController::class, 'destroy'])->name('operator.paket.destroy');
 
         // Surat Jalan
         Route::get('suratjalans', [SuratJalanOperatorController::class, 'index'])->name('operator.suratjalan.index');
         Route::get('suratjalans-create', [SuratJalanOperatorController::class, 'create'])->name('operator.suratjalan.create');
-//     Route::get('suratjalans-detail-{id}', [SuratJalanOperatorController::class, 'detail'])->name('operator.suratjalan.detail');
+        Route::get('suratjalans-detail-{id}', [SuratJalanOperatorController::class, 'detail'])->name('operator.suratjalan.detail');
         Route::get('suratjalans-detail', [SuratJalanOperatorController::class, 'detail'])->name('operator.suratjalan.detail');
-//     Route::post('suratjalans', [SuratJalanOperatorController::class, 'store'])->name('operator.suratjalan.store');
-//     Route::get('suratjalans-edit-{id}', [SuratJalanOperatorController::class, 'edit'])->name('operator.suratjalan.edit');
+        Route::post('suratjalans', [SuratJalanOperatorController::class, 'store'])->name('operator.suratjalan.store');
+        Route::get('suratjalans-edit-{id}', [SuratJalanOperatorController::class, 'edit'])->name('operator.suratjalan.edit');
         Route::get('suratjalans-edit', [SuratJalanOperatorController::class, 'edit'])->name('operator.suratjalan.edit');
-//     Route::put('suratjalans-{id}', [SuratJalanOperatorController::class, 'update'])->name('operator.suratjalan.update');
-//     Route::delete('suratjalans-{id}', [SuratJalanOperatorController::class, 'destroy'])->name('operator.suratjalan.destroy');
+        Route::put('suratjalans-{id}', [SuratJalanOperatorController::class, 'update'])->name('operator.suratjalan.update');
+        Route::delete('suratjalans-{id}', [SuratJalanOperatorController::class, 'destroy'])->name('operator.suratjalan.destroy');
 
-//     // Riwayat Paket
+        // Riwayat Paket
         Route::get('riwayatpakets', [RiwayatPaketOperatorController::class, 'index'])->name('operator.riwayatpaket.index');
-        // Route::get('riwayatpakets-detail-{id}', [RiwayatPaketOperatorController::class, 'detail'])->name('operator.riwayatpaket.detail');
+        Route::get('riwayatpakets-detail-{id}', [RiwayatPaketOperatorController::class, 'detail'])->name('operator.riwayatpaket.detail');
         Route::get('riwayatpakets-detail', [RiwayatPaketOperatorController::class, 'detail'])->name('operator.riwayatpaket.detail');
 });
 

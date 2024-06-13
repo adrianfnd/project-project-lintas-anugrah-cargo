@@ -9,6 +9,8 @@ class Paket extends Model
 {
     use HasFactory;
 
+    protected $table = 'paket';
+
     protected $fillable = [
         'tracking_number', 
         'sender_name', 
