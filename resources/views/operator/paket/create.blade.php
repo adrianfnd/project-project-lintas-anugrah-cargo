@@ -6,10 +6,11 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title" style="margin-bottom: 50px">Form Tambah Data Paket</h4>
-                    <form id="createForm" action="{{ route('operator.paket.store') }}" method="POST"
+                    <form id="operatorForm" action="{{ route('operator.paket.store') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
 
+                        {{-- bagian kiri --}}
                         <div style="text-align: center;">
                             <label for="imageUpload" style="cursor: pointer;">
                                 <div class="image-upload"
@@ -31,6 +32,9 @@
                             </div>
                         </div>
 
+                        {{-- bagian kiri --}}
+
+                        {{-- bagian tengah --}}
                         <div class="form-group">
                             <label for="packetName">Nama Paket</label>
                             <input type="text" class="form-control" id="packetName" name="packet_name"
@@ -158,7 +162,16 @@
                             @error('receiver')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
+                        </div>
+                        {{-- bagian tengah --}}
 
+                        {{-- bagian kanan --}}
+                        <style>
+                            .leaflet-routing-container {
+                                display: none;
+                            }
+                        </style>
+                        <div class="form-group">
                             <div id="mapid" style="height: 400px;" class="mt-4"></div>
 
                             <input type="hidden" id="sender" name="sender" required value="{{ old('sender') }}">
@@ -178,23 +191,21 @@
                             <label>Jarak antara Pengirim dan Penerima:</label>
                             <p id="distance">-</p>
                         </div>
+                        {{-- bagian kanan --}}
 
-                        <style>
-                            .leaflet-routing-container {
-                                display: none;
-                            }
-                        </style>
-
+                        {{-- bagian tengah --}}
                         <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
                             <button type="submit" class="btn btn-primary mr-2">Submit</button>
                             <a class="btn btn-light" data-toggle="modal"
                                 data-target="#cancelConfirmationModal">Cancel</a>
                         </div>
+                        {{-- bagian tengah --}}
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Submit Confirmation Modal -->
     <div class="modal fade" id="submitConfirmationModal" tabindex="-1" role="dialog"
         aria-labelledby="submitConfirmationModalLabel" aria-hidden="true">
