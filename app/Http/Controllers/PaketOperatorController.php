@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Paket;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PaketOperatorController extends Controller
 {
@@ -20,18 +21,16 @@ class PaketOperatorController extends Controller
         return view('operator.paket.create');
     }
 
-    public function detail()
+    public function detail($id)
     {
         $paket = Paket::findOrFail($id);
 
         return view('operator.paket.detail', compact('paket'));
-        return view('operator.paket.detail');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'tracking_number' => 'required|unique:pakets',
             'sender_name' => 'required|string|max:255',
             'sender_address' => 'required|string|max:255',
             'sender_latitude' => 'required|numeric',
@@ -44,7 +43,6 @@ class PaketOperatorController extends Controller
             'dimensions' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|string|max:255'
         ]);
 
         if ($request->hasFile('image')) {
@@ -52,7 +50,8 @@ class PaketOperatorController extends Controller
         }
 
         $paket = new Paket();
-        $paket->tracking_number = $request->tracking_number;
+        $paket->id = Str::uuid();
+        $paket->tracking_number = rand(100000, 999999);
         $paket->sender_name = $request->sender_name;
         $paket->sender_address = $request->sender_address;
         $paket->sender_latitude = $request->sender_latitude;
@@ -64,21 +63,21 @@ class PaketOperatorController extends Controller
         $paket->weight = $request->weight;
         $paket->dimensions = $request->dimensions;
         $paket->description = $request->description;
-        $paket->status = $request->status;
-        if ($request->hasFile('image')) {
-            $paket->image = basename($imageName);
-        }
+        $paket->status = 'proses';
+        // if ($request->hasFile('image')) {
+        //     $paket->image = basename($imageName);
+        // }
+        $paket->image = 'test.jpg';
         $paket->save();
 
         return redirect()->route('operator.paket.index')->with('success', 'Data Paket berhasil ditambahkan.');
     }
 
-    public function edit()
+    public function edit($id)
     {
         $paket = Paket::findOrFail($id);
 
         return view('operator.paket.edit', compact('paket'));
-        return view('operator.paket.edit');
     }
 
     public function update(Request $request, $id)

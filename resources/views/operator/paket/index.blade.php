@@ -40,7 +40,7 @@
                                             </th>
                                         </tr>
                                     </thead>
-                                    {{-- <tbody>
+                                    <tbody>
                                         @foreach ($pakets as $paket)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
@@ -103,7 +103,7 @@
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">Batal</button>
                                                             <form
-                                                                action="{{ route('admin.package.destroy', $paket->id) }}"
+                                                                action="{{ route('operator.paket.destroy', $paket->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -114,7 +114,7 @@
                                                 </div>
                                             </div>
                                         @endforeach
-                                    </tbody> --}}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

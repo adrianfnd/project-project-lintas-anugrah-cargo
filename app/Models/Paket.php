@@ -11,6 +11,9 @@ class Paket extends Model
 
     protected $table = 'paket';
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'tracking_number', 
         'sender_name', 

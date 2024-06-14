@@ -9,6 +9,8 @@ class SuratJalan extends Model
 {
     use HasFactory;
 
+    protected $table = 'surat_jalan';
+
     protected $fillable = [
         'driver_id', 
         'paket_id', 

@@ -11,7 +11,7 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <label>Pic or loc</label>
-                                   {{-- <img src=" {{-- {{ $paket->image ? asset('storage/drivers/' . $paket->image) : 'https://via.placeholder.com/250' }}" 
+                                    {{-- <img src=" {{-- {{ $paket->image ? asset('storage/drivers/' . $paket->image) : 'https://via.placeholder.com/250' }}" 
                                         style="border-radius: 50%; object-fit: cover; border: 3px solid #ccc; width: 250px; height: 250px;"> --}}
                                 </div>
                             </div>
@@ -20,72 +20,72 @@
                             <div class="form-sample">
                                 <div class="form-group">
                                     <label for="trackingNumber">Tracking Number</label>
-                                    <p id="trackingNumber">{{--{{ $paket->tracking_number }}--}}</p>
+                                    <p id="trackingNumber">{{ $paket->tracking_number }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="senderName">Sender Name</label>
-                                    <p id="senderName">{{--{{ $paket->sender_name }}--}}</p>
+                                    <p id="senderName">{{ $paket->sender_name }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="senderAddress">Sender Address</label>
-                                    <p id="senderAddress">{{--{{ $paket->sender_address }}--}}</p>
+                                    <p id="senderAddress">{{ $paket->sender_address }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="senderLatitude">Sender Latitude</label>
-                                    <p id="senderLatitude">{{--{{ $paket->sender_latitude }}--}}</p>
+                                    <p id="senderLatitude">{{ $paket->sender_latitude }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="senderLongitude">Sender Longitude</label>
-                                    <p id="senderLongitude">{{--{{ $paket->sender_longitude }}--}}</p>
+                                    <p id="senderLongitude">{{ $paket->sender_longitude }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="receiverName">Receiver Name</label>
-                                    <p id="receiverName">{{--{{ $paket->receiver_name }}--}}</p>
+                                    <p id="receiverName">{{ $paket->receiver_name }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="receiverAddress">Receiver Address</label>
-                                    <p id="receiverAddress">{{--{{ $paket->receiver_address }}--}}</p>
+                                    <p id="receiverAddress">{{ $paket->receiver_address }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="receiverLatitude">Receiver Latitude</label>
-                                    <p id="receiverLatitude">{{--{{ $paket->receiver_latitude }}--}}</p>
+                                    <p id="receiverLatitude">{{ $paket->receiver_latitude }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="receiverLongitude">Receiver Longitude</label>
-                                    <p id="receiverLongitude">{{--{{ $paket->receiver_longitude }}--}}</p>
+                                    <p id="receiverLongitude">{{ $paket->receiver_longitude }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="weight">Weight</label>
-                                    <p id="weight">{{--{{ $paket->weight }}--}}</p>
+                                    <p id="weight">{{ $paket->weight }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="dimensions">Dimensions</label>
-                                    <p id="dimensions">{{--{{ $paket->dimensions }}--}}</p>
+                                    <p id="dimensions">{{ $paket->dimensions }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Description</label>
-                                    <p id="description">{{--{{ $paket->description }}--}}</p>
+                                    <p id="description">{{ $paket->description }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="image">Image</label>
-                                    <p id="image">{{--{{ $paket->image }}</p>
-                                    <img src="{{--{{ $paket->image ? asset('storage/drivers/' . $paket->image) : 'https://via.placeholder.com/200' }}"
-                                        alt="Driver Image" style="max-width: 100%; height: auto;">--}}
+                                    <p id="image">{{ $paket->image }}</p>
+                                    <img src="{{ $paket->image ? asset('storage/drivers/' . $paket->image) : 'https://via.placeholder.com/200' }}"
+                                        alt="Driver Image" style="max-width: 100%; height: auto;">
                                 </div>
                                 <div class="form-group">
                                     <label for="status">Status</label>
-                                    <p id="status">{{--{{ $paket->status }}--}}</p>
+                                    <p id="status">{{ $paket->status }}</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="location">Location</label>
                                     <div id="mapid" style="height: 400px;"></div>
-                                    <input type="hidden" id="latitude" name="latitude" value="{{--{{ $paket->latitude }}--}}">
-                                    <input type="hidden" id="longitude" name="longitude" value="{{--{{ $paket->longitude }}--}}">
+                                    <input type="hidden" id="latitude" name="latitude" value="{{ $paket->latitude }}">
+                                    <input type="hidden" id="longitude" name="longitude" value="{{ $paket->longitude }}">
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
                                 <a href="{{ route('operator.paket.index') }}" class="btn btn-light">Back</a>
-                                <a href="{{ route('operator.paket.edit'{{--, $paket->id--}}) }}" class="btn btn-primary">Edit</a>
+                                <a href="{{ route('operator.paket.edit', $paket->id) }}" class="btn btn-primary">Edit</a>
                             </div>
                         </div>
                     </div>
