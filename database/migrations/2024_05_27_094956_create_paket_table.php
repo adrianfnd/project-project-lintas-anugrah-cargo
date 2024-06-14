@@ -14,12 +14,16 @@ return new class extends Migration
         Schema::create('paket', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('tracking_number')->unique();
+            $table->string('packet_name');
+            $table->string('packet_type');
             $table->string('sender_name');
             $table->text('sender_address');
+            $table->string('sender_phone');
             $table->decimal('sender_latitude', 10, 8);
             $table->decimal('sender_longitude', 11, 8);
             $table->string('receiver_name');
             $table->text('receiver_address');
+            $table->string('receiver_phone');
             $table->decimal('receiver_latitude', 10, 8);
             $table->decimal('receiver_longitude', 11, 8);
             $table->decimal('weight', 10, 2);

@@ -16,7 +16,7 @@
                                     style="position: relative; display: inline-block; margin-bottom: 10px;">
                                     <input type="file" name="image" id="imageUpload" accept=".png, .jpg, .jpeg"
                                         onchange="previewImage()" style="display: none;">
-                                    <img id="imagePreview" src="https://via.placeholder.com/200" alt="Image Preview"
+                                    <img id="imagePreview" src="https://via.placeholder.com/200" alt="Pratinjau Gambar"
                                         width="200" height="200"
                                         style="object-fit: cover; border: 3px solid #ccc; border-radius: 8px;">
                                     <span id="uploadText"
@@ -32,120 +32,151 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="senderName">Sender Name</label>
+                            <label for="packetName">Nama Paket</label>
+                            <input type="text" class="form-control" id="packetName" name="packet_name"
+                                placeholder="Nama Paket" value="{{ old('packet_name') }}">
+                            @if ($errors->has('packet_name'))
+                                <span class="text-danger">{{ $errors->first('packet_name') }}</span>
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="packetType">Jenis Paket</label>
+                            <input type="text" class="form-control" id="packetType" name="packet_type"
+                                placeholder="Jenis Paket" value="{{ old('packet_type') }}">
+                            @if ($errors->has('packet_type'))
+                                <span class="text-danger">{{ $errors->first('packet_type') }}</span>
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senderName">Nama Pengirim</label>
                             <input type="text" class="form-control" id="senderName" name="sender_name"
-                                placeholder="Sender Name" value="{{ old('sender_name') }}">
+                                placeholder="Nama Pengirim" value="{{ old('sender_name') }}">
                             @if ($errors->has('sender_name'))
                                 <span class="text-danger">{{ $errors->first('sender_name') }}</span>
                             @endif
                         </div>
+
                         <div class="form-group">
-                            <label for="senderAddress">Sender Address</label>
+                            <label for="senderAddress">Alamat Pengirim</label>
                             <input type="text" class="form-control" id="senderAddress" name="sender_address"
-                                placeholder="Sender Address" value="{{ old('sender_address') }}">
+                                placeholder="Alamat Pengirim" value="{{ old('sender_address') }}">
                             @if ($errors->has('sender_address'))
                                 <span class="text-danger">{{ $errors->first('sender_address') }}</span>
                             @endif
                         </div>
 
                         <div class="form-group">
-                            <label for="receiverName">Receiver Name</label>
+                            <label for="senderPhone">No. Telepon Pengirim</label>
+                            <input type="text" class="form-control" id="senderPhone" name="sender_phone"
+                                placeholder="No. Telepon Pengirim" value="{{ old('sender_phone') }}">
+                            @if ($errors->has('sender_phone'))
+                                <span class="text-danger">{{ $errors->first('sender_phone') }}</span>
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="receiverName">Nama Penerima</label>
                             <input type="text" class="form-control" id="receiverName" name="receiver_name"
-                                placeholder="Receiver Name" value="{{ old('receiver_name') }}">
+                                placeholder="Nama Penerima" value="{{ old('receiver_name') }}">
                             @if ($errors->has('receiver_name'))
                                 <span class="text-danger">{{ $errors->first('receiver_name') }}</span>
                             @endif
                         </div>
+
                         <div class="form-group">
-                            <label for="receiverAddress">Receiver Address</label>
+                            <label for="receiverAddress">Alamat Penerima</label>
                             <input type="text" class="form-control" id="receiverAddress" name="receiver_address"
-                                placeholder="Receiver Address" value="{{ old('receiver_address') }}">
+                                placeholder="Alamat Penerima" value="{{ old('receiver_address') }}">
                             @if ($errors->has('receiver_address'))
                                 <span class="text-danger">{{ $errors->first('receiver_address') }}</span>
                             @endif
                         </div>
+
                         <div class="form-group">
-                            <label for="weight">Weight</label>
-                            <input type="number" class="form-control" id="weight" name="weight" placeholder="Weight"
-                                value="{{ old('weight') }}">
+                            <label for="receiverPhone">No. Telepon Penerima</label>
+                            <input type="text" class="form-control" id="receiverPhone" name="receiver_phone"
+                                placeholder="No. Telepon Penerima" value="{{ old('receiver_phone') }}">
+                            @if ($errors->has('receiver_phone'))
+                                <span class="text-danger">{{ $errors->first('receiver_phone') }}</span>
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weight">Berat (kg)</label>
+                            <input type="number" class="form-control" id="weight" name="weight"
+                                placeholder="Berat (kg)" value="{{ old('weight') }}">
                             @if ($errors->has('weight'))
                                 <span class="text-danger">{{ $errors->first('weight') }}</span>
                             @endif
                         </div>
+
                         <div class="form-group">
-                            <label for="dimensions">Dimensions</label>
+                            <label for="dimensions">Dimensi</label>
                             <input type="text" class="form-control" id="dimensions" name="dimensions"
-                                placeholder="Dimensions" value="{{ old('dimensions') }}">
+                                placeholder="Dimensi" value="{{ old('dimensions') }}">
                             @if ($errors->has('dimensions'))
                                 <span class="text-danger">{{ $errors->first('dimensions') }}</span>
                             @endif
                         </div>
+
                         <div class="form-group">
-                            <label for="description">Description</label>
+                            <label for="description">Deskripsi</label>
                             <input type="text" class="form-control" id="description" name="description"
-                                placeholder="Description" value="{{ old('description') }}">
+                                placeholder="Deskripsi" value="{{ old('description') }}">
                             @if ($errors->has('description'))
                                 <span class="text-danger">{{ $errors->first('description') }}</span>
                             @endif
                         </div>
 
                         <div class="form-group">
-                            <label for="mapid">Sender Region</label>
+                            <label for="mapid">Wilayah Pengirim</label>
                             <div class="input-group mb-2">
-                                <input type="text" id="sender_searchbox" placeholder="Search sender location"
+                                <input type="text" id="sender_searchbox" placeholder="Cari lokasi pengirim"
                                     class="form-control" required value="{{ old('sender') }}">
                                 <div class="input-group-append">
                                     <button type="button" id="sender_searchbutton"
                                         class="btn btn-primary">Search</button>
                                 </div>
                             </div>
+                            @error('sender')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                            <label for="mapid">Receiver Region</label>
+                        <div class="form-group">
+                            <label for="mapid">Wilayah Penerima</label>
                             <div class="input-group mb-2">
-                                <input type="text" id="receiver_searchbox" placeholder="Search receiver location"
+                                <input type="text" id="receiver_searchbox" placeholder="Cari lokasi penerima"
                                     class="form-control" required value="{{ old('receiver') }}">
                                 <div class="input-group-append">
                                     <button type="button" id="receiver_searchbutton"
                                         class="btn btn-primary">Search</button>
                                 </div>
                             </div>
-
-                            <div id="mapid" style="height: 400px;"></div>
-
-                            <input type="hidden" id="sender" name="sender" required value="{{ old('sender') }}">
-                            @error('sender')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                            <input type="hidden" id="sender_latitude" name="sender_latitude" required
-                                value="{{ old('sender_latitude') }}">
-                            @error('sender_latitude')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                            <input type="hidden" id="sender_longitude" name="sender_longitude" required
-                                value="{{ old('sender_longitude') }}">
-                            @error('sender_longitude')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                            <input type="hidden" id="receiver" name="receiver" required
-                                value="{{ old('receiver') }}">
                             @error('receiver')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
+
+                            <div id="mapid" style="height: 400px;" class="mt-4"></div>
+
+                            <input type="hidden" id="sender" name="sender" required value="{{ old('sender') }}">
+                            <input type="hidden" id="sender_latitude" name="sender_latitude" required
+                                value="{{ old('sender_latitude') }}">
+                            <input type="hidden" id="sender_longitude" name="sender_longitude" required
+                                value="{{ old('sender_longitude') }}">
+                            <input type="hidden" id="receiver" name="receiver" required
+                                value="{{ old('receiver') }}">
                             <input type="hidden" id="receiver_latitude" name="receiver_latitude" required
                                 value="{{ old('receiver_latitude') }}">
-                            @error('receiver_latitude')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
                             <input type="hidden" id="receiver_longitude" name="receiver_longitude" required
                                 value="{{ old('receiver_longitude') }}">
-                            @error('receiver_longitude')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
                         </div>
 
                         <div class="form-group">
-                            <label>Jarak antara Sender dan Receiver:</label>
-                            <p id="distance">Silahkan masukan sender dan receiver</p>
+                            <label>Jarak antara Pengirim dan Penerima:</label>
+                            <p id="distance">-</p>
                         </div>
 
                         <style>
@@ -156,14 +187,14 @@
 
                         <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
                             <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                            <a class="btn btn-light">Cancel</a>
+                            <a class="btn btn-light" data-toggle="modal"
+                                data-target="#cancelConfirmationModal">Cancel</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Submit Confirmation Modal -->
     <div class="modal fade" id="submitConfirmationModal" tabindex="-1" role="dialog"
         aria-labelledby="submitConfirmationModalLabel" aria-hidden="true">

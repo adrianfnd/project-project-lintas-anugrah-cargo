@@ -72,6 +72,8 @@
                     <ul class="nav flex-column sub-menu">
                         <li class="nav-item"> <a class="nav-link" href="{{ route('operator.paket.index') }}">Paket</a>
                         </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('operator.driver.index') }}">Driver</a>
+                        </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('operator.suratjalan.index') }}">Surat
                                 Jalan</a>
                         </li>

@@ -16,12 +16,16 @@ class Paket extends Model
 
     protected $fillable = [
         'tracking_number', 
+        'packet_name', 
+        'packet_type',
         'sender_name', 
         'sender_address', 
+        'sender_phone',
         'sender_latitude', 
         'sender_longitude', 
         'receiver_name', 
         'receiver_address', 
+        'receiver_phone',
         'receiver_latitude', 
         'receiver_longitude', 
         'weight', 
