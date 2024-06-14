@@ -21,20 +21,17 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
+                                            <th>
+                                                <center>Foto Paket</center>
+                                            </th>
                                             <th>Tracking Number</th>
                                             <th>Sender Name</th>
                                             <th>Sender Address</th>
-                                            <th>Sender Latitude</th>
-                                            <th>Sender Longitude</th>
                                             <th>Receiver Name</th>
                                             <th>Receiver Address</th>
-                                            <th>Receiver Latitude</th>
-                                            <th>Receiver Longitude</th>
-                                            <th>Weight</th>
-                                            <th>Dimensions</th>
-                                            <th>Description</th>
-                                            <th>Image</th>
-                                            <th>Status</th>
+                                            <th>
+                                                <center>Status</center>
+                                            </th>
                                             <th>
                                                 <center>Aksi</center>
                                             </th>
@@ -44,21 +41,33 @@
                                         @foreach ($pakets as $paket)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
+                                                <td>
+                                                    <center><img
+                                                            src="{{ $paket->image ? asset('storage/pakets/' . $paket->image) : 'https://via.placeholder.com/75' }}"
+                                                            alt="Foto Paket" class="img-fluid rounded-circle"
+                                                            style="object-fit: cover; width: 75px; height: 75px;">
+                                                    </center>
+                                                </td>
                                                 <td>{{ $paket->tracking_number }}</td>
                                                 <td>{{ $paket->sender_name }}</td>
                                                 <td>{{ $paket->sender_address }}</td>
-                                                <td>{{ $paket->sender_latitude }}</td>
-                                                <td>{{ $paket->sender_longitude }}</td>
                                                 <td>{{ $paket->receiver_name }}</td>
                                                 <td>{{ $paket->receiver_address }}</td>
-                                                <td>{{ $paket->receiver_latitude }}</td>
-                                                <td>{{ $paket->receiver_longitude }}</td>
-                                                <td>{{ $paket->weight }}</td>
-                                                <td>{{ $paket->dimensions }}</td>
-                                                <td>{{ $paket->description }}</td>
-                                                <td><img src="{{ $paket->image }}" alt="Image"
-                                                        style="width: 50px; height: auto;"></td>
-                                                <td>{{ $paket->status }}</td>
+                                                <td>
+                                                    <center>
+                                                        @if ($paket->status == 'proses')
+                                                            <span
+                                                                class="badge badge-info">{{ ucfirst($paket->status) }}</span>
+                                                        @elseif ($paket->status == 'dikirim')
+                                                            <span
+                                                                class="badge badge-warning">{{ ucfirst($paket->status) }}</span>
+                                                        @elseif ($paket->status == 'terkirim')
+                                                            <span
+                                                                class="badge badge-success">{{ ucfirst($paket->status) }}</span>
+                                                        @else
+                                                            <span class="badge badge-danger">Status tidak diketahui</span>
+                                                        @endif
+                                                    </center>
                                                 <td>
                                                     <center>
                                                         <a href="{{ route('operator.paket.detail', $paket->id) }}">

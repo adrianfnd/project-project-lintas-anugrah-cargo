@@ -10,15 +10,26 @@
                         enctype="multipart/form-data">
                         @csrf
 
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                        <div style="text-align: center;">
+                            <label for="imageUpload" style="cursor: pointer;">
+                                <div class="image-upload"
+                                    style="position: relative; display: inline-block; margin-bottom: 10px;">
+                                    <input type="file" name="image" id="imageUpload" accept=".png, .jpg, .jpeg"
+                                        onchange="previewImage()" style="display: none;">
+                                    <img id="imagePreview" src="https://via.placeholder.com/200" alt="Image Preview"
+                                        width="200" height="200"
+                                        style="object-fit: cover; border: 3px solid #ccc; border-radius: 8px;">
+                                    <span id="uploadText"
+                                        style="display: none; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.8); padding: 5px; border-radius: 10px;">Upload</span>
+                                </div>
+                            </label>
+
+                            <div>
+                                @if ($errors->has('image'))
+                                    <span class="text-danger">{{ $errors->first('image') }}</span>
+                                @endif
                             </div>
-                        @endif
+                        </div>
 
                         <div class="form-group">
                             <label for="senderName">Sender Name</label>
@@ -84,7 +95,8 @@
                                 <input type="text" id="sender_searchbox" placeholder="Search sender location"
                                     class="form-control" required value="{{ old('sender') }}">
                                 <div class="input-group-append">
-                                    <button type="button" id="sender_searchbutton" class="btn btn-primary">Search</button>
+                                    <button type="button" id="sender_searchbutton"
+                                        class="btn btn-primary">Search</button>
                                 </div>
                             </div>
 
@@ -142,193 +154,16 @@
                             }
                         </style>
 
-                        <!-- SweetAlert2 -->
-                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-                        <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
-                        <script>
-                            var oldSenderLatitude = "{{ old('sender_latitude') }}";
-                            var oldSenderLongitude = "{{ old('sender_longitude') }}";
-                            var oldSenderDisplayName = "{{ old('sender') }}";
-                            var oldReceiverLatitude = "{{ old('receiver_latitude') }}";
-                            var oldReceiverLongitude = "{{ old('receiver_longitude') }}";
-                            var oldReceiverDisplayName = "{{ old('receiver') }}";
-
-                            var mapCenter = oldSenderLatitude && oldSenderLongitude ? [oldSenderLatitude, oldSenderLongitude] : [-6.263,
-                                106.781
-                            ];
-                            var mapZoom = oldSenderLatitude && oldSenderLongitude ? 13 : 10;
-
-                            var map = L.map('mapid').setView(mapCenter, mapZoom);
-
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            }).addTo(map);
-
-                            var senderMarker = L.marker(mapCenter, {
-                                draggable: true
-                            }).addTo(map);
-                            var receiverMarker = L.marker(mapCenter, {
-                                draggable: true
-                            }).addTo(map);
-                            var routingControl = null;
-
-                            if (oldSenderDisplayName) {
-                                senderMarker.bindPopup(oldSenderDisplayName).openPopup();
-                            }
-                            if (oldReceiverDisplayName) {
-                                receiverMarker.bindPopup(oldReceiverDisplayName).openPopup();
-                            }
-
-                            var senderSearchBox = document.getElementById('sender_searchbox');
-                            var senderSearchButton = document.getElementById('sender_searchbutton');
-                            var receiverSearchBox = document.getElementById('receiver_searchbox');
-                            var receiverSearchButton = document.getElementById('receiver_searchbutton');
-
-                            function updateLocationInfo(lat, lon, display_name, type) {
-                                if (type === 'sender') {
-                                    document.getElementById('sender').value = display_name;
-                                    document.getElementById('sender_latitude').value = lat;
-                                    document.getElementById('sender_longitude').value = lon;
-                                    senderSearchBox.value = display_name;
-                                } else if (type === 'receiver') {
-                                    document.getElementById('receiver').value = display_name;
-                                    document.getElementById('receiver_latitude').value = lat;
-                                    document.getElementById('receiver_longitude').value = lon;
-                                    receiverSearchBox.value = display_name;
-                                }
-                            }
-
-                            function calculateDistanceAndTime() {
-                                var senderLat = parseFloat(document.getElementById('sender_latitude').value);
-                                var senderLon = parseFloat(document.getElementById('sender_longitude').value);
-                                var receiverLat = parseFloat(document.getElementById('receiver_latitude').value);
-                                var receiverLon = parseFloat(document.getElementById('receiver_longitude').value);
-
-                                if (!isNaN(senderLat) && !isNaN(senderLon) && !isNaN(receiverLat) && !isNaN(receiverLon)) {
-                                    var from = L.latLng(senderLat, senderLon);
-                                    var to = L.latLng(receiverLat, receiverLon);
-                                    var distance = from.distanceTo(to) / 1000;
-                                    var speed = 40;
-
-                                    var time = distance / speed;
-                                    document.getElementById('distance').innerText = distance.toFixed(2) + ' km (' + time.toFixed(2) + ' jam)';
-
-                                    if (routingControl) {
-                                        map.removeControl(routingControl);
-                                    }
-
-                                    routingControl = L.Routing.control({
-                                        waypoints: [from, to],
-                                        routeWhileDragging: true,
-                                        createMarker: function() {
-                                            return null;
-                                        },
-                                    }).addTo(map);
-                                }
-                            }
-
-                            senderSearchButton.addEventListener('click', function() {
-                                var location = senderSearchBox.value;
-                                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data && data.length > 0) {
-                                            var lat = data[0].lat;
-                                            var lon = data[0].lon;
-                                            var display_name = data[0].display_name;
-                                            senderMarker.setLatLng([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
-                                            map.setView([lat, lon], 13);
-                                            updateLocationInfo(lat, lon, display_name, 'sender');
-                                            calculateDistanceAndTime();
-                                        } else {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Lokasi Tidak Ditemukan',
-                                                text: 'Mohon maaf, lokasi yang anda cari tidak ditemukan.',
-                                            });
-                                        }
-                                    })
-                                    .catch(error => console.error('Error:', error));
-                            });
-
-                            receiverSearchButton.addEventListener('click', function() {
-                                var location = receiverSearchBox.value;
-                                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data && data.length > 0) {
-                                            var lat = data[0].lat;
-                                            var lon = data[0].lon;
-                                            var display_name = data[0].display_name;
-                                            receiverMarker.setLatLng([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
-                                            map.setView([lat, lon], 13);
-                                            updateLocationInfo(lat, lon, display_name, 'receiver');
-                                            calculateDistanceAndTime();
-                                        } else {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Lokasi Tidak Ditemukan',
-                                                text: 'Mohon maaf, lokasi yang anda cari tidak ditemukan.',
-                                            });
-                                        }
-                                    })
-                                    .catch(error => console.error('Error:', error));
-                            });
-
-                            senderMarker.on('dragend', function(event) {
-                                var marker = event.target;
-                                var position = marker.getLatLng();
-                                var lat = position.lat;
-                                var lon = position.lng;
-
-                                fetch(
-                                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
-                                    )
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        var display_name = data.display_name;
-                                        updateLocationInfo(lat, lon, display_name, 'sender');
-                                        calculateDistanceAndTime();
-                                        marker.bindPopup(display_name).openPopup();
-                                    })
-                                    .catch(error => console.error('Error:', error));
-                            });
-
-                            receiverMarker.on('dragend', function(event) {
-                                var marker = event.target;
-                                var position = marker.getLatLng();
-                                var lat = position.lat;
-                                var lon = position.lng;
-
-                                fetch(
-                                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
-                                    )
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        var display_name = data.display_name;
-                                        updateLocationInfo(lat, lon, display_name, 'receiver');
-                                        calculateDistanceAndTime();
-                                        marker.bindPopup(display_name).openPopup();
-                                    })
-                                    .catch(error => console.error('Error:', error));
-                            });
-
-                            if (oldSenderLatitude && oldSenderLongitude && oldReceiverLatitude && oldReceiverLongitude) {
-                                calculateDistanceAndTime();
-                            }
-                        </script>
-
                         <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
                             <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                            <a class="btn btn-light" data-toggle="modal"
-                                data-target="#cancelConfirmationModal">Cancel</a>
+                            <a class="btn btn-light">Cancel</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Submit Confirmation Modal -->
     <div class="modal fade" id="submitConfirmationModal" tabindex="-1" role="dialog"
         aria-labelledby="submitConfirmationModalLabel" aria-hidden="true">
@@ -389,8 +224,215 @@
             });
 
             document.getElementById('confirmCancel').addEventListener('click', function() {
-                window.location.href = "{{ route('admin.operator.index') }}";
+                window.location.href = "{{ route('operator.paket.index') }}";
             });
         });
+    </script>
+
+    <script>
+        function previewImage() {
+            var preview = document.getElementById('imagePreview');
+            var fileInput = document.getElementById('imageUpload');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "https://via.placeholder.com/150";
+            }
+        }
+
+        var imageUpload = document.querySelector('.image-upload');
+        var uploadText = document.getElementById('uploadText');
+
+        imageUpload.addEventListener('mouseenter', function() {
+            uploadText.style.display = 'block';
+        });
+
+        imageUpload.addEventListener('mouseleave', function() {
+            uploadText.style.display = 'none';
+        });
+    </script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        var oldSenderLatitude = "{{ old('sender_latitude') }}";
+        var oldSenderLongitude = "{{ old('sender_longitude') }}";
+        var oldSenderDisplayName = "{{ old('sender') }}";
+        var oldReceiverLatitude = "{{ old('receiver_latitude') }}";
+        var oldReceiverLongitude = "{{ old('receiver_longitude') }}";
+        var oldReceiverDisplayName = "{{ old('receiver') }}";
+
+        var mapCenter = oldSenderLatitude && oldSenderLongitude ? [oldSenderLatitude, oldSenderLongitude] : [-6.263,
+            106.781
+        ];
+        var mapZoom = oldSenderLatitude && oldSenderLongitude ? 13 : 10;
+
+        var map = L.map('mapid').setView(mapCenter, mapZoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var senderMarker = L.marker(mapCenter, {
+            draggable: true
+        }).addTo(map);
+        var receiverMarker = L.marker(mapCenter, {
+            draggable: true
+        }).addTo(map);
+        var routingControl = null;
+
+        if (oldSenderDisplayName) {
+            senderMarker.bindPopup(oldSenderDisplayName).openPopup();
+        }
+        if (oldReceiverDisplayName) {
+            receiverMarker.bindPopup(oldReceiverDisplayName).openPopup();
+        }
+
+        var senderSearchBox = document.getElementById('sender_searchbox');
+        var senderSearchButton = document.getElementById('sender_searchbutton');
+        var receiverSearchBox = document.getElementById('receiver_searchbox');
+        var receiverSearchButton = document.getElementById('receiver_searchbutton');
+
+        function updateLocationInfo(lat, lon, display_name, type) {
+            if (type === 'sender') {
+                document.getElementById('sender').value = display_name;
+                document.getElementById('sender_latitude').value = lat;
+                document.getElementById('sender_longitude').value = lon;
+                senderSearchBox.value = display_name;
+            } else if (type === 'receiver') {
+                document.getElementById('receiver').value = display_name;
+                document.getElementById('receiver_latitude').value = lat;
+                document.getElementById('receiver_longitude').value = lon;
+                receiverSearchBox.value = display_name;
+            }
+        }
+
+        function calculateDistanceAndTime() {
+            var senderLat = parseFloat(document.getElementById('sender_latitude').value);
+            var senderLon = parseFloat(document.getElementById('sender_longitude').value);
+            var receiverLat = parseFloat(document.getElementById('receiver_latitude').value);
+            var receiverLon = parseFloat(document.getElementById('receiver_longitude').value);
+
+            if (!isNaN(senderLat) && !isNaN(senderLon) && !isNaN(receiverLat) && !isNaN(receiverLon)) {
+                var from = L.latLng(senderLat, senderLon);
+                var to = L.latLng(receiverLat, receiverLon);
+                var distance = from.distanceTo(to) / 1000;
+                var speed = 40;
+
+                var time = distance / speed;
+                document.getElementById('distance').innerText = distance.toFixed(2) + ' km (' + time.toFixed(2) + ' jam)';
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: [from, to],
+                    routeWhileDragging: true,
+                    createMarker: function() {
+                        return null;
+                    },
+                }).addTo(map);
+            }
+        }
+
+        senderSearchButton.addEventListener('click', function() {
+            var location = senderSearchBox.value;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var display_name = data[0].display_name;
+                        senderMarker.setLatLng([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
+                        map.setView([lat, lon], 13);
+                        updateLocationInfo(lat, lon, display_name, 'sender');
+                        calculateDistanceAndTime();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lokasi Tidak Ditemukan',
+                            text: 'Mohon maaf, lokasi yang anda cari tidak ditemukan.',
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        receiverSearchButton.addEventListener('click', function() {
+            var location = receiverSearchBox.value;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var display_name = data[0].display_name;
+                        receiverMarker.setLatLng([lat, lon]).addTo(map).bindPopup(display_name).openPopup();
+                        map.setView([lat, lon], 13);
+                        updateLocationInfo(lat, lon, display_name, 'receiver');
+                        calculateDistanceAndTime();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lokasi Tidak Ditemukan',
+                            text: 'Mohon maaf, lokasi yang anda cari tidak ditemukan.',
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        senderMarker.on('dragend', function(event) {
+            var marker = event.target;
+            var position = marker.getLatLng();
+            var lat = position.lat;
+            var lon = position.lng;
+
+            fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
+                )
+                .then(response => response.json())
+                .then(data => {
+                    var display_name = data.display_name;
+                    updateLocationInfo(lat, lon, display_name, 'sender');
+                    calculateDistanceAndTime();
+                    marker.bindPopup(display_name).openPopup();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        receiverMarker.on('dragend', function(event) {
+            var marker = event.target;
+            var position = marker.getLatLng();
+            var lat = position.lat;
+            var lon = position.lng;
+
+            fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
+                )
+                .then(response => response.json())
+                .then(data => {
+                    var display_name = data.display_name;
+                    updateLocationInfo(lat, lon, display_name, 'receiver');
+                    calculateDistanceAndTime();
+                    marker.bindPopup(display_name).openPopup();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        if (oldSenderLatitude && oldSenderLongitude && oldReceiverLatitude && oldReceiverLongitude) {
+            calculateDistanceAndTime();
+        }
     </script>
 @endsection

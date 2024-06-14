@@ -33,16 +33,14 @@ class PaketOperatorController extends Controller
         $request->validate([
             'sender_name' => 'required|string|max:255',
             'sender_address' => 'required|string|max:255',
-            'sender_latitude' => 'required|numeric',
-            'sender_longitude' => 'required|numeric',
+            'sender' => 'required|numeric',
             'receiver_name' => 'required|string|max:255',
             'receiver_address' => 'required|string|max:255',
-            'receiver_latitude' => 'required|numeric',
-            'receiver_longitude' => 'required|numeric',
+            'receiver' => 'required|numeric',
             'weight' => 'required|numeric',
             'dimensions' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -51,7 +49,7 @@ class PaketOperatorController extends Controller
 
         $paket = new Paket();
         $paket->id = Str::uuid();
-        $paket->tracking_number = rand(100000, 999999);
+        $paket->tracking_number = rand(10000000, 99999999);
         $paket->sender_name = $request->sender_name;
         $paket->sender_address = $request->sender_address;
         $paket->sender_latitude = $request->sender_latitude;
@@ -64,10 +62,9 @@ class PaketOperatorController extends Controller
         $paket->dimensions = $request->dimensions;
         $paket->description = $request->description;
         $paket->status = 'proses';
-        // if ($request->hasFile('image')) {
-        //     $paket->image = basename($imageName);
-        // }
-        $paket->image = 'test.jpg';
+        if ($request->hasFile('image')) {
+            $paket->image = basename($imageName);
+        }
         $paket->save();
 
         return redirect()->route('operator.paket.index')->with('success', 'Data Paket berhasil ditambahkan.');

@@ -49,12 +49,16 @@ class DriverAdminController extends Controller
             'address' => 'required|string|max:255'
         ]);
 
-        $imageName = $request->file('image')->store('public/drivers');
+        if ($request->hasFile('image')) {
+            $imageName = $request->file('image')->store('public/drivers');
+        }
 
         $driver = new Driver();
         $driver->created_by = auth()->user()->admin_id;
         $driver->name = $request->name;
-        $driver->image = basename($imageName);
+        if ($request->hasFile('image')) {
+            $driver->image = basename($imageName);
+        }
         $driver->phone_number = $request->phone_number;
         $driver->license_number = $request->license_number;
         $driver->vehicle_name = $request->vehicle_name;
