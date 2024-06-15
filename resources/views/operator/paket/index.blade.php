@@ -38,9 +38,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($pakets as $paket)
+                                        @foreach ($pakets as $index => $paket)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $pakets->firstItem() + $index }}</td>
                                                 <td>
                                                     <center><img
                                                             src="{{ $paket->image ? asset('storage/pakets/' . $paket->image) : 'https://via.placeholder.com/75' }}"
@@ -125,6 +125,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="d-flex justify-content-end">
+                                    {{ $pakets->links('pagination::bootstrap-4') }}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -30,9 +30,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($operators as $operator)
+                                        @foreach ($operators as $index => $operator)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $operators->firstItem() + $index }}</td>
                                                 <td>{{ $operator->name }}</td>
                                                 <td>{{ $operator->address }}</td>
                                                 <td>{{ $operator->region }}</td>
@@ -93,6 +93,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="d-flex justify-content-end">
+                                    {{ $operators->links('pagination::bootstrap-4') }}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -35,9 +35,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($drivers as $driver)
+                                        @foreach ($drivers as $index => $driver)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $drivers->firstItem() + $index }}</td>
                                                 <td>
                                                     <center><img
                                                             src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/75' }}"
@@ -106,6 +106,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="d-flex justify-content-end">
+                                    {{ $drivers->links('pagination::bootstrap-4') }}
+                                </div>
                             </div>
                         </div>
                     </div>

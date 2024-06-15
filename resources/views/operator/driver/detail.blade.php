@@ -22,7 +22,7 @@
                                     <label for="driverRate">Rate</label>
                                     <p id="driverRate">
                                         @if (is_null($driver->rate))
-                                            <span>No rating available</span>
+                                            <span>Rating Belum Tersedia</span>
                                         @else
                                             @for ($i = 0; $i < $driver->rate; $i++)
                                                 <i class="fas fa-star"></i>
