@@ -91,8 +91,6 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
         Route::get('suratjalans-edit-{id}', [SuratJalanOperatorController::class, 'edit'])->name('operator.suratjalan.edit');
         Route::put('suratjalans-{id}', [SuratJalanOperatorController::class, 'update'])->name('operator.suratjalan.update');
         Route::delete('suratjalans-{id}', [SuratJalanOperatorController::class, 'destroy'])->name('operator.suratjalan.destroy');
-        Route::get('search-drivers', [SuratJalanOperatorController::class, 'searchDrivers'])->name('search.drivers');
-        Route::get('search-pakets', [SuratJalanOperatorController::class, 'searchPakets'])->name('search.pakets');
 
         // Riwayat Paket
         Route::get('riwayats', [RiwayatPaketOperatorController::class, 'index'])->name('operator.riwayat.index');
@@ -107,19 +105,19 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
 
     // Surat Jalan
     Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
-    //  Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
+    Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
     Route::get('suratjalans-detail', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
-    //  Route::post('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'antarPaket'])->name('driver.suratjalan.antar');
+    Route::post('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'antarPaket'])->name('driver.suratjalan.antar');
  
-    //  // Map Tracking
-    //  Route::get('maptracking/{id}', [MapTrackingDriverController::class, 'showTrackingMap'])->name('driver.maptracking.show');
+    // Map Tracking
+    Route::get('maptracking/{id}', [MapTrackingDriverController::class, 'showTrackingMap'])->name('driver.maptracking.show');
     Route::get('maptracking', [MapTrackingDriverController::class, 'showTrackingMap'])->name('driver.maptracking.show');
-    //  Route::post('maptracking/{id}/checkpoint', [MapTrackingDriverController::class, 'checkpoint'])->name('driver.maptracking.checkpoint');
-    //  Route::post('maptracking/{id}/complete', [MapTrackingDriverController::class, 'completeDelivery'])->name('driver.maptracking.complete');
+    Route::post('maptracking/{id}/checkpoint', [MapTrackingDriverController::class, 'checkpoint'])->name('driver.maptracking.checkpoint');
+    Route::post('maptracking/{id}/complete', [MapTrackingDriverController::class, 'completeDelivery'])->name('driver.maptracking.complete');
 
-    //  // Riwayat Paket
-    Route::get('riwayatpakets', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayatpaket.index');
-    //  Route::get('riwayatpakets-detail-{id}', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayatpaket.detail');
-    Route::get('riwayatpakets-detail', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayatpaket.detail');
+    // Riwayat Paket
+    Route::get('riwayat', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayat.index');
+    Route::get('riwayat-detail-{id}', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');
+    Route::get('riwayat-detail', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');
 
 });

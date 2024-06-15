@@ -46,7 +46,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title" style="margin-bottom: 50px">Form Tambah Surat Jalan</h4>
-                    <form id="createForm" action="{{ route('operator.suratjalan.store') }}" method="POST"
+                    <form id="operatorForm" action="{{ route('operator.suratjalan.store') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -160,6 +160,71 @@
             </div>
         </div>
     </div>
+
+    <!-- Submit Confirmation Modal -->
+    <div class="modal fade" id="submitConfirmationModal" tabindex="-1" role="dialog"
+        aria-labelledby="submitConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitConfirmationModalLabel">Konfirmasi Submit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin melanjutkan?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button id="confirmSubmit" type="button" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog"
+        aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelConfirmationModalLabel">Konfirmasi Pembatalan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin membatalkan?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button id="confirmCancel" type="button" class="btn btn-danger">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('operatorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                $('#submitConfirmationModal').modal('show');
+            });
+
+            document.querySelector('.btn-light').addEventListener('click', function() {
+                $('#cancelConfirmationModal').modal('show');
+            });
+
+            document.getElementById('confirmSubmit').addEventListener('click', function() {
+                document.getElementById('operatorForm').submit();
+            });
+
+            document.getElementById('confirmCancel').addEventListener('click', function() {
+                window.location.href = "{{ route('operator.suratjalan.index') }}";
+            });
+        });
+    </script>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

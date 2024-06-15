@@ -11,6 +11,9 @@ class SuratJalan extends Model
 
     protected $table = 'surat_jalan';
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'driver_id', 
         'paket_id', 

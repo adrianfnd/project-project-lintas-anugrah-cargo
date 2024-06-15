@@ -18,15 +18,55 @@
                         <div class="col-12">
                             <div class="table-responsive">
                                 <table class="display expandable-table" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>
+                                                <center>Foto Paket</center>
+                                            </th>
+                                            <th>Nama Paket</th>
+                                            <th>Nama Driver</th>
+                                            <th>Nomor Telpon</th>
+                                            <th>Nomor Kendaraan</th>
+                                            <th>
+                                                <center>Status</center>
+                                            </th>
+                                            <th>
+                                                <center>Aksi</center>
+                                            </th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         @foreach ($suratjalans as $index => $suratjalan)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $suratjalan->driver_id }}</td>
-                                                <td>{{ $suratjalan->paket_id }}</td>
-                                                <td>{{ $suratjalan->status }}</td>
-                                                <td>{{ $suratjalan->latitude }}</td>
-                                                <td>{{ $suratjalan->longitude }}</td>
+                                                <td>{{ $suratjalans->firstItem() + $index }}</td>
+                                                <td>
+                                                    <center><img
+                                                            src="{{ $suratjalan->paket->image ? asset('storage/pakets/' . $suratjalan->paket->image) : 'https://via.placeholder.com/75' }}"
+                                                            alt="Foto Paket" class="img-fluid rounded-circle"
+                                                            style="object-fit: cover; width: 75px; height: 75px;">
+                                                    </center>
+                                                </td>
+                                                <td>{{ $suratjalan->paket->packet_name }}</td>
+                                                <td>{{ $suratjalan->driver->name }}</td>
+                                                <td>{{ $suratjalan->driver->phone_number }}</td>
+                                                <td>{{ $suratjalan->driver->license_number }}</td>
+                                                <td>
+                                                    <center>
+                                                        @if ($suratjalan->status == 'proses')
+                                                            <span
+                                                                class="badge badge-info">{{ ucfirst($suratjalan->status) }}</span>
+                                                        @elseif ($suratjalan->status == 'dikirim')
+                                                            <span
+                                                                class="badge badge-warning">{{ ucfirst($suratjalan->status) }}</span>
+                                                        @elseif ($suratjalan->status == 'terkirim')
+                                                            <span
+                                                                class="badge badge-success">{{ ucfirst($suratjalan->status) }}</span>
+                                                        @else
+                                                            <span class="badge badge-danger">Status tidak diketahui</span>
+                                                        @endif
+                                                    </center>
+                                                </td>
                                                 <td>
                                                     <center>
                                                         <a
@@ -66,7 +106,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Apakah Anda yakin ingin menghapus data $suratjalan jalan ini?
+                                                            Apakah Anda yakin ingin menghapus data surat jalan ini?
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
@@ -85,6 +125,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="d-flex justify-content-end">
+                                    {{ $suratjalans->links('pagination::bootstrap-4') }}
+                                </div>
                             </div>
                         </div>
                     </div>

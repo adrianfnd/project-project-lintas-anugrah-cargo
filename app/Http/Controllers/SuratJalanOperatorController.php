@@ -17,7 +17,7 @@ class SuratJalanOperatorController extends Controller
         return view('operator.suratjalan.index', compact('suratjalans'));
     }
 
-    public function detail()
+    public function detail($id)
     {
         $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
 
@@ -36,8 +36,15 @@ class SuratJalanOperatorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'driver' => 'required|exists:drivers,id',
-            'paket' => 'required|exists:paket,id',
+            'driver' => 'required|exists:drivers,id|unique:surat_jalan,driver_id,NULL,id,paket_id,' . $request->paket,
+            'paket' => 'required|exists:paket,id|unique:surat_jalan,paket_id,NULL,id,driver_id,' . $request->driver,
+        ], [
+            'driver.required' => 'Kolom driver harus diisi.',
+            'driver.exists' => 'Driver yang dipilih tidak valid.',
+            'driver.unique' => 'Driver ini sudah terdaftar untuk paket lain.',
+            'paket.required' => 'Kolom paket harus diisi.',
+            'paket.exists' => 'Paket yang dipilih tidak valid.',
+            'paket.unique' => 'Paket ini sudah terdaftar untuk driver lain.',
         ]);
 
         $paket = Paket::findOrFail($request->paket);
@@ -52,7 +59,7 @@ class SuratJalanOperatorController extends Controller
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil ditambahkan.');
     }
 
-    public function edit()
+    public function edit($id)
     {
         $suratjalan = SuratJalan::findOrFail($id);
 
@@ -66,8 +73,15 @@ class SuratJalanOperatorController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'driver' => 'required|exists:drivers,id',
-            'paket' => 'required|exists:paket,id',
+            'driver' => 'required|exists:drivers,id|unique:surat_jalan,driver_id,NULL,id,paket_id,' . $request->paket,
+            'paket' => 'required|exists:paket,id|unique:surat_jalan,paket_id,NULL,id,driver_id,' . $request->driver,
+        ], [
+            'driver.required' => 'Kolom driver harus diisi.',
+            'driver.exists' => 'Driver yang dipilih tidak valid.',
+            'driver.unique' => 'Driver ini sudah terdaftar untuk paket lain.',
+            'paket.required' => 'Kolom paket harus diisi.',
+            'paket.exists' => 'Paket yang dipilih tidak valid.',
+            'paket.unique' => 'Paket ini sudah terdaftar untuk driver lain.',
         ]);
 
         $suratjalan = SuratJalan::findOrFail($id);
@@ -89,25 +103,5 @@ class SuratJalanOperatorController extends Controller
         $suratjalan->delete();
 
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil dihapus.');
-    }
-
-    public function searchDrivers(Request $request)
-    {
-        $query = $request->get('query');
-        $drivers = Driver::where('name', 'like', "%{$query}%")
-                        ->orWhere('phone_number', 'like', "%{$query}%")
-                        ->get();
-
-        return response()->json($drivers);
-    }
-
-    public function searchPakets(Request $request)
-    {
-        $query = $request->get('query');
-        $pakets = Paket::where('packet_name', 'like', "%{$query}%")
-                        ->orWhere('tracking_number', 'like', "%{$query}%")
-                        ->get();
-
-        return response()->json($pakets);
     }
 }
