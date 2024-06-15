@@ -328,17 +328,17 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <script>
-        var oldSenderLatitude = "{{ old('sender_latitude') }}";
-        var oldSenderLongitude = "{{ old('sender_longitude') }}";
-        var oldSenderDisplayName = "{{ old('sender') }}";
-        var oldReceiverLatitude = "{{ old('receiver_latitude') }}";
-        var oldReceiverLongitude = "{{ old('receiver_longitude') }}";
-        var oldReceiverDisplayName = "{{ old('receiver') }}";
+        var senderLatitude = "{{ old('sender_latitude') }}";
+        var senderLongitude = "{{ old('sender_longitude') }}";
+        var senderDisplayName = "{{ old('sender') }}";
+        var receiverLatitude = "{{ old('receiver_latitude') }}";
+        var receiverLongitude = "{{ old('receiver_longitude') }}";
+        var receiverDisplayName = "{{ old('receiver') }}";
 
-        var mapCenter = oldSenderLatitude && oldSenderLongitude ? [oldSenderLatitude, oldSenderLongitude] : [-6.263,
+        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
             106.781
         ];
-        var mapZoom = oldSenderLatitude && oldSenderLongitude ? 7 : 7;
+        var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
 
         var map = L.map('mapid').setView(mapCenter, mapZoom);
 
@@ -354,11 +354,11 @@
         }).addTo(map);
         var routingControl = null;
 
-        if (oldSenderDisplayName) {
-            senderMarker.bindPopup(oldSenderDisplayName).openPopup();
+        if (senderDisplayName) {
+            senderMarker.bindPopup(senderDisplayName).openPopup();
         }
-        if (oldReceiverDisplayName) {
-            receiverMarker.bindPopup(oldReceiverDisplayName).openPopup();
+        if (receiverDisplayName) {
+            receiverMarker.bindPopup(receiverDisplayName).openPopup();
         }
 
         var senderSearchBox = document.getElementById('sender_searchbox');
@@ -513,7 +513,7 @@
                 .catch(error => console.error('Error:', error));
         });
 
-        if (oldSenderLatitude && oldSenderLongitude && oldReceiverLatitude && oldReceiverLongitude) {
+        if (senderLatitude && senderLongitude && receiverLatitude && receiverLongitude) {
             calculateDistanceAndTime();
         }
     </script>
