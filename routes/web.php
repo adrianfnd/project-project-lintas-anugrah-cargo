@@ -91,6 +91,8 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
         Route::get('suratjalans-edit-{id}', [SuratJalanOperatorController::class, 'edit'])->name('operator.suratjalan.edit');
         Route::put('suratjalans-{id}', [SuratJalanOperatorController::class, 'update'])->name('operator.suratjalan.update');
         Route::delete('suratjalans-{id}', [SuratJalanOperatorController::class, 'destroy'])->name('operator.suratjalan.destroy');
+        Route::get('search-drivers', [SuratJalanOperatorController::class, 'searchDrivers'])->name('search.drivers');
+        Route::get('search-pakets', [SuratJalanOperatorController::class, 'searchPakets'])->name('search.pakets');
 
         // Riwayat Paket
         Route::get('riwayats', [RiwayatPaketOperatorController::class, 'index'])->name('operator.riwayat.index');

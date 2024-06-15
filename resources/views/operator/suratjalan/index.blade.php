@@ -18,37 +18,25 @@
                         <div class="col-12">
                             <div class="table-responsive">
                                 <table class="display expandable-table" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Driver ID</th>
-                                            <th>Paket ID</th>
-                                            <th>Status</th>
-                                            <th>Latitude</th>
-                                            <th>Longitude</th>
-                                            <th>
-                                                <center>Aksi</center>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    {{-- <tbody>
-                                        @foreach ($$suratjalans as $index => $$suratjalan)
+                                    <tbody>
+                                        @foreach ($suratjalans as $index => $suratjalan)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                <td>{{ $$suratjalan->driver_id }}</td>
-                                                <td>{{ $$suratjalan->paket_id }}</td>
-                                                <td>{{ $$suratjalan->status }}</td>
-                                                <td>{{ $$suratjalan->latitude }}</td>
-                                                <td>{{ $$suratjalan->longitude }}</td>
+                                                <td>{{ $suratjalan->driver_id }}</td>
+                                                <td>{{ $suratjalan->paket_id }}</td>
+                                                <td>{{ $suratjalan->status }}</td>
+                                                <td>{{ $suratjalan->latitude }}</td>
+                                                <td>{{ $suratjalan->longitude }}</td>
                                                 <td>
                                                     <center>
-                                                        <a href="{{ route('operator.$suratjalanjalan.detail', $$suratjalan->id) }}">
+                                                        <a
+                                                            href="{{ route('operator.suratjalan.detail', $suratjalan->id) }}">
                                                             <button type="button"
                                                                 class="btn btn-inverse-success btn-rounded btn-icon">
                                                                 <i class="ti-eye"></i>
                                                             </button>
                                                         </a>
-                                                        <a href="{{ route('operator.$suratjalanjalan.edit', $$suratjalan->id) }}">
+                                                        <a href="{{ route('operator.suratjalan.edit', $suratjalan->id) }}">
                                                             <button type="button"
                                                                 class="btn btn-inverse-primary btn-rounded btn-icon">
                                                                 <i class="ti-pencil"></i>
@@ -57,7 +45,7 @@
                                                         <button type="button"
                                                             class="btn btn-inverse-danger btn-rounded btn-icon"
                                                             data-toggle="modal"
-                                                            data-target="#deleteModal{{ $$suratjalan->id }}">
+                                                            data-target="#deleteModal{{ $suratjalan->id }}">
                                                             <i class="ti-trash"></i>
                                                         </button>
                                                     </center>
@@ -65,7 +53,7 @@
                                             </tr>
 
                                             <!-- Modal Konfirmasi Hapus -->
-                                            <div class="modal fade" id="deleteModal{{ $$suratjalan->id }}" tabindex="-1"
+                                            <div class="modal fade" id="deleteModal{{ $suratjalan->id }}" tabindex="-1"
                                                 role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -84,7 +72,7 @@
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">Batal</button>
                                                             <form
-                                                                action="{{ route('operator.$suratjalanjalan.destroy', $$suratjalan->id) }}"
+                                                                action="{{ route('operator.suratjalan.destroy', $suratjalan->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -95,7 +83,7 @@
                                                 </div>
                                             </div>
                                         @endforeach
-                                    </tbody> --}}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

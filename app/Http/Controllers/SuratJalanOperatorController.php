@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SuratJalan;
 use App\Models\Driver;
 use App\Models\Paket;
+use Illuminate\Support\Str;
 
 class SuratJalanOperatorController extends Controller
 {
@@ -14,6 +15,13 @@ class SuratJalanOperatorController extends Controller
         $suratjalans = SuratJalan::with(['driver', 'paket'])->paginate(10);
 
         return view('operator.suratjalan.index', compact('suratjalans'));
+    }
+
+    public function detail()
+    {
+        $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
+
+        return view('operator.suratjalan.detail', compact('suratjalan'));
     }
 
     public function create()
@@ -25,29 +33,20 @@ class SuratJalanOperatorController extends Controller
         return view('operator.suratjalan.create', compact('drivers', 'pakets'));
     }
 
-    public function detail()
-    {
-        $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
-
-        return view('operator.suratjalan.detail', compact('suratjalan'));
-    }
-
     public function store(Request $request)
     {
         $request->validate([
-            'driver_id' => 'required|exists:drivers,id',
-            'paket_id' => 'required|exists:pakets,id',
-            'status' => 'required|string|max:255'
+            'driver' => 'required|exists:drivers,id',
+            'paket' => 'required|exists:paket,id',
         ]);
 
-        $paket = Paket::findOrFail($request->paket_id);
+        $paket = Paket::findOrFail($request->paket);
 
         $suratjalan = new SuratJalan();
-        $suratjalan->driver_id = $request->driver_id;
-        $suratjalan->paket_id = $request->paket_id;
-        $suratjalan->status = $request->status;
-        $suratjalan->latitude = $paket->sender_latitude;
-        $suratjalan->longitude = $paket->sender_longitude;
+        $suratjalan->id = Str::uuid();
+        $suratjalan->driver_id = $request->driver;
+        $suratjalan->paket_id = $request->paket;
+        $suratjalan->status = 'dikirim';
         $suratjalan->save();
 
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil ditambahkan.');
@@ -56,7 +55,9 @@ class SuratJalanOperatorController extends Controller
     public function edit()
     {
         $suratjalan = SuratJalan::findOrFail($id);
+
         $drivers = Driver::all();
+
         $pakets = Paket::all();
 
         return view('operator.suratjalan.edit', compact('suratjalan', 'drivers', 'pakets'));
@@ -64,21 +65,18 @@ class SuratJalanOperatorController extends Controller
 
     public function update(Request $request, $id)
     {
-        $suratjalan = SuratJalan::findOrFail($id);
-
         $request->validate([
-            'driver_id' => 'required|exists:drivers,id',
-            'paket_id' => 'required|exists:pakets,id',
-            'status' => 'required|string|max:255'
+            'driver' => 'required|exists:drivers,id',
+            'paket' => 'required|exists:paket,id',
         ]);
 
-        $paket = Paket::findOrFail($request->paket_id);
+        $suratjalan = SuratJalan::findOrFail($id);
 
-        $suratjalan->driver_id = $request->driver_id;
-        $suratjalan->paket_id = $request->paket_id;
-        $suratjalan->status = $request->status;
-        $suratjalan->latitude = $paket->sender_latitude;
-        $suratjalan->longitude = $paket->sender_longitude;
+        $paket = Paket::findOrFail($request->paket);
+
+        $suratjalan->driver_id = $request->driver;
+        $suratjalan->paket_id = $request->paket;
+        $suratjalan->status = 'dikirim';
         $suratjalan->save();
 
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil diupdate.');
@@ -91,5 +89,25 @@ class SuratJalanOperatorController extends Controller
         $suratjalan->delete();
 
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil dihapus.');
+    }
+
+    public function searchDrivers(Request $request)
+    {
+        $query = $request->get('query');
+        $drivers = Driver::where('name', 'like', "%{$query}%")
+                        ->orWhere('phone_number', 'like', "%{$query}%")
+                        ->get();
+
+        return response()->json($drivers);
+    }
+
+    public function searchPakets(Request $request)
+    {
+        $query = $request->get('query');
+        $pakets = Paket::where('packet_name', 'like', "%{$query}%")
+                        ->orWhere('tracking_number', 'like', "%{$query}%")
+                        ->get();
+
+        return response()->json($pakets);
     }
 }
