@@ -56,13 +56,13 @@ class DriverAdminController extends Controller
         $driver = new Driver();
         $driver->created_by = auth()->user()->admin_id;
         $driver->name = $request->name;
-        if ($request->hasFile('image')) {
-            $driver->image = basename($imageName);
-        }
         $driver->phone_number = $request->phone_number;
         $driver->license_number = $request->license_number;
         $driver->vehicle_name = $request->vehicle_name;
         $driver->address = $request->address;
+        if ($request->hasFile('image')) {
+            $driver->image = basename($imageName);
+        }
         $driver->save();
 
         $user = new User();
@@ -108,23 +108,27 @@ class DriverAdminController extends Controller
         ]);
 
         $driver->name = $request->name;
+        $driver->phone_number = $request->phone_number;
+        $driver->license_number = $request->license_number;
+        $driver->vehicle_name = $request->vehicle_name;
+        $driver->address = $request->address;
+
         if ($request->hasFile('image')) {
             Storage::delete('public/drivers/' . $driver->image);
             $imageName = $request->file('image')->store('public/drivers');
             $driver->image = basename($imageName);
         }
-        $driver->phone_number = $request->phone_number;
-        $driver->license_number = $request->license_number;
-        $driver->vehicle_name = $request->vehicle_name;
-        $driver->address = $request->address;
+
         $driver->save();
 
         $user->name = $request->name;
         $user->username = $request->username;
         $user->email = $request->email;
+        
         if ($request->password) {
             $user->password = bcrypt($request->password);
         }
+
         $user->save();
 
         return redirect()->route('admin.driver.index')->with('success', 'Data Driver berhasil diupdate.');
@@ -134,7 +138,9 @@ class DriverAdminController extends Controller
     {
         $driver = Driver::findOrFail($id);
 
-        Storage::delete('public/drivers/' . $driver->image);
+        if ($driver->image) {
+            Storage::delete('public/drivers/' . $driver->image);
+        }
 
         $driver->delete();
 
