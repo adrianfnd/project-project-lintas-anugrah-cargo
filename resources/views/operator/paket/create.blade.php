@@ -1,6 +1,47 @@
 @extends('layouts.main')
 
 @section('content')
+    <style>
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #333;
+            animation: spin 1s ease infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        .leaflet-routing-container {
+            display: none;
+        }
+    </style>
+
     <div class="content-wrapper">
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
@@ -186,14 +227,13 @@
                                 </div>
                             </div>
 
-                            <style>
-                                .leaflet-routing-container {
-                                    display: none;
-                                }
-                            </style>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <div id="mapid" style="height: 400px;" class="mt-4"></div>
+                                    <div id="loading" style="display: none;">
+                                        <div class="spinner"></div>
+                                        Memuat peta...
+                                    </div>
+                                    <div id="mapid" style="height: 500px;"></div>
 
                                     <input type="hidden" id="sender" name="sender" required
                                         value="{{ old('sender') }}">
@@ -326,7 +366,6 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
     <script>
         var senderLatitude = "{{ old('sender_latitude') }}";
         var senderLongitude = "{{ old('sender_longitude') }}";
@@ -335,16 +374,19 @@
         var receiverLongitude = "{{ old('receiver_longitude') }}";
         var receiverDisplayName = "{{ old('receiver') }}";
 
-        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
-            106.781
-        ];
+        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263, 106.781];
         var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
+
+        var loadingElement = document.getElementById('loading');
+        loadingElement.style.display = 'block';
 
         var map = L.map('mapid').setView(mapCenter, mapZoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        }).addTo(map).on('load', function() {
+            loadingElement.style.display = 'none';
+        });
 
         var senderMarker = L.marker(mapCenter, {
             draggable: true
@@ -429,9 +471,11 @@
 
         senderSearchButton.addEventListener('click', function() {
             var location = senderSearchBox.value;
+            loadingElement.style.display = 'block';
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
                 .then(response => response.json())
                 .then(data => {
+                    loadingElement.style.display = 'none';
                     if (data && data.length > 0) {
                         var lat = data[0].lat;
                         var lon = data[0].lon;
@@ -448,14 +492,19 @@
                         });
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    console.error('Error:', error);
+                });
         });
 
         receiverSearchButton.addEventListener('click', function() {
             var location = receiverSearchBox.value;
+            loadingElement.style.display = 'block';
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}&accept-language=id-ID`)
                 .then(response => response.json())
                 .then(data => {
+                    loadingElement.style.display = 'none';
                     if (data && data.length > 0) {
                         var lat = data[0].lat;
                         var lon = data[0].lon;
@@ -472,7 +521,10 @@
                         });
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    console.error('Error:', error);
+                });
         });
 
         senderMarker.on('dragend', function(event) {
@@ -481,17 +533,22 @@
             var lat = position.lat;
             var lon = position.lng;
 
+            loadingElement.style.display = 'block';
             fetch(
                     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
                 )
                 .then(response => response.json())
                 .then(data => {
+                    loadingElement.style.display = 'none';
                     var display_name = data.display_name;
                     updateLocationInfo(lat, lon, display_name, 'sender');
                     calculateDistanceAndTime();
                     marker.bindPopup(display_name).openPopup();
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    console.error('Error:', error);
+                });
         });
 
         receiverMarker.on('dragend', function(event) {
@@ -500,17 +557,22 @@
             var lat = position.lat;
             var lon = position.lng;
 
+            loadingElement.style.display = 'block';
             fetch(
                     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id-ID`
                 )
                 .then(response => response.json())
                 .then(data => {
+                    loadingElement.style.display = 'none';
                     var display_name = data.display_name;
                     updateLocationInfo(lat, lon, display_name, 'receiver');
                     calculateDistanceAndTime();
                     marker.bindPopup(display_name).openPopup();
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    console.error('Error:', error);
+                });
         });
 
         if (senderLatitude && senderLongitude && receiverLatitude && receiverLongitude) {

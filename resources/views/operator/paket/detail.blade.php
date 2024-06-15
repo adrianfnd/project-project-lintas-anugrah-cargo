@@ -1,6 +1,46 @@
 @extends('layouts.main')
 
 @section('content')
+    <style>
+        .leaflet-routing-container {
+            display: none;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #333;
+            animation: spin 1s ease infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
     <div class="content-wrapper">
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
@@ -109,14 +149,12 @@
                                 </div>
                             </div>
 
-                            <style>
-                                .leaflet-routing-container {
-                                    display: none;
-                                }
-                            </style>
-
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <div id="loading" style="display: none;">
+                                        <div class="spinner"></div>
+                                        Memuat data...
+                                    </div>
                                     <div id="mapid" style="height: 400px;" class="mt-4"></div>
 
                                     <input type="hidden" id="sender_latitude" name="sender_latitude" required
@@ -142,99 +180,110 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- SweetAlert2 -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-        <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
-        <script>
-            var oldSenderLatitude = "{{ $paket->sender_latitude }}";
-            var oldSenderLongitude = "{{ $paket->sender_longitude }}";
-            var oldReceiverLatitude = "{{ $paket->receiver_latitude }}";
-            var oldReceiverLongitude = "{{ $paket->receiver_longitude }}";
+    <script>
+        var senderLatitude = "{{ $paket->sender_latitude }}";
+        var senderLongitude = "{{ $paket->sender_longitude }}";
+        var receiverLatitude = "{{ $paket->receiver_latitude }}";
+        var receiverLongitude = "{{ $paket->receiver_longitude }}";
 
-            var mapCenter = oldSenderLatitude && oldSenderLongitude ? [oldSenderLatitude, oldSenderLongitude] : [-6.263,
-                106.781
-            ];
-            var mapZoom = oldSenderLatitude && oldSenderLongitude ? 7 : 7;
+        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
+            106.781
+        ];
+        var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
 
-            var map = L.map('mapid').setView(mapCenter, mapZoom);
+        var loadingElement = document.getElementById('loading');
+        loadingElement.style.display = 'block';
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+        var map = L.map('mapid').setView(mapCenter, mapZoom);
 
-            var senderMarker = L.marker([oldSenderLatitude, oldSenderLongitude]).addTo(map);
-            var receiverMarker = L.marker([oldReceiverLatitude, oldReceiverLongitude]).addTo(map);
-            var routingControl = null;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map).on('load', function() {
+            loadingElement.style.display = 'none';
+        });
 
-            function calculateDistanceAndTime() {
-                var senderLat = parseFloat(document.getElementById('sender_latitude').value);
-                var senderLon = parseFloat(document.getElementById('sender_longitude').value);
-                var receiverLat = parseFloat(document.getElementById('receiver_latitude').value);
-                var receiverLon = parseFloat(document.getElementById('receiver_longitude').value);
+        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
+        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+        var routingControl = null;
 
-                if (!isNaN(senderLat) && !isNaN(senderLon) && !isNaN(receiverLat) && !isNaN(receiverLon)) {
-                    var from = L.latLng(senderLat, senderLon);
-                    var to = L.latLng(receiverLat, receiverLon);
-                    var distance = from.distanceTo(to) / 1000;
-                    var speed = 40;
+        function calculateDistanceAndTime() {
+            var senderLat = parseFloat(document.getElementById('sender_latitude').value);
+            var senderLon = parseFloat(document.getElementById('sender_longitude').value);
+            var receiverLat = parseFloat(document.getElementById('receiver_latitude').value);
+            var receiverLon = parseFloat(document.getElementById('receiver_longitude').value);
 
-                    var timeInHours = distance / speed;
-                    var hours = Math.floor(timeInHours);
-                    var minutes = Math.round((timeInHours - hours) * 60);
+            if (!isNaN(senderLat) && !isNaN(senderLon) && !isNaN(receiverLat) && !isNaN(receiverLon)) {
+                var from = L.latLng(senderLat, senderLon);
+                var to = L.latLng(receiverLat, receiverLon);
+                var distance = from.distanceTo(to) / 1000;
+                var speed = 40;
 
-                    var formattedTime;
-                    if (minutes === 60) {
-                        hours++;
-                        minutes = 0;
-                    }
+                var timeInHours = distance / speed;
+                var hours = Math.floor(timeInHours);
+                var minutes = Math.round((timeInHours - hours) * 60);
 
-                    if (hours > 0 && minutes > 0) {
-                        formattedTime = hours + ' jam ' + minutes + ' menit';
-                    } else if (hours > 0) {
-                        formattedTime = hours + ' jam';
-                    } else {
-                        formattedTime = minutes + ' menit';
-                    }
-
-                    document.getElementById('distance').innerText = distance.toFixed(2) + ' km ( estimasi waktu : ' +
-                        formattedTime + ')';
-
-                    if (routingControl) {
-                        map.removeControl(routingControl);
-                    }
-
-                    routingControl = L.Routing.control({
-                        waypoints: [from, to],
-                        routeWhileDragging: false,
-                        createMarker: function() {
-                            return null;
-                        },
-                    }).addTo(map);
+                var formattedTime;
+                if (minutes === 60) {
+                    hours++;
+                    minutes = 0;
                 }
+
+                if (hours > 0 && minutes > 0) {
+                    formattedTime = hours + ' jam ' + minutes + ' menit';
+                } else if (hours > 0) {
+                    formattedTime = hours + ' jam';
+                } else {
+                    formattedTime = minutes + ' menit';
+                }
+
+                document.getElementById('distance').innerText = distance.toFixed(2) + ' km ( estimasi waktu : ' +
+                    formattedTime + ')';
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: [from, to],
+                    routeWhileDragging: false,
+                    createMarker: function() {
+                        return null;
+                    },
+                }).addTo(map);
             }
+        }
 
-            fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${oldSenderLatitude}&lon=${oldSenderLongitude}&accept-language=id-ID`
-                )
+        function fetchData(url, elementId) {
+            loadingElement.style.display = 'block';
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    var senderLocation = data.display_name;
-                    document.getElementById('sender_location').innerText = senderLocation;
+                    loadingElement.style.display = 'none';
+                    var location = data.display_name;
+                    document.getElementById(elementId).innerText = location;
                 })
-                .catch(error => console.error('Error fetching sender location:', error));
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    console.error('Error fetching location:', error);
+                });
+        }
 
-            fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${oldReceiverLatitude}&lon=${oldReceiverLongitude}&accept-language=id-ID`
-                )
-                .then(response => response.json())
-                .then(data => {
-                    var receiverLocation = data.display_name;
-                    document.getElementById('receiver_location').innerText = receiverLocation;
-                })
-                .catch(error => console.error('Error fetching receiver location:', error));
+        fetchData(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${senderLatitude}&lon=${senderLongitude}&accept-language=id-ID`,
+            'sender_location'
+        );
 
-            calculateDistanceAndTime();
-        </script>
-    @endsection
+        fetchData(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${receiverLatitude}&lon=${receiverLongitude}&accept-language=id-ID`,
+            'receiver_location'
+        );
+
+        calculateDistanceAndTime();
+    </script>
+@endsection
