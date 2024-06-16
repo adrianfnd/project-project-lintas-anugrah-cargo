@@ -17,13 +17,6 @@ class SuratJalanOperatorController extends Controller
         return view('operator.suratjalan.index', compact('suratjalans'));
     }
 
-    public function detail($id)
-    {
-        $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
-
-        return view('operator.suratjalan.detail', compact('suratjalan'));
-    }
-
     public function create()
     {
         $drivers = Driver::all();
@@ -31,6 +24,13 @@ class SuratJalanOperatorController extends Controller
         $pakets = Paket::all();
 
         return view('operator.suratjalan.create', compact('drivers', 'pakets'));
+    }
+
+    public function detail($id)
+    {
+        $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
+
+        return view('operator.suratjalan.detail', compact('suratjalan'));
     }
 
     public function store(Request $request)

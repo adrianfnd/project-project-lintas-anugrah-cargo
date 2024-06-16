@@ -9,35 +9,33 @@ class SuratJalanDriverController extends Controller
 {
     public function index()
     {
-        // $suratJalans = SuratJalan::where('driver_id', auth()->user()->driver->id)->paginate(10);
+        $suratjalans = SuratJalan::where('driver_id', auth()->user()->driver->id)->paginate(10);
 
-        // return view('driver.suratjalan.index', compact('suratJalans'));
-        return view('driver.suratjalan.index');
+        return view('driver.suratjalan.index', compact('suratjalans'));
     }
 
-    public function detail()
+    public function detail($id)
     {
-        // $suratJalan = SuratJalan::with(['paket', 'driver'])->findOrFail($id);
+        $suratJalan = SuratJalan::with(['paket', 'driver'])->findOrFail($id);
 
-        // return view('driver.suratjalan.detail', compact('suratJalan'));
-        return view('driver.suratjalan.detail');
+        return view('driver.suratjalan.detail', compact('suratJalan'));
     }
 
-    // public function antarPaket($id)
-    // {
-    //     $suratJalan = SuratJalan::findOrFail($id);
+    public function antarPaket($id)
+    {
+        $suratJalan = SuratJalan::findOrFail($id);
 
-    //     $suratJalan->status = 'delivered';
+        $suratJalan->status = 'delivered';
 
-    //     $suratJalan->save();
+        $suratJalan->save();
 
-    //     $riwayatPaket = new RiwayatPaket();
-    //     $riwayatPaket->driver_id = auth()->user()->driver->id;
-    //     $riwayatPaket->paket_id = $suratJalan->paket_id;
-    //     $riwayatPaket->surat_jalan_id = $suratJalan->id;
-    //     $riwayatPaket->status = 'delivered';
-    //     $riwayatPaket->save();
+        $riwayatPaket = new RiwayatPaket();
+        $riwayatPaket->driver_id = auth()->user()->driver->id;
+        $riwayatPaket->paket_id = $suratJalan->paket_id;
+        $riwayatPaket->surat_jalan_id = $suratJalan->id;
+        $riwayatPaket->status = 'delivered';
+        $riwayatPaket->save();
 
-    //     return redirect()->route('driver.suratjalan.detail', $id)->with('success', 'Paket berhasil diantar.');
-    // }
+        return redirect()->route('driver.suratjalan.detail', $id)->with('success', 'Paket berhasil diantar.');
+    }
 }
