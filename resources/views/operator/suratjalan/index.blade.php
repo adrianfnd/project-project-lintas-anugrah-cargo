@@ -99,7 +99,7 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus
-                                                                Data $suratjalan Jalan</h5>
+                                                                Data surat jalan</h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>

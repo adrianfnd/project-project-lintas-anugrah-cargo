@@ -26,33 +26,6 @@
                 </div>
             </li>
         </ul>
-    @elseif (Auth::user()->role->name == 'driver')
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('driver.dashboard') }}">
-                    <i class="icon-grid menu-icon"></i>
-                    <span class="menu-title">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('driver.suratjalan.index') }}">
-                    <i class="feather icon-mail menu-icon"></i>
-                    <span class="menu-title">Surat Jalan</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('driver.maptracking.show') }}">
-                    <i class="feather icon-map menu-icon"></i>
-                    <span class="menu-title">Map Tracking</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('driver.riwayat.index') }}">
-                    <i class="ti-time menu-icon"></i>
-                    <span class="menu-title">Riwayat Paket</span>
-                </a>
-            </li>
-        </ul>
     @elseif (Auth::user()->role->name == 'operator')
         <ul class="nav">
             <li class="nav-item">
@@ -82,6 +55,42 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('operator.riwayat.index') }}">
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">History</span>
+                </a>
+            </li>
+        </ul>
+    @elseif (Auth::user()->role->name == 'driver')
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.dashboard') }}">
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">Dashboard</span>
+                </a>
+            </li>
+            {{-- <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.maptracking.show') }}">
+                    <i class="feather icon-map menu-icon"></i>
+                    <span class="menu-title">Map Tracking</span>
+                </a>
+            </li> --}}
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                    aria-controls="ui-basic">
+                    <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">List Data</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-basic">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('driver.suratjalan.index') }}">Surat
+                                Jalan</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.riwayat.index') }}">
                     <i class="icon-grid menu-icon"></i>
                     <span class="menu-title">History</span>
                 </a>

@@ -1,74 +1,216 @@
 @extends('layouts.main')
 
 @section('content')
+    <style>
+        .leaflet-routing-container {
+            display: none;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #333;
+            animation: spin 1s ease infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
     <div class="content-wrapper">
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Detail Surat Jalan</h4>
+                    <h4 class="card-title" style="margin-bottom: 50px">Detail Surat Jalan</h4>
                     <div class="row">
-                        <div class="col-md-4 d-flex justify-content-center align-items-center">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <label>Pic or loc</label>
-                                    {{-- <img src="{{ $suratjalan->image ? asset('storage/drivers/' . $suratjalan->image) : 'https://via.placeholder.com/250' }}" 
-                                        style="border-radius: 50%; object-fit: cover; border: 3px solid #ccc; width: 250px; height: 250px;"> --}}
+                        <div class="col-md-6">
+                            <label>Driver</label>
+                            <div class="form-group" style="text-align: center;">
+                                <div class="image-upload"
+                                    style="position: relative; display: inline-block; margin-bottom: 10px;">
+                                    <img src="{{ $suratjalan->driver->image ? asset('storage/drivers/' . $suratjalan->driver->image) : 'https://via.placeholder.com/200' }}"
+                                        alt="Pratinjau Gambar" width="200" height="200"
+                                        style="object-fit: cover; border: 3px solid #ccc; border-radius: 8px;">
+                                </div>
+                                <div style="text-align: center;">
+                                    <p><strong>Nama:</strong> {{ $suratjalan->driver->name ?? '-' }}</p>
+                                    <p><strong>Nomor HP:</strong> {{ $suratjalan->driver->phone_number ?? '-' }}</p>
+                                    <p><strong>Nama Kendaraan:</strong> {{ $suratjalan->driver->vehicle_name ?? '-' }}</p>
+                                    <p><strong>Nomor Plat Kendaraan:</strong>
+                                        {{ $suratjalan->driver->license_number ?? '-' }}</p>
+                                    <p><strong>Alamat:</strong> {{ $suratjalan->driver->address ?? '-' }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <div class="form-sample">
-                                <div class="form-group">
-                                    <label for="driverId">Driver ID</label>
-                                    <p id="driverId">{{-- {{ $suratjalan->driver_id }} --}}</p>
+                        <div class="col-md-6">
+                            <label>Paket</label>
+                            <div class="form-group" style="text-align: center;">
+                                <div class="image-upload"
+                                    style="position: relative; display: inline-block; margin-bottom: 10px;">
+                                    <img src="{{ $suratjalan->paket->image ? asset('storage/pakets/' . $suratjalan->paket->image) : 'https://via.placeholder.com/200' }}"
+                                        alt="Pratinjau Gambar" width="200" height="200"
+                                        style="object-fit: cover; border: 3px solid #ccc; border-radius: 8px;">
                                 </div>
-                                <div class="form-group">
-                                    <label for="paketId">Paket ID</label>
-                                    <p id="paketId">{{-- {{ $suratjalan->paket_id }} --}}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <p id="status">{{-- {{ $suratjalan->status }} --}}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="latitude">Latitude</label>
-                                    <p id="latitude">{{-- {{ $suratjalan->latitude }} --}}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="longitude">Longitude</label>
-                                    <p id="longitude">{{-- {{ $suratjalan->longitude }} --}}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="location">Location</label>
-                                    <div id="mapid" style="height: 400px;"></div>
-                                    <input type="hidden" id="latitude" name="latitude" value="{{-- {{ $suratjalan->latitude }} --}}">
-                                    <input type="hidden" id="longitude" name="longitude" value="{{-- {{ $suratjalan->longitude }} --}}">
+                                <div style="text-align: center;">
+                                    <p><strong>Nama Paket:</strong> {{ $suratjalan->paket->packet_name ?? '-' }}</p>
+                                    <p><strong>Jenis Paket:</strong> {{ $suratjalan->paket->packet_type ?? '-' }}</p>
+                                    <p><strong>Nama Pengirim:</strong> {{ $suratjalan->paket->sender_name ?? '-' }}</p>
+                                    <p><strong>Nama Penerima:</strong> {{ $suratjalan->paket->receiver_name ?? '-' }}</p>
+                                    <p><strong>Berat (kg):</strong> {{ $suratjalan->paket->weight ?? '-' }}</p>
                                 </div>
                             </div>
-                            <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
-                                <a href="{{ route('operator.suratjalan.index') }}" class="btn btn-light">Back</a>
-                                <a href="{{ route('operator.suratjalan.edit') {{--, $suratjalan->id)--}} }}" class="btn btn-primary">Edit</a>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div id="loading" style="display: none;">
+                                    <div class="spinner"></div>
+                                    Memuat data...
+                                </div>
+                                <div id="mapid" style="height: 400px;" class="mt-4"></div>
                             </div>
+
+                            <div class="form-group">
+                                <label>Jarak antara Pengirim dan Penerima:</label>
+                                <p id="distance">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
+                            <a href="{{ route('operator.suratjalan.index') }}" class="btn btn-light">Back</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Add Leaflet CSS and JavaScript -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <script>
-        var latitude = parseFloat(document.getElementById('latitude').value);
-        var longitude = parseFloat(document.getElementById('longitude').value);
+        var map = null;
 
-        var mymap = L.map('mapid').setView([latitude, longitude], 13);
+        document.addEventListener('DOMContentLoaded', function() {
+            var loadingElement = document.getElementById('loading');
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(mymap);
+            if (map !== null) {
+                map.remove();
+            }
 
-        var marker = L.marker([latitude, longitude]).addTo(mymap);
+            var senderLatitude = {{ $suratjalan->paket->sender_latitude ?? 0 }};
+            var senderLongitude = {{ $suratjalan->paket->sender_longitude ?? 0 }};
+            var receiverLatitude = {{ $suratjalan->paket->receiver_latitude ?? 0 }};
+            var receiverLongitude = {{ $suratjalan->paket->receiver_longitude ?? 0 }};
+
+            var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
+                106.781
+            ];
+            var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
+
+            loadingElement.style.display = 'block';
+
+            map = L.map('mapid').setView(mapCenter, mapZoom);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map).on('load', function() {
+                loadingElement.style.display = 'none';
+            });
+
+            var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
+            var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+            var routingControl = null;
+
+            function calculateDistanceAndTime() {
+                var from = L.latLng(senderLatitude, senderLongitude);
+                var to = L.latLng(receiverLatitude, receiverLongitude);
+                var distance = from.distanceTo(to) / 1000;
+                var speed = 40;
+
+                var timeInHours = distance / speed;
+                var hours = Math.floor(timeInHours);
+                var minutes = Math.round((timeInHours - hours) * 60);
+
+                var formattedTime;
+                if (minutes === 60) {
+                    hours++;
+                    minutes = 0;
+                }
+
+                if (hours > 0 && minutes > 0) {
+                    formattedTime = hours + ' jam ' + minutes + ' menit';
+                } else if (hours > 0) {
+                    formattedTime = hours + ' jam';
+                } else {
+                    formattedTime = minutes + ' menit';
+                }
+
+                document.getElementById('distance').innerText = distance.toFixed(2) + ' km (estimasi waktu: ' +
+                    formattedTime + ')';
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: [from, to],
+                    routeWhileDragging: false,
+                    createMarker: function() {
+                        return null;
+                    },
+                }).addTo(map);
+            }
+
+            function fetchData(url, elementId) {
+                loadingElement.style.display = 'block';
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        loadingElement.style.display = 'none';
+                        var location = data.display_name;
+                        document.getElementById(elementId).innerText = location;
+                    })
+                    .catch(error => {
+                        loadingElement.style.display = 'none';
+                        console.error('Error fetching location:', error);
+                    });
+            }
+
+            fetchData(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${senderLatitude}&lon=${senderLongitude}&accept-language=id-ID`,
+                'sender_location'
+            );
+
+            fetchData(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${receiverLatitude}&lon=${receiverLongitude}&accept-language=id-ID`,
+                'receiver_location'
+            );
+
+            calculateDistanceAndTime();
+        });
     </script>
 @endsection

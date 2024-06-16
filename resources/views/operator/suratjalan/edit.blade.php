@@ -157,6 +157,7 @@
                                 <a class="btn btn-light" data-toggle="modal"
                                     data-target="#cancelConfirmationModal">Cancel</a>
                             </div>
+                        </div>
                     </form>
                 </div>
             </div>
