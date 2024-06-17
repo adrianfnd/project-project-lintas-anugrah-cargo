@@ -12,7 +12,7 @@ class SuratJalanOperatorController extends Controller
 {
     public function index()
     {
-        $suratjalans = SuratJalan::with(['driver', 'paket'])->paginate(10);
+        $suratjalans = SuratJalan::with(['driver'])->paginate(10);
 
         return view('operator.suratjalan.index', compact('suratjalans'));
     }
@@ -28,7 +28,7 @@ class SuratJalanOperatorController extends Controller
 
     public function detail($id)
     {
-        $suratjalan = SuratJalan::with(['driver', 'paket'])->findOrFail($id);
+        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
 
         return view('operator.suratjalan.detail', compact('suratjalan'));
     }
@@ -36,15 +36,15 @@ class SuratJalanOperatorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'driver' => 'required|exists:drivers,id|unique:surat_jalan,driver_id,NULL,id,paket_id,' . $request->paket,
-            'paket' => 'required|exists:paket,id|unique:surat_jalan,paket_id,NULL,id,driver_id,' . $request->driver,
+            // 'driver' => 'required|exists:drivers,id|unique:surat_jalan,driver_id,NULL,id,paket_id,' . $request->paket,
+            // 'paket' => 'required|exists:paket,id|unique:surat_jalan,paket_id,NULL,id,driver_id,' . $request->driver,
         ], [
-            'driver.required' => 'Kolom driver harus diisi.',
-            'driver.exists' => 'Driver yang dipilih tidak valid.',
-            'driver.unique' => 'Driver ini sudah terdaftar untuk paket lain.',
-            'paket.required' => 'Kolom paket harus diisi.',
-            'paket.exists' => 'Paket yang dipilih tidak valid.',
-            'paket.unique' => 'Paket ini sudah terdaftar untuk driver lain.',
+            // 'driver.required' => 'Kolom driver harus diisi.',
+            // 'driver.exists' => 'Driver yang dipilih tidak valid.',
+            // 'driver.unique' => 'Driver ini sudah terdaftar untuk paket lain.',
+            // 'paket.required' => 'Kolom paket harus diisi.',
+            // 'paket.exists' => 'Paket yang dipilih tidak valid.',
+            // 'paket.unique' => 'Paket ini sudah terdaftar untuk driver lain.',
         ]);
 
         $paket = Paket::findOrFail($request->paket);
@@ -52,7 +52,11 @@ class SuratJalanOperatorController extends Controller
         $suratjalan = new SuratJalan();
         $suratjalan->id = Str::uuid();
         $suratjalan->driver_id = $request->driver;
-        $suratjalan->paket_id = $request->paket;
+        $suratjalan->list_paket = $request->paket;
+        $suratjalan->sender_latitude = $request->sender_latitude;
+        $suratjalan->sender_longitude = $request->sender_longitude;
+        $suratjalan->receiver_latitude = $request->receiver_latitude;
+        $suratjalan->receiver_longitude = $request->receiver_longitude;
         $suratjalan->status = 'dikirim';
         $suratjalan->save();
 

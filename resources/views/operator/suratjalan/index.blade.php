@@ -21,10 +21,10 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>
+                                            {{-- <th>
                                                 <center>Foto Paket</center>
                                             </th>
-                                            <th>Nama Paket</th>
+                                            <th>Nama Paket</th> --}}
                                             <th>Nama Driver</th>
                                             <th>Nomor Telpon</th>
                                             <th>Nomor Kendaraan</th>
@@ -40,14 +40,14 @@
                                         @foreach ($suratjalans as $index => $suratjalan)
                                             <tr>
                                                 <td>{{ $suratjalans->firstItem() + $index }}</td>
-                                                <td>
+                                                {{-- <td>
                                                     <center><img
                                                             src="{{ $suratjalan->paket->image ? asset('storage/pakets/' . $suratjalan->paket->image) : 'https://via.placeholder.com/75' }}"
                                                             alt="Foto Paket" class="img-fluid rounded-circle"
                                                             style="object-fit: cover; width: 75px; height: 75px;">
                                                     </center>
                                                 </td>
-                                                <td>{{ $suratjalan->paket->packet_name }}</td>
+                                                <td>{{ $suratjalan->paket->packet_name }}</td> --}}
                                                 <td>{{ $suratjalan->driver->name }}</td>
                                                 <td>{{ $suratjalan->driver->phone_number }}</td>
                                                 <td>{{ $suratjalan->driver->license_number }}</td>
