@@ -16,20 +16,19 @@ class SuratJalan extends Model
 
     protected $fillable = [
         'driver_id', 
-        'paket_id', 
+        'list_paket', 
         'status', 
-        'latitude', 
-        'longitude'
+        'sender_latitude', 
+        'sender_longitude', 
+        'receiver_latitude', 
+        'receiver_longitude', 
+        'checkpoint_latitude', 
+        'checkpoint_longitude'
     ];
 
     public function driver()
     {
         return $this->belongsTo(Driver::class);
-    }
-
-    public function paket()
-    {
-        return $this->belongsTo(Paket::class);
     }
 
     public function laporan()

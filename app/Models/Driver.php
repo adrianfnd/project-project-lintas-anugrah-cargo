@@ -21,6 +21,7 @@ class Driver extends Model
         'license_number', 
         'vehicle_name', 
         'address', 
+        'status', 
         'rate'
     ];
 

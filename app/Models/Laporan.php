@@ -11,22 +11,14 @@ class Laporan extends Model
 
     protected $fillable = [
         'driver_id', 
-        'paket_id', 
         'surat_jalan_id', 
         'keluhan', 
-        'image', 
-        'latitude', 
-        'longitude'
+        'image'
     ];
 
     public function driver()
     {
         return $this->belongsTo(Driver::class);
-    }
-
-    public function paket()
-    {
-        return $this->belongsTo(Paket::class);
     }
 
     public function suratJalan()

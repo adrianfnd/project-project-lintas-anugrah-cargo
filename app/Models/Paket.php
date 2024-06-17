@@ -32,12 +32,19 @@ class Paket extends Model
         'dimensions', 
         'description', 
         'image', 
-        'status'
+        'status',
+        'surat_jalan_id',
+        'create_by'
     ];
 
     public function suratJalan()
     {
         return $this->hasMany(SuratJalan::class);
+    }
+
+    public function operator()
+    {
+        return $this->belongsTo(Operator::class, 'created_by');
     }
 
     public function laporan()

@@ -11,8 +11,9 @@ class RiwayatPaket extends Model
 
     protected $fillable = [
         'driver_id', 
-        'paket_id', 
+        'list_paket', 
         'surat_jalan_id', 
+        'laporan_id', 
         'status'
     ];
 
@@ -21,13 +22,13 @@ class RiwayatPaket extends Model
         return $this->belongsTo(Driver::class);
     }
 
-    public function paket()
-    {
-        return $this->belongsTo(Paket::class);
-    }
-
     public function suratJalan()
     {
         return $this->belongsTo(SuratJalan::class);
+    }
+
+    public function laporan()
+    {
+        return $this->belongsTo(Laporan::class);
     }
 }
