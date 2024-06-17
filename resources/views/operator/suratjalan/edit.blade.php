@@ -137,12 +137,95 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
+                                <!-- Paket Table -->
+                                <div class="form-group">
+                                    <label for="list_paket">List Paket</label>
+                                    <table class="table table-bordered" id="paketTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama Paket</th>
+                                                <th>Jenis Paket</th>
+                                                <th>Pengirim</th>
+                                                <th>Penerima</th>
+                                                <th>Berat (kg)</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($list_paket as $paket)
+                                                <tr>
+                                                    <td>{{ $paket['packet_name'] }}</td>
+                                                    <td>{{ $paket['packet_type'] }}</td>
+                                                    <td>{{ $paket['sender_name'] }}</td>
+                                                    <td>{{ $paket['receiver_name'] }}</td>
+                                                    <td>{{ $paket['weight'] }}</td>
+                                                    <td><button type="button"
+                                                            class="btn btn-danger btn-sm deletePaketButton">Hapus</button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <input type="hidden" id="list_paket" name="list_paket"
+                                        value="{{ $suratjalan->list_paket }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sender_searchbox">Wilayah Pengirim</label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" id="sender_searchbox" name="sender_searchbox"
+                                            placeholder="Cari lokasi pengirim" class="form-control" required
+                                            value="{{ old('sender_searchbox', $paket->sender_address ?? '') }}">
+                                        <div class="input-group-append">
+                                            <button type="button" id="sender_searchbutton"
+                                                class="btn btn-primary">Search</button>
+                                        </div>
+                                    </div>
+                                    @error('sender_searchbox')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="receiver_searchbox">Wilayah Penerima</label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" id="receiver_searchbox" name="receiver_searchbox"
+                                            placeholder="Cari lokasi penerima" class="form-control" required
+                                            value="{{ old('receiver_searchbox', $paket->receiver_address ?? '') }}">
+                                        <div class="input-group-append">
+                                            <button type="button" id="receiver_searchbutton"
+                                                class="btn btn-primary">Search</button>
+                                        </div>
+                                    </div>
+                                    @error('receiver_searchbox')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <div id="loading" style="display: none;">
                                         <div class="spinner"></div>
-                                        Memuat data...
+                                        Memuat peta...
                                     </div>
                                     <div id="mapid" style="height: 400px;" class="mt-4"></div>
+
+                                    <input type="hidden" id="sender" name="sender" required
+                                        value="{{ old('sender') }}">
+                                    <input type="hidden" id="sender_latitude" name="sender_latitude" required
+                                        value="{{ old('sender_latitude', $suratjalan->sender_latitude) }}">
+                                    <input type="hidden" id="sender_longitude" name="sender_longitude" required
+                                        value="{{ old('sender_longitude', $suratjalan->sender_longitude) }}">
+                                    <input type="hidden" id="receiver" name="receiver" required
+                                        value="{{ old('receiver') }}">
+                                    <input type="hidden" id="receiver_latitude" name="receiver_latitude" required
+                                        value="{{ old('receiver_latitude', $suratjalan->receiver_latitude) }}">
+                                    <input type="hidden" id="receiver_longitude" name="receiver_longitude" required
+                                        value="{{ old('receiver_longitude', $suratjalan->receiver_longitude) }}">
                                 </div>
 
                                 <div class="form-group">
@@ -150,6 +233,7 @@
                                     <p id="distance">-</p>
                                 </div>
                             </div>
+
                         </div>
                         <div class="col-md-12">
                             <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
@@ -234,15 +318,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
     <script>
-        var senderLatitude = "{{ $paket->sender_latitude }}";
-        var senderLongitude = "{{ $paket->sender_longitude }}";
-        var receiverLatitude = "{{ $paket->receiver_latitude }}";
-        var receiverLongitude = "{{ $paket->receiver_longitude }}";
+        var senderLatitude = "{{ $suratjalan->sender_latitude }}";
+        var senderLongitude = "{{ $suratjalan->sender_longitude }}";
+        var receiverLatitude = "{{ $suratjalan->receiver_latitude }}";
+        var receiverLongitude = "{{ $suratjalan->receiver_longitude }}";
 
         var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
             106.781
