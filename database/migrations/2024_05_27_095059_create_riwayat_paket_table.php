@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('list_paket');
             $table->uuid('surat_jalan_id');
             $table->foreign('surat_jalan_id')->references('id')->on('surat_jalan');
-            $table->uuid('laporan_id');
-            $table->foreign('laporan_id')->references('id')->on('laporan')->nullable();
+            $table->uuid('laporan_id')->nullable();
+            $table->foreign('laporan_id')->references('id')->on('laporan');
             $table->string('status');
             $table->timestamps();
         });

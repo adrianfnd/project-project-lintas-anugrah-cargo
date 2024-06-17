@@ -31,8 +31,8 @@ return new class extends Migration
             $table->text('description');
             $table->string('image');
             $table->string('status');
-            $table->uuid('surat_jalan_id');
-            $table->foreign('surat_jalan_id')->references('id')->on('surat_jalan')->nullable();
+            $table->uuid('surat_jalan_id')->nullable();
+            $table->foreign('surat_jalan_id')->references('id')->on('surat_jalan');
             $table->uuid('created_by');
             $table->foreign('created_by')->references('id')->on('operators')->nullable();
             $table->timestamps();

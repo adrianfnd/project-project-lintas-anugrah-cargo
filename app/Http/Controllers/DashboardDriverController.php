@@ -8,8 +8,6 @@ class DashboardDriverController extends Controller
 {
     public function index()
     {
-        // return view('driver.dashboard', compact('driver'));
         return view('driver.dashboard');
-
     }
 }

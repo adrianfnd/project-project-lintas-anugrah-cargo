@@ -99,6 +99,7 @@ class PaketOperatorController extends Controller
         if ($request->hasFile('image')) {
             $paket->image = basename($imageName);
         }
+        $paket->created_by = auth()->user()->operator_id;
         $paket->save();
 
         return redirect()->route('operator.paket.index')->with('success', 'Data Paket berhasil ditambahkan.');
