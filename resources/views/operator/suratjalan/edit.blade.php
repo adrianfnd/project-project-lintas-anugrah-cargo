@@ -136,62 +136,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="sender_searchbox">Wilayah Pengirim</label>
-                                    <div class="input-group mb-2">
-                                        <input type="text" id="sender_searchbox" name="sender_searchbox"
-                                            placeholder="Cari lokasi pengirim" class="form-control" required
-                                            value="{{ old('sender_searchbox', $paket->sender_address ?? '') }}">
-                                        <div class="input-group-append">
-                                            <button type="button" id="sender_searchbutton"
-                                                class="btn btn-primary">Search</button>
-                                        </div>
-                                    </div>
-                                    @error('sender_searchbox')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="receiver_searchbox">Wilayah Penerima</label>
-                                    <div class="input-group mb-2">
-                                        <input type="text" id="receiver_searchbox" name="receiver_searchbox"
-                                            placeholder="Cari lokasi penerima" class="form-control" required
-                                            value="{{ old('receiver_searchbox', $paket->receiver_address ?? '') }}">
-                                        <div class="input-group-append">
-                                            <button type="button" id="receiver_searchbutton"
-                                                class="btn btn-primary">Search</button>
-                                        </div>
-                                    </div>
-                                    @error('receiver_searchbox')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <div id="loading" style="display: none;">
                                         <div class="spinner"></div>
-                                        Memuat peta...
+                                        Memuat data...
                                     </div>
                                     <div id="mapid" style="height: 400px;" class="mt-4"></div>
-
-                                    <input type="hidden" id="sender" name="sender" required
-                                        value="{{ old('sender') }}">
-                                    <input type="hidden" id="sender_latitude" name="sender_latitude" required
-                                        value="{{ old('sender_latitude', $paket->sender_latitude) }}">
-                                    <input type="hidden" id="sender_longitude" name="sender_longitude" required
-                                        value="{{ old('sender_longitude', $paket->sender_longitude) }}">
-                                    <input type="hidden" id="receiver" name="receiver" required
-                                        value="{{ old('receiver') }}">
-                                    <input type="hidden" id="receiver_latitude" name="receiver_latitude" required
-                                        value="{{ old('receiver_latitude', $paket->receiver_latitude) }}">
-                                    <input type="hidden" id="receiver_longitude" name="receiver_longitude" required
-                                        value="{{ old('receiver_longitude', $paket->receiver_longitude) }}">
                                 </div>
 
                                 <div class="form-group">
@@ -278,6 +229,10 @@
             });
         });
     </script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -514,5 +469,96 @@
                     console.error('Error:', error);
                 });
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var driverSelect = document.getElementById('driverSelect');
+            var paketSelect = document.getElementById('paketSelect');
+            var loadingElement = document.getElementById('loading');
+
+            var selectedDriverOption = document.querySelector('#driverSelect option:checked');
+            var driverData = {
+                name: selectedDriverOption.getAttribute('data-name'),
+                phone: selectedDriverOption.getAttribute('data-phone'),
+                vehicle: selectedDriverOption.getAttribute('data-vehicle'),
+                plate: selectedDriverOption.getAttribute('data-plate'),
+                address: selectedDriverOption.getAttribute('data-address'),
+                latitude: parseFloat(selectedDriverOption.getAttribute('data-latitude')),
+                longitude: parseFloat(selectedDriverOption.getAttribute('data-longitude')),
+                image: selectedDriverOption.getAttribute('data-image')
+            };
+            updateDriverInfo(driverData);
+
+            var selectedPaketOption = document.querySelector('#paketSelect option:checked');
+            var paketData = {
+                name: selectedPaketOption.getAttribute('data-name'),
+                type: selectedPaketOption.getAttribute('data-type'),
+                sender: selectedPaketOption.getAttribute('data-sender'),
+                receiver: selectedPaketOption.getAttribute('data-receiver'),
+                weight: selectedPaketOption.getAttribute('data-weight'),
+                senderLatitude: parseFloat(selectedPaketOption.getAttribute(
+                    'data-sender-latitude')),
+                senderLongitude: parseFloat(selectedPaketOption.getAttribute(
+                    'data-sender-longitude')),
+                receiverLatitude: parseFloat(selectedPaketOption.getAttribute(
+                    'data-receiver-latitude')),
+                receiverLongitude: parseFloat(selectedPaketOption.getAttribute(
+                    'data-receiver-longitude')),
+                image: selectedPaketOption.getAttribute('data-image')
+            };
+            updatePaketInfo(paketData);
+
+            driverSelect.addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var driverData = {
+                    name: selectedOption.getAttribute('data-name'),
+                    phone: selectedOption.getAttribute('data-phone'),
+                    vehicle: selectedOption.getAttribute('data-vehicle'),
+                    plate: selectedOption.getAttribute('data-plate'),
+                    address: selectedOption.getAttribute('data-address'),
+                    latitude: parseFloat(selectedOption.getAttribute('data-latitude')),
+                    longitude: parseFloat(selectedOption.getAttribute('data-longitude')),
+                    image: selectedOption.getAttribute('data-image')
+                };
+                updateDriverInfo(driverData);
+            });
+
+            paketSelect.addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var paketData = {
+                    name: selectedOption.getAttribute('data-name'),
+                    type: selectedOption.getAttribute('data-type'),
+                    sender: selectedOption.getAttribute('data-sender'),
+                    receiver: selectedOption.getAttribute('data-receiver'),
+                    weight: selectedOption.getAttribute('data-weight'),
+                    senderLatitude: parseFloat(selectedOption.getAttribute('data-sender-latitude')),
+                    senderLongitude: parseFloat(selectedOption.getAttribute('data-sender-longitude')),
+                    receiverLatitude: parseFloat(selectedOption.getAttribute('data-receiver-latitude')),
+                    receiverLongitude: parseFloat(selectedOption.getAttribute(
+                        'data-receiver-longitude')),
+                    image: selectedOption.getAttribute('data-image')
+                };
+                updatePaketInfo(paketData);
+                updateMap();
+            });
+
+            function updateDriverInfo(driverData) {
+                document.getElementById('driverImagePreview').src = driverData.image;
+                document.getElementById('driverName').innerText = 'Nama: ' + driverData.name;
+                document.getElementById('driverPhone').innerText = 'Nomor HP: ' + driverData.phone;
+                document.getElementById('driverVehicle').innerText = 'Nama Kendaraan: ' + driverData.vehicle;
+                document.getElementById('driverPlate').innerText = 'Nomor Plat Kendaraan: ' + driverData.plate;
+                document.getElementById('driverAddress').innerText = 'Alamat: ' + driverData.address;
+            }
+
+            function updatePaketInfo(paketData) {
+                document.getElementById('paketImagePreview').src = paketData.image;
+                document.getElementById('paketName').innerText = 'Nama Paket: ' + paketData.name;
+                document.getElementById('paketType').innerText = 'Jenis Paket: ' + paketData.type;
+                document.getElementById('paketSender').innerText = 'Nama Pengirim: ' + paketData.sender;
+                document.getElementById('paketReceiver').innerText = 'Nama Penerima: ' + paketData.receiver;
+                document.getElementById('paketWeight').innerText = 'Berat (kg): ' + paketData.weight;
+            }
+        });
     </script>
 @endsection
