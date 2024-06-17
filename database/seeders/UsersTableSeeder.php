@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class UsersTableSeeder extends Seeder
 {
@@ -15,6 +16,8 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
+
         $adminId = Str::uuid()->toString();
         DB::table('admins')->insert([
             'id' => $adminId,
@@ -68,7 +71,7 @@ class UsersTableSeeder extends Seeder
             'id' => $driverId,
             'created_by' => $adminId,
             'name' => 'Driver User',
-            'image' => 'driver.jpg',
+            'image' => $faker->imageUrl($width = 640, $height = 480, 'people', true, 'Faker'),
             'phone_number' => '0987654321',
             'license_number' => 'D123456',
             'vehicle_name' => 'Driver Vehicle',

@@ -15,11 +15,14 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('driver_id');
             $table->foreign('driver_id')->references('id')->on('drivers');
-            $table->uuid('paket_id');
-            $table->foreign('paket_id')->references('id')->on('paket');
+            $table->string('list_paket');
             $table->string('status');
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
+            $table->decimal('sender_latitude', 10, 8);
+            $table->decimal('sender_longitude', 11, 8);
+            $table->decimal('receiver_latitude', 10, 8);
+            $table->decimal('receiver_longitude', 11, 8);
+            $table->decimal('checkpoint_latitude', 10, 8)->nullable();
+            $table->decimal('checkpoint_longitude', 11, 8)->nullable();
             $table->timestamps();
         });
     }

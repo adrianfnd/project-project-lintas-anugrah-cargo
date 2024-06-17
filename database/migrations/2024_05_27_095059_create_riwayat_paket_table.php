@@ -15,10 +15,11 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('driver_id');
             $table->foreign('driver_id')->references('id')->on('drivers');
-            $table->uuid('paket_id');
-            $table->foreign('paket_id')->references('id')->on('paket');
+            $table->string('list_paket');
             $table->uuid('surat_jalan_id');
             $table->foreign('surat_jalan_id')->references('id')->on('surat_jalan');
+            $table->uuid('laporan_id');
+            $table->foreign('laporan_id')->references('id')->on('laporan')->nullable();
             $table->string('status');
             $table->timestamps();
         });
