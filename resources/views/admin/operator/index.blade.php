@@ -23,7 +23,7 @@
                                             <th>No.</th>
                                             <th>Nama</th>
                                             <th>Alamat</th>
-                                            <th>Region</th>
+                                            <th>Wilayah</th>
                                             <th>
                                                 <center>Aksi</center>
                                             </th>

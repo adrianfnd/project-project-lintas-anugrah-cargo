@@ -35,7 +35,7 @@
                                     <p id="operatorAddress">{{ $operator->address }}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label for="operatorRegion">Region</label>
+                                    <label for="operatorRegion">Wilayah</label>
                                     <p id="operatorRegion">{{ $operator->region }}</p>
                                 </div>
                             </div>

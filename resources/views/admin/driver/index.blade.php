@@ -26,7 +26,7 @@
                                             </th>
                                             <th>Nama</th>
                                             <th>Nomor Hp</th>
-                                            <th>Nomor Kendaraan</th>
+                                            <th>Nomor Plat Kendaraan</th>
                                             <th>Nama Kendaraan</th>
                                             <th>Alamat</th>
                                             <th>

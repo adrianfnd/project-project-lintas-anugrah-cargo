@@ -19,11 +19,6 @@ class DriverAdminController extends Controller
        return view('admin.driver.index', compact('drivers'));
     }
 
-    public function create()
-    {
-        return view('admin.driver.create');
-    }
-
     public function detail($id)
     {
         $driver = Driver::findOrFail($id);
@@ -31,6 +26,11 @@ class DriverAdminController extends Controller
         $user = User::where('driver_id', $driver->id)->firstOrFail();
 
         return view('admin.driver.detail', compact('driver', 'user'));
+    }
+
+    public function create()
+    {
+        return view('admin.driver.create');
     }
 
     public function store(Request $request)
@@ -140,18 +140,19 @@ class DriverAdminController extends Controller
             'address' => 'required|string|max:255'
         ], [
             'username.required' => 'Kolom username harus diisi.',
-            'username.string' => 'Username harus berupa teks.',
-            'username.max' => 'Username tidak boleh lebih dari 255 karakter.',
             'username.unique' => 'Username sudah terdaftar.',
             'email.required' => 'Kolom email harus diisi.',
             'email.email' => 'Email harus berupa alamat email yang valid.',
-            'email.max' => 'Email tidak boleh lebih dari 255 karakter.',
             'email.unique' => 'Email sudah terdaftar.',
             'password.min' => 'Password minimal 8 karakter.',
             'password_confirmation.same' => 'Konfirmasi password tidak sama.',
+
             'name.required' => 'Kolom nama harus diisi.',
             'name.string' => 'Nama harus berupa teks.',
             'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'image.image' => 'Gambar harus berupa file gambar.',
+            'image.mimes' => 'Gambar harus memiliki format jpeg, png, jpg, atau gif.',
+            'image.max' => 'Gambar tidak boleh lebih dari 2048 kilobyte.',
             'phone_number.required' => 'Kolom nomor hp harus diisi.',
             'phone_number.string' => 'Nomor hp harus berupa teks.',
             'phone_number.max' => 'Nomor hp tidak boleh lebih dari 255 karakter.',
