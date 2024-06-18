@@ -46,7 +46,7 @@
                 <div class="card-body">
                     <h4 class="card-title" style="margin-bottom: 50px">Detail Surat Jalan</h4>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label>Driver</label>
                             <div class="form-group" style="text-align: center;">
                                 <div class="image-upload"
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        {{-- <div class="col-md-6">
                             <label>Paket</label>
                             <div class="form-group" style="text-align: center;">
                                 <div class="image-upload"
@@ -82,6 +82,35 @@
                                     <p><strong>Berat (kg):</strong> {{ $suratjalan->paket->weight ?? '-' }}</p>
                                 </div>
                             </div>
+                        </div> --}}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="list_paket">List Paket</label>
+                                <table class="table table-bordered" id="paketTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Paket</th>
+                                            <th>Jenis Paket</th>
+                                            <th>Pengirim</th>
+                                            <th>Penerima</th>
+                                            <th>Berat (kg)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($list_paket as $paket)
+                                            <tr>
+                                                <td>{{ $paket['packet_name'] }}</td>
+                                                <td>{{ $paket['packet_type'] }}</td>
+                                                <td>{{ $paket['sender_name'] }}</td>
+                                                <td>{{ $paket['receiver_name'] }}</td>
+                                                <td>{{ $paket['weight'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <input type="hidden" id="list_paket" name="list_paket"
+                                    value="{{ json_encode($list_paket) }}">
+                            </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
@@ -90,6 +119,15 @@
                                     Memuat data...
                                 </div>
                                 <div id="mapid" style="height: 400px;" class="mt-4"></div>
+
+                                <input type="hidden" id="sender_latitude" name="sender_latitude" required
+                                    value="{{ $suratjalan->sender_latitude }}">
+                                <input type="hidden" id="sender_longitude" name="sender_longitude" required
+                                    value="{{ $suratjalan->sender_longitude }}">
+                                <input type="hidden" id="receiver_latitude" name="receiver_latitude" required
+                                    value="{{ $suratjalan->receiver_latitude }}">
+                                <input type="hidden" id="receiver_longitude" name="receiver_longitude" required
+                                    value="{{ $suratjalan->receiver_longitude }}">
                             </div>
 
                             <div class="form-group">
@@ -112,42 +150,40 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <script>
-        var map = null;
+        var senderLatitude = "{{ $suratjalan->sender_latitude }}";
+        var senderLongitude = "{{ $suratjalan->sender_longitude }}";
+        var receiverLatitude = "{{ $suratjalan->receiver_latitude }}";
+        var receiverLongitude = "{{ $suratjalan->receiver_longitude }}";
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var loadingElement = document.getElementById('loading');
+        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
+            106.781
+        ];
+        var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
 
-            if (map !== null) {
-                map.remove();
-            }
+        var loadingElement = document.getElementById('loading');
+        loadingElement.style.display = 'block';
 
-            var senderLatitude = {{ $suratjalan->paket->sender_latitude ?? 0 }};
-            var senderLongitude = {{ $suratjalan->paket->sender_longitude ?? 0 }};
-            var receiverLatitude = {{ $suratjalan->paket->receiver_latitude ?? 0 }};
-            var receiverLongitude = {{ $suratjalan->paket->receiver_longitude ?? 0 }};
+        var map = L.map('mapid').setView(mapCenter, mapZoom);
 
-            var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263,
-                106.781
-            ];
-            var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map).on('load', function() {
+            loadingElement.style.display = 'none';
+        });
 
-            loadingElement.style.display = 'block';
+        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
+        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+        var routingControl = null;
 
-            map = L.map('mapid').setView(mapCenter, mapZoom);
+        function calculateDistanceAndTime() {
+            var senderLat = parseFloat(document.getElementById('sender_latitude').value);
+            var senderLon = parseFloat(document.getElementById('sender_longitude').value);
+            var receiverLat = parseFloat(document.getElementById('receiver_latitude').value);
+            var receiverLon = parseFloat(document.getElementById('receiver_longitude').value);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map).on('load', function() {
-                loadingElement.style.display = 'none';
-            });
-
-            var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
-            var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
-            var routingControl = null;
-
-            function calculateDistanceAndTime() {
-                var from = L.latLng(senderLatitude, senderLongitude);
-                var to = L.latLng(receiverLatitude, receiverLongitude);
+            if (!isNaN(senderLat) && !isNaN(senderLon) && !isNaN(receiverLat) && !isNaN(receiverLon)) {
+                var from = L.latLng(senderLat, senderLon);
+                var to = L.latLng(receiverLat, receiverLon);
                 var distance = from.distanceTo(to) / 1000;
                 var speed = 40;
 
@@ -169,7 +205,7 @@
                     formattedTime = minutes + ' menit';
                 }
 
-                document.getElementById('distance').innerText = distance.toFixed(2) + ' km (estimasi waktu: ' +
+                document.getElementById('distance').innerText = distance.toFixed(2) + ' km ( estimasi waktu : ' +
                     formattedTime + ')';
 
                 if (routingControl) {
@@ -184,33 +220,33 @@
                     },
                 }).addTo(map);
             }
+        }
 
-            function fetchData(url, elementId) {
-                loadingElement.style.display = 'block';
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        loadingElement.style.display = 'none';
-                        var location = data.display_name;
-                        document.getElementById(elementId).innerText = location;
-                    })
-                    .catch(error => {
-                        loadingElement.style.display = 'none';
-                        console.error('Error fetching location:', error);
-                    });
-            }
+        function fetchData(url, elementId) {
+            loadingElement.style.display = 'block';
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    loadingElement.style.display = 'none';
+                    var location = data.display_name;
+                    document.getElementById(elementId).innerText = location;
+                })
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    console.error('Error fetching location:', error);
+                });
+        }
 
-            fetchData(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${senderLatitude}&lon=${senderLongitude}&accept-language=id-ID`,
-                'sender_location'
-            );
+        fetchData(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${senderLatitude}&lon=${senderLongitude}&accept-language=id-ID`,
+            'sender_location'
+        );
 
-            fetchData(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${receiverLatitude}&lon=${receiverLongitude}&accept-language=id-ID`,
-                'receiver_location'
-            );
+        fetchData(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${receiverLatitude}&lon=${receiverLongitude}&accept-language=id-ID`,
+            'receiver_location'
+        );
 
-            calculateDistanceAndTime();
-        });
+        calculateDistanceAndTime();
     </script>
 @endsection

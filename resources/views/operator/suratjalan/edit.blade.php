@@ -94,25 +94,29 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="paketSelect">Cari Paket</label>
-                                    <select id="paketSelect" name="paket" class="form-control">
-                                        <option value="">Pilih Paket</option>
-                                        @foreach ($pakets as $paket)
-                                            <option name="paket" value="{{ $paket->id }}"
-                                                data-name="{{ $paket->packet_name }}"
-                                                data-type="{{ $paket->packet_type }}"
-                                                data-sender="{{ $paket->sender_name }}"
-                                                data-receiver="{{ $paket->receiver_name }}"
-                                                data-weight="{{ $paket->weight }}"
-                                                data-sender-latitude="{{ $paket->sender_latitude }}"
-                                                data-sender-longitude="{{ $paket->sender_longitude }}"
-                                                data-receiver-latitude="{{ $paket->receiver_latitude }}"
-                                                data-receiver-longitude="{{ $paket->receiver_longitude }}"
-                                                data-image="{{ asset('storage/pakets/' . $paket->image) }}"
-                                                {{ $suratjalan->paket_id == $paket->id ? 'selected' : '' }}>
-                                                {{ $paket->packet_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <div class="input-group">
+                                        <select id="paketSelect" name="paket" class="form-control">
+                                            <option value="">Pilih Paket</option>
+                                            @foreach ($pakets as $paket)
+                                                <option name="paket" value="{{ $paket->id }}"
+                                                    data-name="{{ $paket->packet_name }}"
+                                                    data-type="{{ $paket->packet_type }}"
+                                                    data-sender="{{ $paket->sender_name }}"
+                                                    data-receiver="{{ $paket->receiver_name }}"
+                                                    data-weight="{{ $paket->weight }}"
+                                                    data-sender-latitude="{{ $paket->sender_latitude }}"
+                                                    data-sender-longitude="{{ $paket->sender_longitude }}"
+                                                    data-receiver-latitude="{{ $paket->receiver_latitude }}"
+                                                    data-receiver-longitude="{{ $paket->receiver_longitude }}"
+                                                    data-image="{{ asset('storage/pakets/' . $paket->image) }}">
+                                                    {{ $paket->packet_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button type="button" id="addPaketButton" class="btn btn-primary">Add</button>
+                                        </div>
+                                    </div>
                                     @if ($errors->has('paket'))
                                         <span class="text-danger">{{ $errors->first('paket') }}</span>
                                     @endif
@@ -153,21 +157,22 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($list_paket as $paket)
-                                                <tr>
+                                                <tr data-paket-id="{{ $paket['id'] }}">
                                                     <td>{{ $paket['packet_name'] }}</td>
                                                     <td>{{ $paket['packet_type'] }}</td>
                                                     <td>{{ $paket['sender_name'] }}</td>
                                                     <td>{{ $paket['receiver_name'] }}</td>
                                                     <td>{{ $paket['weight'] }}</td>
-                                                    <td><button type="button"
-                                                            class="btn btn-danger btn-sm deletePaketButton">Hapus</button>
+                                                    <td>
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-danger remove-paket">Remove</button>
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                     <input type="hidden" id="list_paket" name="list_paket"
-                                        value="{{ $suratjalan->list_paket }}">
+                                        value="{{ json_encode($list_paket_ids) }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -639,6 +644,87 @@
                 document.getElementById('paketReceiver').innerText = 'Nama Penerima: ' + paketData.receiver;
                 document.getElementById('paketWeight').innerText = 'Berat (kg): ' + paketData.weight;
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paketTable = document.getElementById('paketTable');
+            const addPaketButton = document.getElementById('addPaketButton');
+            const listPaketInput = document.getElementById('list_paket');
+
+            addPaketButton.addEventListener('click', function() {
+                const paketSelect = document.getElementById('paketSelect');
+                const paketId = paketSelect.value;
+                const paketOption = paketSelect.options[paketSelect.selectedIndex];
+
+                if (paketId && !isPaketInList(paketId)) {
+                    const paketData = {
+                        id: paketId,
+                        name: paketOption.getAttribute('data-name'),
+                        type: paketOption.getAttribute('data-type'),
+                        sender: paketOption.getAttribute('data-sender'),
+                        receiver: paketOption.getAttribute('data-receiver'),
+                        weight: paketOption.getAttribute('data-weight')
+                    };
+                    addPaketRow(paketData);
+                    updateListPaketField();
+                } else {
+                    console.log('Paket sudah ada di dalam daftar atau pilihan tidak valid.');
+                }
+            });
+
+            function isPaketInList(paketId) {
+                const paketRows = paketTable.querySelectorAll('tr');
+                let found = false;
+                paketRows.forEach(function(row) {
+                    if (row.dataset.paketId == paketId) {
+                        found = true;
+                    }
+                });
+                return found;
+            }
+
+            function addPaketRow(paketData) {
+                const row = document.createElement('tr');
+                row.dataset.paketId = paketData.id;
+
+                const html = `
+            <td>${paketData.name}</td>
+            <td>${paketData.type}</td>
+            <td>${paketData.sender}</td>
+            <td>${paketData.receiver}</td>
+            <td>${paketData.weight}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger remove-paket">Remove</button>
+            </td>
+        `;
+                row.innerHTML = html;
+
+                paketTable.querySelector('tbody').appendChild(row);
+            }
+
+            function updateListPaketField() {
+                const paketIds = [];
+                paketTable.querySelectorAll('tr').forEach(function(row) {
+                    const paketId = row.dataset.paketId;
+                    if (paketId) {
+                        paketIds.push(paketId);
+                    }
+                });
+                listPaketInput.value = JSON.stringify(paketIds);
+            }
+
+            paketTable.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-paket')) {
+                    const row = event.target.closest('tr');
+                    row.parentNode.removeChild(row);
+                    updateListPaketField();
+                }
+            });
+
+            // Inisialisasi nilai awal dari input list_paket
+            updateListPaketField();
         });
     </script>
 @endsection
