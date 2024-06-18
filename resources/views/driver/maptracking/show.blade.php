@@ -1,10 +1,52 @@
 @extends('layouts.main')
 
 @section('content')
+    <style>
+        .leaflet-routing-container {
+            display: none;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #333;
+            animation: spin 1s ease infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
     <div class="content-wrapper">
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
-                <div id="loading" class="loading">Memuat data...</div>
+                <div id="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    Memuat data...
+                </div>
                 <div id="mapid" style="height: 400px;"></div>
                 <div class="info-wrapper">
                     <div class="info-header">
@@ -33,8 +75,13 @@
         </div>
     </div>
 
+    <!-- Include Leaflet and Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <script>
         var senderLatitude = "{{ $suratJalan->sender_latitude }}";
         var senderLongitude = "{{ $suratJalan->sender_longitude }}";
@@ -75,8 +122,9 @@
             routingControl = L.Routing.control({
                 waypoints: waypoints,
                 routeWhileDragging: false,
-                createMarker: function() {
-                    return null;
+                createMarker: function(i, wp, nWps) {
+                    return L.marker(wp.latLng).bindPopup(i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" :
+                        "Checkpoint"));
                 },
             }).addTo(map);
         }
