@@ -21,10 +21,9 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            {{-- <th>
-                                                <center>Foto Paket</center>
-                                            </th>
-                                            <th>Nama Paket</th> --}}
+                                            <th>Jumlah Paket</th>
+                                            <th>Wilayah Pengirim</th>
+                                            <th>Wilayah Penerima</th>
                                             <th>Nama Driver</th>
                                             <th>Nomor Telpon</th>
                                             <th>Nomor Kendaraan</th>
@@ -40,14 +39,9 @@
                                         @foreach ($suratjalans as $index => $suratjalan)
                                             <tr>
                                                 <td>{{ $suratjalans->firstItem() + $index }}</td>
-                                                {{-- <td>
-                                                    <center><img
-                                                            src="{{ $suratjalan->paket->image ? asset('storage/pakets/' . $suratjalan->paket->image) : 'https://via.placeholder.com/75' }}"
-                                                            alt="Foto Paket" class="img-fluid rounded-circle"
-                                                            style="object-fit: cover; width: 75px; height: 75px;">
-                                                    </center>
-                                                </td>
-                                                <td>{{ $suratjalan->paket->packet_name }}</td> --}}
+                                                <td>{{ count(json_decode($suratjalan->list_paket)) }} Paket</td>
+                                                <td>{{ $suratjalan->sender }}</td>
+                                                <td>{{ $suratjalan->receiver }}</td>
                                                 <td>{{ $suratjalan->driver->name }}</td>
                                                 <td>{{ $suratjalan->driver->phone_number }}</td>
                                                 <td>{{ $suratjalan->driver->license_number }}</td>
@@ -59,7 +53,7 @@
                                                         @elseif ($suratjalan->status == 'dikirim')
                                                             <span
                                                                 class="badge badge-warning">{{ ucfirst($suratjalan->status) }}</span>
-                                                        @elseif ($suratjalan->status == 'terkirim')
+                                                        @elseif ($suratjalan->status == 'sampai')
                                                             <span
                                                                 class="badge badge-success">{{ ucfirst($suratjalan->status) }}</span>
                                                         @else
@@ -76,18 +70,21 @@
                                                                 <i class="ti-eye"></i>
                                                             </button>
                                                         </a>
-                                                        <a href="{{ route('operator.suratjalan.edit', $suratjalan->id) }}">
+                                                        @if ($suratjalan->status == 'proses')
+                                                            <a
+                                                                href="{{ route('operator.suratjalan.edit', $suratjalan->id) }}">
+                                                                <button type="button"
+                                                                    class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                                    <i class="ti-pencil"></i>
+                                                                </button>
+                                                            </a>
                                                             <button type="button"
-                                                                class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                                <i class="ti-pencil"></i>
+                                                                class="btn btn-inverse-danger btn-rounded btn-icon"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteModal{{ $suratjalan->id }}">
+                                                                <i class="ti-trash"></i>
                                                             </button>
-                                                        </a>
-                                                        <button type="button"
-                                                            class="btn btn-inverse-danger btn-rounded btn-icon"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteModal{{ $suratjalan->id }}">
-                                                            <i class="ti-trash"></i>
-                                                        </button>
+                                                        @endif
                                                     </center>
                                                 </td>
                                             </tr>

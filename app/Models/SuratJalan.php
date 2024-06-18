@@ -18,10 +18,13 @@ class SuratJalan extends Model
         'driver_id', 
         'list_paket', 
         'status', 
+        'sender',
         'sender_latitude', 
         'sender_longitude', 
+        'receiver',
         'receiver_latitude', 
         'receiver_longitude', 
+        'checkpoint',
         'checkpoint_latitude', 
         'checkpoint_longitude'
     ];

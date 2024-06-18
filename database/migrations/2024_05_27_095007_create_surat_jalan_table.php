@@ -17,10 +17,13 @@ return new class extends Migration
             $table->foreign('driver_id')->references('id')->on('drivers');
             $table->string('list_paket');
             $table->string('status');
+            $table->string('sender');
             $table->decimal('sender_latitude', 10, 8);
             $table->decimal('sender_longitude', 11, 8);
+            $table->string('receiver');
             $table->decimal('receiver_latitude', 10, 8);
             $table->decimal('receiver_longitude', 11, 8);
+            $table->string('checkpoint')->nullable();
             $table->decimal('checkpoint_latitude', 10, 8)->nullable();
             $table->decimal('checkpoint_longitude', 11, 8)->nullable();
             $table->timestamps();

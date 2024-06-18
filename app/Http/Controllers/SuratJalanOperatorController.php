@@ -32,9 +32,8 @@ class SuratJalanOperatorController extends Controller
 
     public function create()
     {
-        $drivers = Driver::all();
-        
-        $pakets = Paket::all();
+        $drivers = Driver::where('status', 'menunggu')->get();
+        $pakets = Paket::where('status', 'diinput')->get();
 
         return view('operator.suratjalan.create', compact('drivers', 'pakets'));
     }
@@ -53,31 +52,39 @@ class SuratJalanOperatorController extends Controller
             'sender.required' => 'Kolom Pengirim harus diisi.',
             'receiver.required' => 'Kolom Penerima harus diisi.',
         ]);
-
+    
         $suratJalan = new SuratJalan;
-
+    
         $suratJalan->id = Str::uuid();
         $suratJalan->driver_id = $request->input('driver');
+        $suratJalan->sender = $request->input('sender');
         $suratJalan->sender_latitude = $request->input('sender_latitude');
         $suratJalan->sender_longitude = $request->input('sender_longitude');
+        $suratJalan->receiver = $request->input('receiver');
         $suratJalan->receiver_latitude = $request->input('receiver_latitude');
         $suratJalan->receiver_longitude = $request->input('receiver_longitude');
         $suratJalan->list_paket = $request->input('list_paket');
-        $suratJalan->status = 'dikirim';
-
+        $suratJalan->status = 'proses';
+    
         $suratJalan->save();
+    
+        $paketIds = json_decode($request->input('list_paket'), true);
+        Paket::whereIn('id', $paketIds)->update([
+            'surat_jalan_id' => $suratJalan->id,
+            'status' => 'proses'
+        ]);
     
         session()->forget('pakets');
     
         return redirect()->route('operator.suratjalan.index')->with('success', 'Surat Jalan berhasil ditambahkan.');
     }
     
+    
 
     public function edit($id)
     {
-        $drivers = Driver::all();
-        $pakets = Paket::all();
-        // $pakets = Paket::where('status', 'diinput')->get();
+        $drivers = Driver::where('status', 'menunggu')->get();
+        $pakets = Paket::where('status', 'diinput')->get();
 
         $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
 
@@ -92,7 +99,7 @@ class SuratJalanOperatorController extends Controller
     
 
     public function update(Request $request, $id)
-    {  
+    {
         $request->validate([
             'driver' => 'required|exists:drivers,id',
             'list_paket' => 'required|string',
@@ -105,23 +112,49 @@ class SuratJalanOperatorController extends Controller
             'sender.required' => 'Kolom Pengirim harus diisi.',
             'receiver.required' => 'Kolom Penerima harus diisi.',
         ]);
+    
+        $suratJalan = SuratJalan::findOrFail($id);
+    
 
-        $suratjalan = SuratJalan::findOrFail($id);
+        $existingPaketIds = json_decode($suratJalan->list_paket, true);
+        Paket::whereIn('id', $existingPaketIds)->update([
+            'surat_jalan_id' => null,
+            'status' => 'diinput'
+        ]);
+    
+        $suratJalan->driver_id = $request->input('driver');
+        $suratJalan->sender = $request->input('sender');
+        $suratJalan->sender_latitude = $request->input('sender_latitude');
+        $suratJalan->sender_longitude = $request->input('sender_longitude');
+        $suratJalan->receiver = $request->input('receiver');
+        $suratJalan->receiver_latitude = $request->input('receiver_latitude');
+        $suratJalan->receiver_longitude = $request->input('receiver_longitude');
+        $suratJalan->list_paket = $request->input('list_paket');
+        $suratJalan->status = 'proses';
+    
+        $suratJalan->save();
 
-        $paket = Paket::find($request->paket);
-
-        $suratjalan->driver_id = $request->driver;
-        $suratjalan->paket_id = $request->paket;
-        $suratjalan->status = 'dikirim';
-        $suratjalan->save();
-
+        $newPaketIds = json_decode($request->input('list_paket'), true);
+        Paket::whereIn('id', $newPaketIds)->update([
+            'surat_jalan_id' => $suratJalan->id,
+            'status' => 'proses'
+        ]);
+    
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil diupdate.');
     }
+    
 
     public function destroy($id)
     {
         $suratjalan = SuratJalan::findOrFail($id);
-        
+
+        $paketIds = json_decode($suratjalan->list_paket, true);
+
+        Paket::whereIn('id', $paketIds)->update([
+            'surat_jalan_id' => null,
+            'status' => 'diinput'
+        ]);
+
         $suratjalan->delete();
 
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil dihapus.');
