@@ -1,68 +1,42 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\SuratJalan;
-use App\Models\RiwayatPaket;
+use Illuminate\Http\Request;
 
 class MapTrackingDriverController extends Controller
 {
-    public function showTrackingMap()
+    public function show($id)
     {
-        // $suratJalan = SuratJalan::with(['paket'])->findOrFail($id);
-        // return view('driver.maptracking.show', compact('suratJalan'));
-        return view('driver.maptracking.show');
+        $suratJalan = SuratJalan::with(['driver'])->findOrFail($id);
+
+        // Decode JSON strings to arrays, or initialize as empty arrays if null
+        $suratJalan->checkpoint_latitude = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
+        $suratJalan->checkpoint_longitude = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
+
+        return view('driver.maptracking.show', compact('suratJalan'));
     }
 
-    // public function checkpoint(Request $request, $id)
-    // {
-    //     $suratJalan = SuratJalan::findOrFail($id);
-    //     $latitude = $request->latitude;
-    //     $longitude = $request->longitude;
+    public function addCheckpoint(Request $request, $id)
+    {
+        $suratJalan = SuratJalan::findOrFail($id);
 
-    //     if ($this->isValidCheckpoint($suratJalan, $latitude, $longitude)) {
-    //         $checkpoints = json_decode($suratJalan->checkpoints, true) ?? [];
-    //         $checkpoints[] = ['latitude' => $latitude, 'longitude' => $longitude];
-    //         $suratJalan->checkpoints = json_encode($checkpoints);
-    //         $suratJalan->save();
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
 
-    //         return response()->json(['success' => true, 'message' => 'Checkpoint added successfully.']);
-    //     }
+        // Decode JSON strings to arrays, or initialize as empty arrays if null
+        $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
+        $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
 
-    //     return response()->json(['success' => false, 'message' => 'Invalid checkpoint location.']);
-    // }
+        // Append new coordinates
+        $checkpointLatitudes[] = $latitude;
+        $checkpointLongitudes[] = $longitude;
 
-    // public function completeDelivery(Request $request, $id)
-    // {
-    //     $suratJalan = SuratJalan::findOrFail($id);
-    //     $latitude = $request->latitude;
-    //     $longitude = $request->longitude;
+        // Encode arrays back to JSON strings
+        $suratJalan->checkpoint_latitude = json_encode($checkpointLatitudes);
+        $suratJalan->checkpoint_longitude = json_encode($checkpointLongitudes);
+        $suratJalan->save();
 
-    //     if ($this->isNearReceiver($suratJalan, $latitude, $longitude)) {
-    //         $suratJalan->status = 'delivered';
-    //         $suratJalan->save();
-
-    //         $riwayatPaket = new RiwayatPaket();
-    //         $riwayatPaket->driver_id = $suratJalan->driver_id;
-    //         $riwayatPaket->paket_id = $suratJalan->paket_id;
-    //         $riwayatPaket->surat_jalan_id = $suratJalan->id;
-    //         $riwayatPaket->status = 'delivered';
-    //         $riwayatPaket->save();
-
-    //         return response()->json(['success' => true, 'message' => 'Delivery completed successfully.']);
-    //     }
-
-    //     return response()->json(['success' => false, 'message' => 'Not near receiver location.']);
-    // }
-
-    // private function isValidCheckpoint(SuratJalan $suratJalan, $latitude, $longitude)
-    // {
-    //     return true;
-    // }
-
-    // private function isNearReceiver(SuratJalan $suratJalan, $latitude, $longitude)
-    // {
-    //     return true;
-    // }
+        return response()->json(['success' => true]);
+    }
 }

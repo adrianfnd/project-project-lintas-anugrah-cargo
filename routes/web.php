@@ -100,13 +100,10 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
     // Surat Jalan
     Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
     Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
-    Route::post('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'antarPaket'])->name('driver.suratjalan.antar');
- 
-    // Map Tracking
-    Route::get('maptracking/{id}', [MapTrackingDriverController::class, 'showTrackingMap'])->name('driver.maptracking.show');
-    Route::get('maptracking', [MapTrackingDriverController::class, 'showTrackingMap'])->name('driver.maptracking.show');
-    Route::post('maptracking/{id}/checkpoint', [MapTrackingDriverController::class, 'checkpoint'])->name('driver.maptracking.checkpoint');
-    Route::post('maptracking/{id}/complete', [MapTrackingDriverController::class, 'completeDelivery'])->name('driver.maptracking.complete');
+    Route::get('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'startDelivery'])->name('driver.suratjalan.antar');
+
+    Route::get('/maptracking-{id}', [MapTrackingDriverController::class, 'show'])->name('driver.maptracking.show');
+    Route::post('/maptracking-addcheckpoint-{id}', [MapTrackingDriverController::class, 'addCheckpoint'])->name('driver.maptracking.addcheckpoint');
 
     // Riwayat Paket
     Route::get('riwayat', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayat.index');

@@ -118,7 +118,8 @@
 
                         <div class="col-md-12">
                             <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
-                                <a class="btn btn-primary mr-2" href="{{ route('driver.maptracking.show') }}">Antar
+                                <a class="btn btn-primary mr-2"
+                                    href="{{ route('driver.suratjalan.antar', $suratjalan->id) }}">Antar
                                     Sekarang</a>
                                 <a href="{{ route('driver.suratjalan.index') }}" class="btn btn-light">Cancel</a>
                             </div>

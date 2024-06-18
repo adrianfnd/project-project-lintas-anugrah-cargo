@@ -30,21 +30,19 @@ class SuratJalanDriverController extends Controller
         return view('driver.suratjalan.detail', compact('suratjalan', 'list_paket', 'list_paket_ids'));
     }
 
-    public function antarPaket($id)
+    public function startDelivery($id)
     {
         $suratJalan = SuratJalan::findOrFail($id);
-
-        $suratJalan->status = 'delivered';
-
+        $suratJalan->status = 'dikirim';
         $suratJalan->save();
 
-        $riwayatPaket = new RiwayatPaket();
-        $riwayatPaket->driver_id = auth()->user()->driver->id;
-        $riwayatPaket->paket_id = $suratJalan->paket_id;
-        $riwayatPaket->surat_jalan_id = $suratJalan->id;
-        $riwayatPaket->status = 'delivered';
-        $riwayatPaket->save();
+        $paketIds = json_decode($suratJalan->list_paket, true);
+        Paket::whereIn('id', $paketIds)->update(['status' => 'dikirim']);
 
-        return redirect()->route('driver.suratjalan.detail', $id)->with('success', 'Paket berhasil diantar.');
+        $driver = auth()->user()->driver;
+        $driver->status = 'dalam_perjalanan';
+        $driver->save();
+
+        return redirect()->route('driver.maptracking.show', $suratJalan->id);
     }
 }
