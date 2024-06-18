@@ -27,7 +27,7 @@
                                     <p id="driverEmail">{{ $user->email }}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label for="driverName">Name</label>
+                                    <label for="driverName">Nama</label>
                                     <p id="driverName">{{ $driver->name }}</p>
                                 </div>
                                 <div class="form-group">

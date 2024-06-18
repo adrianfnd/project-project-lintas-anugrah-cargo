@@ -54,16 +54,16 @@
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="inputPasswordConfirmation">Password Confirmation</label>
+                            <label for="inputPasswordConfirmation">Konfirmasi Password</label>
                             <input type="password" class="form-control" id="inputPasswordConfirmation"
-                                name="password_confirmation" placeholder="Password Confirmation">
+                                name="password_confirmation" placeholder="Konfirmasi Password">
                             @if ($errors->has('password_confirmation'))
                                 <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
                             @endif
                         </div>
                         <div class="form-group">
                             <label for="inputName">Nama</label>
-                            <input type="text" class="form-control" id="inputName" name="name" placeholder="Name"
+                            <input type="text" class="form-control" id="inputName" name="name" placeholder="Nama"
                                 value="{{ old('name') }}">
                             @if ($errors->has('name'))
                                 <span class="text-danger">{{ $errors->first('name') }}</span>
@@ -72,7 +72,7 @@
                         <div class="form-group">
                             <label for="inputPhoneNumber">Nomor HP</label>
                             <input type="text" class="form-control" id="inputPhoneNumber" name="phone_number"
-                                placeholder="Phone Number" value="{{ old('phone_number') }}">
+                                placeholder="Nomor HP" value="{{ old('phone_number') }}">
                             @if ($errors->has('phone_number'))
                                 <span class="text-danger">{{ $errors->first('phone_number') }}</span>
                             @endif
@@ -80,7 +80,7 @@
                         <div class="form-group">
                             <label for="inputLicenseNumber">Nomor Plat Kendaraan</label>
                             <input type="text" class="form-control" id="inputLicenseNumber" name="license_number"
-                                placeholder="License Number" value="{{ old('license_number') }}">
+                                placeholder="Nomor Plat Kendaraan" value="{{ old('license_number') }}">
                             @if ($errors->has('license_number'))
                                 <span class="text-danger">{{ $errors->first('license_number') }}</span>
                             @endif
@@ -88,7 +88,7 @@
                         <div class="form-group">
                             <label for="inputVehicleName">Nama Kendaraan</label>
                             <input type="text" class="form-control" id="inputVehicleName" name="vehicle_name"
-                                placeholder="Vehicle Name" value="{{ old('vehicle_name') }}">
+                                placeholder="Nama Kendaraan" value="{{ old('vehicle_name') }}">
                             @if ($errors->has('vehicle_name'))
                                 <span class="text-danger">{{ $errors->first('vehicle_name') }}</span>
                             @endif
@@ -96,7 +96,7 @@
                         <div class="form-group">
                             <label for="inputAddress">Alamat</label>
                             <input type="text" class="form-control" id="inputAddress" name="address"
-                                placeholder="Address" value="{{ old('address') }}">
+                                placeholder="Alamat" value="{{ old('address') }}">
                             @if ($errors->has('address'))
                                 <span class="text-danger">{{ $errors->first('address') }}</span>
                             @endif

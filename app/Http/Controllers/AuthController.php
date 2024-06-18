@@ -19,6 +19,9 @@ class AuthController extends Controller
         $request->validate([
             'username' => 'required',
             'password' => 'required',
+        ], [
+            'username.required' => 'Username wajib diisi',
+            'password.required' => 'Password wajib diisi',
         ]);
     
         $credentials = $request->only('username', 'password');
@@ -27,11 +30,11 @@ class AuthController extends Controller
             $user = Auth::user()->load('role');
 
             if ($user->role->name == 'admin') {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('admin.operator.index');
             } elseif ($user->role->name == 'operator') {
                 return redirect()->route('operator.dashboard');
             } elseif ($user->role->name == 'driver') {
-                return redirect()->route('driver.dashboard');
+                return redirect()->route('driver.suratjalan.index');
             }
         }
     

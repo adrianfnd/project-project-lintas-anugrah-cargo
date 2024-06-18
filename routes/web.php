@@ -42,10 +42,7 @@ Route::get('forgot-password', [AuthController::class, 'showForgotPasswordForm'])
 Route::post('forgot-password', [AuthController::class, 'sendResetLink'])->name('forgot.password.post');
 
 // Admin routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    // Dashboard
-    Route::get('dashboard', [DashboardAdminController::class, 'dashboard'])->name('admin.dashboard');
-    
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {   
     // Operator
     Route::get('operators', [OperatorAdminController::class, 'index'])->name('admin.operator.index');
     Route::get('operators-create', [OperatorAdminController::class, 'create'])->name('admin.operator.create');
@@ -67,8 +64,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 // Operator routes
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function () {
-    // Dashboard
-    Route::get('dashboard', [DashboardOperatorController::class, 'dashboard'])->name('operator.dashboard');
+        // Dashboard
+        Route::get('dashboard', [DashboardOperatorController::class, 'dashboard'])->name('operator.dashboard');
 
         // Driver
         Route::get('drivers', [DriverOperatorController::class, 'index'])->name('operator.driver.index');
@@ -100,9 +97,6 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 
 // Driver routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () {
-     // Dashboard
-     Route::get('dashboard', [DashboardDriverController::class, 'index'])->name('driver.dashboard');
-
     // Surat Jalan
     Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
     Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
