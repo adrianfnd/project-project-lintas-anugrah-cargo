@@ -154,21 +154,25 @@
                                                     <th>Nama Pengirim</th>
                                                     <th>Nama Penerima</th>
                                                     <th>Berat (kg)</th>
-                                                    <th>Aksi</th>
+                                                    <th>
+                                                        <center>Aksi</center>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($list_paket as $paket)
+                                                @foreach ($list_paket as $index => $paket)
                                                     <tr data-paket-id="{{ $paket['id'] }}">
-                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $index + 1 }}</td>
                                                         <td>{{ $paket['packet_name'] }}</td>
                                                         <td>{{ $paket['packet_type'] }}</td>
                                                         <td>{{ $paket['sender_name'] }}</td>
                                                         <td>{{ $paket['receiver_name'] }}</td>
                                                         <td>{{ $paket['weight'] }}</td>
                                                         <td>
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-danger remove-paket">Remove</button>
+                                                            <center>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-danger remove-paket">Hapus</button>
+                                                            </center>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -176,6 +180,9 @@
                                         </table>
                                         <input type="hidden" id="list_paket" name="list_paket"
                                             value="{{ json_encode($list_paket_ids) }}">
+                                        @if ($errors->has('list_paket'))
+                                            <span class="text-danger">{{ $errors->first('list_paket') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -678,14 +685,19 @@
                 const row = document.createElement('tr');
                 row.dataset.paketId = paketData.id;
 
+                const rowCount = paketTable.querySelector('tbody').children.length + 1;
+
                 const html = `
+        <td>${rowCount}</td>
         <td>${paketData.name}</td>
         <td>${paketData.type}</td>
         <td>${paketData.sender}</td>
         <td>${paketData.receiver}</td>
         <td>${paketData.weight}</td>
         <td>
-            <button type="button" class="btn btn-sm btn-danger remove-paket">Hapus</button>
+            <center>
+                <button type="button" class="btn btn-sm btn-danger remove-paket">Hapus</button>
+            </center>
         </td>
     `;
                 row.innerHTML = html;

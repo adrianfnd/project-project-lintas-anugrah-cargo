@@ -41,16 +41,18 @@ class SuratJalanOperatorController extends Controller
 
     public function store(Request $request)
     {
-        // $validated = $request->validate([
-        //     'driver' => 'required|exists:drivers,id',
-        //     'list_paket' => 'required|string',
-        //     'sender_latitude' => 'required|numeric',
-        //     'sender_longitude' => 'required|numeric',
-        //     'receiver_latitude' => 'required|numeric',
-        //     'receiver_longitude' => 'required|numeric',
-        // ]);
-
-        dd($request->list_paket);
+        $request->validate([
+            'driver' => 'required|exists:drivers,id',
+            'list_paket' => 'required|string',
+            'sender' => 'required',
+            'receiver' => 'required',
+        ], [
+            'driver.required' => 'Kolom driver harus diisi.',
+            'driver.exists' => 'Driver yang dipilih tidak valid.',
+            'list_paket.required' => 'Kolom List Paket harus diisi.',
+            'sender.required' => 'Kolom Pengirim harus diisi.',
+            'receiver.required' => 'Kolom Penerima harus diisi.',
+        ]);
 
         $suratJalan = new SuratJalan;
 
@@ -90,34 +92,23 @@ class SuratJalanOperatorController extends Controller
     
 
     public function update(Request $request, $id)
-    {
-        // $request->validate([
-        //     'driver' => 'required|exists:drivers,id|unique:surat_jalan,driver_id,NULL,id,paket_id,' . $request->paket,
-        //     'paket' => 'required|exists:paket,id|unique:surat_jalan,paket_id,NULL,id,driver_id,' . $request->driver,
-        // ], [
-        //     'driver.required' => 'Kolom driver harus diisi.',
-        //     'driver.exists' => 'Driver yang dipilih tidak valid.',
-        //     'driver.unique' => 'Driver ini sudah terdaftar untuk paket lain.',
-        //     'paket.required' => 'Kolom paket harus diisi.',
-        //     'paket.exists' => 'Paket yang dipilih tidak valid.',
-        //     'paket.unique' => 'Paket ini sudah terdaftar untuk driver lain.',
-        // ]);
-
-        
-        // $validated = $request->validate([
-        //     'driver' => 'required|exists:drivers,id',
-        //     'list_paket' => 'required|string',
-        //     'sender_latitude' => 'required|numeric',
-        //     'sender_longitude' => 'required|numeric',
-        //     'receiver_latitude' => 'required|numeric',
-        //     'receiver_longitude' => 'required|numeric',
-        // ]);
-
-        dd($request->list_paket);
+    {  
+        $request->validate([
+            'driver' => 'required|exists:drivers,id',
+            'list_paket' => 'required|string',
+            'sender' => 'required',
+            'receiver' => 'required',
+        ], [
+            'driver.required' => 'Kolom driver harus diisi.',
+            'driver.exists' => 'Driver yang dipilih tidak valid.',
+            'list_paket.required' => 'Kolom List Paket harus diisi.',
+            'sender.required' => 'Kolom Pengirim harus diisi.',
+            'receiver.required' => 'Kolom Penerima harus diisi.',
+        ]);
 
         $suratjalan = SuratJalan::findOrFail($id);
 
-        $paket = Paket::findOrFail($request->paket);
+        $paket = Paket::find($request->paket);
 
         $suratjalan->driver_id = $request->driver;
         $suratjalan->paket_id = $request->paket;

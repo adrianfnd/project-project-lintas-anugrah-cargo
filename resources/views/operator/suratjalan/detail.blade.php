@@ -72,6 +72,7 @@
                                     <table class="table table-bordered" id="paketTable">
                                         <thead>
                                             <tr>
+                                                <th>No.</th>
                                                 <th>Nama Paket</th>
                                                 <th>Jenis Paket</th>
                                                 <th>Pengirim</th>
@@ -80,8 +81,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($list_paket as $paket)
+                                            @foreach ($list_paket as $index => $paket)
                                                 <tr>
+                                                    <td>{{ $index + 1 }}</td>
                                                     <td>{{ $paket['packet_name'] }}</td>
                                                     <td>{{ $paket['packet_type'] }}</td>
                                                     <td>{{ $paket['sender_name'] }}</td>
@@ -94,6 +96,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div id="loading" style="display: none;">
@@ -117,6 +120,7 @@
                                 <p id="distance">-</p>
                             </div>
                         </div>
+
                     </div>
                     <div class="col-md-12">
                         <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
@@ -127,6 +131,7 @@
             </div>
         </div>
     </div>
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>

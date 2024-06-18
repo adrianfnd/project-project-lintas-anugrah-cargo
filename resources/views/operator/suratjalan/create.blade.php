@@ -152,14 +152,16 @@
                                                     <th>Nama Pengirim</th>
                                                     <th>Nama Penerima</th>
                                                     <th>Berat (kg)</th>
-                                                    <th>Aksi</th>
+                                                    <th>
+                                                        <center>Aksi</center>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @if (session('pakets'))
-                                                    @foreach (session('pakets') as $paket)
+                                                    @foreach (session('pakets') as $index => $paket)
                                                         <tr>
-                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $index + 1 }}</td>
                                                             <td>{{ $paket['name'] }}</td>
                                                             <td>{{ $paket['type'] }}</td>
                                                             <td>{{ $paket['sender'] }}</td>
@@ -174,6 +176,9 @@
                                             </tbody>
                                         </table>
                                         <input type="hidden" name="list_paket" id="list_paket">
+                                        @if ($errors->has('list_paket'))
+                                            <span class="text-danger">{{ $errors->first('list_paket') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -641,14 +646,18 @@
                 const row = document.createElement('tr');
                 row.dataset.paketId = paketData.id;
 
+                const rowCount = paketTable.querySelector('tbody').children.length + 1;
+
                 const html = `
+        <td>${rowCount}</td>
         <td>${paketData.name}</td>
         <td>${paketData.type}</td>
         <td>${paketData.sender}</td>
         <td>${paketData.receiver}</td>
         <td>${paketData.weight}</td>
-        <td>
-            <button type="button" class="btn btn-sm btn-danger remove-paket">Hapus</button>
+        <td><center>
+                <button type="button" class="btn btn-sm btn-danger remove-paket">Hapus</button>
+            </center>
         </td>
         <input type="hidden" name="paket_ids[]" value="${paketData.id}">
         `;
