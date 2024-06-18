@@ -17,6 +17,19 @@ class SuratJalanOperatorController extends Controller
         return view('operator.suratjalan.index', compact('suratjalans'));
     }
 
+    public function detail($id)
+    {
+        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
+
+        $paketIds = json_decode($suratjalan->list_paket, true);
+        $paketList = Paket::whereIn('id', $paketIds)->get();
+        $list_paket = $paketList->toArray();
+        $list_paket_ids = array_column($list_paket, 'id');
+        $suratjalan->list_paket = json_encode($list_paket);
+
+        return view('operator.suratjalan.detail', compact('suratjalan', 'list_paket', 'list_paket_ids'));
+    }
+
     public function create()
     {
         $drivers = Driver::all();
@@ -24,21 +37,6 @@ class SuratJalanOperatorController extends Controller
         $pakets = Paket::all();
 
         return view('operator.suratjalan.create', compact('drivers', 'pakets'));
-    }
-
-    public function detail($id)
-    {
-        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
-
-        $paketIds = json_decode($suratjalan->list_paket, true);
-
-        $paketList = Paket::whereIn('id', $paketIds)->get();
-        
-        $list_paket = $paketList->toArray();
-
-        $suratjalan->list_paket = json_encode($list_paket);
-
-        return view('operator.suratjalan.detail', compact('suratjalan', 'list_paket'));
     }
 
     public function store(Request $request)
@@ -72,21 +70,19 @@ class SuratJalanOperatorController extends Controller
         return redirect()->route('operator.suratjalan.index')->with('success', 'Surat Jalan berhasil ditambahkan.');
     }
     
-    
 
     public function edit($id)
     {
-        $suratjalan = SuratJalan::findOrFail($id);
         $drivers = Driver::all();
         $pakets = Paket::all();
-    
+        // $pakets = Paket::where('status', 'diinput')->get();
+
+        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
+
         $paketIds = json_decode($suratjalan->list_paket, true);
-    
         $paketList = Paket::whereIn('id', $paketIds)->get();
         $list_paket = $paketList->toArray();
-    
         $list_paket_ids = array_column($list_paket, 'id');
-    
         $suratjalan->list_paket = json_encode($list_paket);
     
         return view('operator.suratjalan.edit', compact('suratjalan', 'drivers', 'pakets', 'list_paket', 'list_paket_ids'));

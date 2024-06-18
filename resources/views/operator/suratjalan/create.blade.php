@@ -140,37 +140,41 @@
                             </div>
 
                             <div class="col-md-12 mt-3">
-                                <input type="hidden" name="list_paket" id="list_paket">
-
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="paketTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Nama Paket</th>
-                                                <th>Jenis Paket</th>
-                                                <th>Nama Pengirim</th>
-                                                <th>Nama Penerima</th>
-                                                <th>Berat (kg)</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (session('pakets'))
-                                                @foreach (session('pakets') as $paket)
-                                                    <tr>
-                                                        <td>{{ $paket['name'] }}</td>
-                                                        <td>{{ $paket['type'] }}</td>
-                                                        <td>{{ $paket['sender'] }}</td>
-                                                        <td>{{ $paket['receiver'] }}</td>
-                                                        <td>{{ $paket['weight'] }}</td>
-                                                        <td><button type="button"
-                                                                class="btn btn-danger btn-sm remove-paket"
-                                                                data-id="{{ $paket['id'] }}">Hapus</button></td>
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
+                                <div class="form-group">
+                                    <div class="table-responsive">
+                                        <label for="list_paket">List Paket</label>
+                                        <table class="table table-bordered" id="paketTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Nama Paket</th>
+                                                    <th>Jenis Paket</th>
+                                                    <th>Nama Pengirim</th>
+                                                    <th>Nama Penerima</th>
+                                                    <th>Berat (kg)</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (session('pakets'))
+                                                    @foreach (session('pakets') as $paket)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $paket['name'] }}</td>
+                                                            <td>{{ $paket['type'] }}</td>
+                                                            <td>{{ $paket['sender'] }}</td>
+                                                            <td>{{ $paket['receiver'] }}</td>
+                                                            <td>{{ $paket['weight'] }}</td>
+                                                            <td><button type="button"
+                                                                    class="btn btn-danger btn-sm remove-paket"
+                                                                    data-id="{{ $paket['id'] }}">Hapus</button></td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                        <input type="hidden" name="list_paket" id="list_paket">
+                                    </div>
                                 </div>
                             </div>
 
@@ -235,6 +239,7 @@
                                     <p id="distance">-</p>
                                 </div>
                             </div>
+
                         </div>
                         <div class="col-md-12">
                             <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
@@ -313,86 +318,6 @@
             });
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const paketTable = document.getElementById('paketTable');
-            const addPaketButton = document.getElementById('addPaketButton');
-            const listPaketInput = document.getElementById('list_paket');
-
-            addPaketButton.addEventListener('click', function() {
-                const paketSelect = document.getElementById('paketSelect');
-                const paketId = paketSelect.value;
-                const paketOption = paketSelect.options[paketSelect.selectedIndex];
-
-                if (paketId && !isPaketInList(paketId)) {
-                    const paketData = {
-                        id: paketId,
-                        name: paketOption.getAttribute('data-name'),
-                        type: paketOption.getAttribute('data-type'),
-                        sender: paketOption.getAttribute('data-sender'),
-                        receiver: paketOption.getAttribute('data-receiver'),
-                        weight: paketOption.getAttribute('data-weight')
-                    };
-                    addPaketRow(paketData);
-                    updateListPaketField();
-                } else {
-                    console.log('Paket sudah ada di dalam daftar atau pilihan tidak valid.');
-                }
-            });
-
-            function isPaketInList(paketId) {
-                const paketRows = paketTable.querySelectorAll('tr');
-                let found = false;
-                paketRows.forEach(function(row) {
-                    if (row.dataset.paketId === paketId) {
-                        found = true;
-                    }
-                });
-                return found;
-            }
-
-            function addPaketRow(paketData) {
-                const row = document.createElement('tr');
-                row.dataset.paketId = paketData.id;
-
-                const html = `
-            <td>${paketData.name}</td>
-            <td>${paketData.type}</td>
-            <td>${paketData.sender}</td>
-            <td>${paketData.receiver}</td>
-            <td>${paketData.weight}</td>
-            <td>
-                <button type="button" class="btn btn-sm btn-danger remove-paket">Remove</button>
-            </td>
-            <input type="hidden" name="paket_ids[]" value="${paketData.id}">
-            `;
-                row.innerHTML = html;
-
-                paketTable.querySelector('tbody').appendChild(row);
-            }
-
-            function updateListPaketField() {
-                const paketIds = [];
-                paketTable.querySelectorAll('tr').forEach(function(row) {
-                    const paketId = row.dataset.paketId;
-                    if (paketId) {
-                        paketIds.push(paketId);
-                    }
-                });
-                listPaketInput.value = JSON.stringify(paketIds);
-            }
-
-            paketTable.addEventListener('click', function(event) {
-                if (event.target.classList.contains('remove-paket')) {
-                    const row = event.target.closest('tr');
-                    row.parentNode.removeChild(row);
-                    updateListPaketField();
-                }
-            });
-        });
-    </script>
-
-
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -610,6 +535,7 @@
             calculateDistanceAndTime();
         }
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var driverSelect = document.getElementById('driverSelect');
@@ -666,6 +592,89 @@
                 document.getElementById('paketReceiver').innerText = 'Nama Penerima: ' + paketData.receiver;
                 document.getElementById('paketWeight').innerText = 'Berat (kg): ' + paketData.weight;
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paketTable = document.getElementById('paketTable');
+            const addPaketButton = document.getElementById('addPaketButton');
+            const listPaketInput = document.getElementById('list_paket');
+
+            addPaketButton.addEventListener('click', function() {
+                const paketSelect = document.getElementById('paketSelect');
+                const paketId = paketSelect.value;
+                const paketOption = paketSelect.options[paketSelect.selectedIndex];
+
+                if (paketId && !isPaketInList(paketId)) {
+                    const paketData = {
+                        id: paketId,
+                        name: paketOption.getAttribute('data-name'),
+                        type: paketOption.getAttribute('data-type'),
+                        sender: paketOption.getAttribute('data-sender'),
+                        receiver: paketOption.getAttribute('data-receiver'),
+                        weight: paketOption.getAttribute('data-weight')
+                    };
+                    addPaketRow(paketData);
+                    updateListPaketField();
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Paket Sudah Ada',
+                        text: 'Paket ini sudah ditambahkan ke dalam list paket.',
+                    });
+                }
+            });
+
+            function isPaketInList(paketId) {
+                const paketRows = paketTable.querySelectorAll('tr');
+                let found = false;
+                paketRows.forEach(function(row) {
+                    if (row.dataset.paketId === paketId) {
+                        found = true;
+                    }
+                });
+                return found;
+            }
+
+            function addPaketRow(paketData) {
+                const row = document.createElement('tr');
+                row.dataset.paketId = paketData.id;
+
+                const html = `
+        <td>${paketData.name}</td>
+        <td>${paketData.type}</td>
+        <td>${paketData.sender}</td>
+        <td>${paketData.receiver}</td>
+        <td>${paketData.weight}</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-danger remove-paket">Hapus</button>
+        </td>
+        <input type="hidden" name="paket_ids[]" value="${paketData.id}">
+        `;
+                row.innerHTML = html;
+
+                paketTable.querySelector('tbody').appendChild(row);
+            }
+
+            function updateListPaketField() {
+                const paketIds = [];
+                paketTable.querySelectorAll('tr').forEach(function(row) {
+                    const paketId = row.dataset.paketId;
+                    if (paketId) {
+                        paketIds.push(paketId);
+                    }
+                });
+                listPaketInput.value = JSON.stringify(paketIds);
+            }
+
+            paketTable.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-paket')) {
+                    const row = event.target.closest('tr');
+                    row.parentNode.removeChild(row);
+                    updateListPaketField();
+                }
+            });
         });
     </script>
 @endsection

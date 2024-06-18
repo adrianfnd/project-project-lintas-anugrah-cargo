@@ -140,42 +140,46 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <!-- Paket Table -->
+
+                            <div class="col-md-12 mt-3">
                                 <div class="form-group">
-                                    <label for="list_paket">List Paket</label>
-                                    <table class="table table-bordered" id="paketTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Nama Paket</th>
-                                                <th>Jenis Paket</th>
-                                                <th>Pengirim</th>
-                                                <th>Penerima</th>
-                                                <th>Berat (kg)</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($list_paket as $paket)
-                                                <tr data-paket-id="{{ $paket['id'] }}">
-                                                    <td>{{ $paket['packet_name'] }}</td>
-                                                    <td>{{ $paket['packet_type'] }}</td>
-                                                    <td>{{ $paket['sender_name'] }}</td>
-                                                    <td>{{ $paket['receiver_name'] }}</td>
-                                                    <td>{{ $paket['weight'] }}</td>
-                                                    <td>
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-danger remove-paket">Remove</button>
-                                                    </td>
+                                    <div class="table-responsive">
+                                        <label for="list_paket">List Paket</label>
+                                        <table class="table table-bordered" id="paketTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Nama Paket</th>
+                                                    <th>Jenis Paket</th>
+                                                    <th>Nama Pengirim</th>
+                                                    <th>Nama Penerima</th>
+                                                    <th>Berat (kg)</th>
+                                                    <th>Aksi</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <input type="hidden" id="list_paket" name="list_paket"
-                                        value="{{ json_encode($list_paket_ids) }}">
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($list_paket as $paket)
+                                                    <tr data-paket-id="{{ $paket['id'] }}">
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $paket['packet_name'] }}</td>
+                                                        <td>{{ $paket['packet_type'] }}</td>
+                                                        <td>{{ $paket['sender_name'] }}</td>
+                                                        <td>{{ $paket['receiver_name'] }}</td>
+                                                        <td>{{ $paket['weight'] }}</td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-danger remove-paket">Remove</button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        <input type="hidden" id="list_paket" name="list_paket"
+                                            value="{{ json_encode($list_paket_ids) }}">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-4">
                                 <div class="form-group">
                                     <label for="sender_searchbox">Wilayah Pengirim</label>
                                     <div class="input-group mb-2">
@@ -193,7 +197,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-4">
                                 <div class="form-group">
                                     <label for="receiver_searchbox">Wilayah Penerima</label>
                                     <div class="input-group mb-2">
@@ -322,7 +326,6 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
     <script>
         var senderLatitude = "{{ $suratjalan->sender_latitude }}";
         var senderLongitude = "{{ $suratjalan->sender_longitude }}";
@@ -555,6 +558,7 @@
                 });
         }
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var driverSelect = document.getElementById('driverSelect');
@@ -573,25 +577,6 @@
                 image: selectedDriverOption.getAttribute('data-image')
             };
             updateDriverInfo(driverData);
-
-            var selectedPaketOption = document.querySelector('#paketSelect option:checked');
-            var paketData = {
-                name: selectedPaketOption.getAttribute('data-name'),
-                type: selectedPaketOption.getAttribute('data-type'),
-                sender: selectedPaketOption.getAttribute('data-sender'),
-                receiver: selectedPaketOption.getAttribute('data-receiver'),
-                weight: selectedPaketOption.getAttribute('data-weight'),
-                senderLatitude: parseFloat(selectedPaketOption.getAttribute(
-                    'data-sender-latitude')),
-                senderLongitude: parseFloat(selectedPaketOption.getAttribute(
-                    'data-sender-longitude')),
-                receiverLatitude: parseFloat(selectedPaketOption.getAttribute(
-                    'data-receiver-latitude')),
-                receiverLongitude: parseFloat(selectedPaketOption.getAttribute(
-                    'data-receiver-longitude')),
-                image: selectedPaketOption.getAttribute('data-image')
-            };
-            updatePaketInfo(paketData);
 
             driverSelect.addEventListener('change', function() {
                 var selectedOption = this.options[this.selectedIndex];
@@ -670,7 +655,11 @@
                     addPaketRow(paketData);
                     updateListPaketField();
                 } else {
-                    console.log('Paket sudah ada di dalam daftar atau pilihan tidak valid.');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Paket Sudah Ada',
+                        text: 'Paket ini sudah ditambahkan ke dalam list paket.',
+                    });
                 }
             });
 
@@ -690,15 +679,15 @@
                 row.dataset.paketId = paketData.id;
 
                 const html = `
-            <td>${paketData.name}</td>
-            <td>${paketData.type}</td>
-            <td>${paketData.sender}</td>
-            <td>${paketData.receiver}</td>
-            <td>${paketData.weight}</td>
-            <td>
-                <button type="button" class="btn btn-sm btn-danger remove-paket">Remove</button>
-            </td>
-        `;
+        <td>${paketData.name}</td>
+        <td>${paketData.type}</td>
+        <td>${paketData.sender}</td>
+        <td>${paketData.receiver}</td>
+        <td>${paketData.weight}</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-danger remove-paket">Hapus</button>
+        </td>
+    `;
                 row.innerHTML = html;
 
                 paketTable.querySelector('tbody').appendChild(row);
@@ -723,7 +712,6 @@
                 }
             });
 
-            // Inisialisasi nilai awal dari input list_paket
             updateListPaketField();
         });
     </script>

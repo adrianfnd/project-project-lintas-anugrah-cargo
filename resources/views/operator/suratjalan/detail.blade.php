@@ -65,51 +65,33 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="col-md-6">
-                            <label>Paket</label>
-                            <div class="form-group" style="text-align: center;">
-                                <div class="image-upload"
-                                    style="position: relative; display: inline-block; margin-bottom: 10px;">
-                                    <img src="{{ $suratjalan->paket->image ? asset('storage/pakets/' . $suratjalan->paket->image) : 'https://via.placeholder.com/200' }}"
-                                        alt="Pratinjau Gambar" width="200" height="200"
-                                        style="object-fit: cover; border: 3px solid #ccc; border-radius: 8px;">
-                                </div>
-                                <div style="text-align: center;">
-                                    <p><strong>Nama Paket:</strong> {{ $suratjalan->paket->packet_name ?? '-' }}</p>
-                                    <p><strong>Jenis Paket:</strong> {{ $suratjalan->paket->packet_type ?? '-' }}</p>
-                                    <p><strong>Nama Pengirim:</strong> {{ $suratjalan->paket->sender_name ?? '-' }}</p>
-                                    <p><strong>Nama Penerima:</strong> {{ $suratjalan->paket->receiver_name ?? '-' }}</p>
-                                    <p><strong>Berat (kg):</strong> {{ $suratjalan->paket->weight ?? '-' }}</p>
-                                </div>
-                            </div>
-                        </div> --}}
-                        <div class="col-md-12">
+                        <div class="col-md-12 mt-3">
                             <div class="form-group">
-                                <label for="list_paket">List Paket</label>
-                                <table class="table table-bordered" id="paketTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Paket</th>
-                                            <th>Jenis Paket</th>
-                                            <th>Pengirim</th>
-                                            <th>Penerima</th>
-                                            <th>Berat (kg)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($list_paket as $paket)
+                                <div class="table-responsive">
+                                    <label for="list_paket">List Paket</label>
+                                    <table class="table table-bordered" id="paketTable">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $paket['packet_name'] }}</td>
-                                                <td>{{ $paket['packet_type'] }}</td>
-                                                <td>{{ $paket['sender_name'] }}</td>
-                                                <td>{{ $paket['receiver_name'] }}</td>
-                                                <td>{{ $paket['weight'] }}</td>
+                                                <th>Nama Paket</th>
+                                                <th>Jenis Paket</th>
+                                                <th>Pengirim</th>
+                                                <th>Penerima</th>
+                                                <th>Berat (kg)</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <input type="hidden" id="list_paket" name="list_paket"
-                                    value="{{ json_encode($list_paket) }}">
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($list_paket as $paket)
+                                                <tr>
+                                                    <td>{{ $paket['packet_name'] }}</td>
+                                                    <td>{{ $paket['packet_type'] }}</td>
+                                                    <td>{{ $paket['sender_name'] }}</td>
+                                                    <td>{{ $paket['receiver_name'] }}</td>
+                                                    <td>{{ $paket['weight'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-12">
