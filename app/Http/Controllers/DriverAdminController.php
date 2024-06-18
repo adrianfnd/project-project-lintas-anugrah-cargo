@@ -60,7 +60,6 @@ class DriverAdminController extends Controller
         $driver->license_number = $request->license_number;
         $driver->vehicle_name = $request->vehicle_name;
         $driver->address = $request->address;
-        $driver->status = 'menunggu';
         if ($request->hasFile('image')) {
             $driver->image = basename($imageName);
         }
