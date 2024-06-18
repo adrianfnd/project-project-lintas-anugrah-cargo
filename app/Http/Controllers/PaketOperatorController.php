@@ -95,7 +95,7 @@ class PaketOperatorController extends Controller
         $paket->weight = $request->weight;
         $paket->dimensions = $request->dimensions;
         $paket->description = $request->description;
-        $paket->status = 'proses';
+        $paket->status = 'diinput';
         if ($request->hasFile('image')) {
             $paket->image = basename($imageName);
         }

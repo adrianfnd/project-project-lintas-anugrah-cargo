@@ -118,9 +118,9 @@
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="senderPhone">No. Telepon Pengirim</label>
+                                    <label for="senderPhone">Nomor Telepon Pengirim</label>
                                     <input type="text" class="form-control" id="senderPhone" name="sender_phone"
-                                        placeholder="No. Telepon Pengirim" value="{{ old('sender_phone') }}">
+                                        placeholder="Nomor Telepon Pengirim" value="{{ old('sender_phone') }}">
                                     @if ($errors->has('sender_phone'))
                                         <span class="text-danger">{{ $errors->first('sender_phone') }}</span>
                                     @endif
@@ -151,9 +151,9 @@
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="receiverPhone">No. Telepon Penerima</label>
+                                    <label for="receiverPhone">Nomor Telepon Penerima</label>
                                     <input type="text" class="form-control" id="receiverPhone" name="receiver_phone"
-                                        placeholder="No. Telepon Penerima" value="{{ old('receiver_phone') }}">
+                                        placeholder="Nomor Telepon Penerima" value="{{ old('receiver_phone') }}">
                                     @if ($errors->has('receiver_phone'))
                                         <span class="text-danger">{{ $errors->first('receiver_phone') }}</span>
                                     @endif

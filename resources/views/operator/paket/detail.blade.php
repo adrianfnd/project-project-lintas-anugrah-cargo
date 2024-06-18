@@ -88,7 +88,7 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="senderPhone">No. Telepon Pengirim</label>
+                                    <label for="senderPhone">Nomor Telepon Pengirim</label>
                                     <p class="form-control-static">{{ $paket->sender_phone }}</p>
                                 </div>
                             </div>
@@ -109,7 +109,7 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="receiverPhone">No. Telepon Penerima</label>
+                                    <label for="receiverPhone">Nomor Telepon Penerima</label>
                                     <p class="form-control-static">{{ $paket->receiver_phone }}</p>
                                 </div>
                             </div>

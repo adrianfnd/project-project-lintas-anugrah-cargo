@@ -55,13 +55,13 @@
                                                 <td>{{ $paket->receiver_address }}</td>
                                                 <td>
                                                     <center>
-                                                        @if ($paket->status == 'proses')
+                                                        @if ($paket->status == 'diinput' or $paket->status == 'proses')
                                                             <span
                                                                 class="badge badge-info">{{ ucfirst($paket->status) }}</span>
                                                         @elseif ($paket->status == 'dikirim')
                                                             <span
                                                                 class="badge badge-warning">{{ ucfirst($paket->status) }}</span>
-                                                        @elseif ($paket->status == 'terkirim')
+                                                        @elseif ($paket->status == 'sampai')
                                                             <span
                                                                 class="badge badge-success">{{ ucfirst($paket->status) }}</span>
                                                         @else
