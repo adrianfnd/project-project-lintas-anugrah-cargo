@@ -100,7 +100,6 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
     // Surat Jalan
     Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
     Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
-    Route::get('suratjalans-detail', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
     Route::post('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'antarPaket'])->name('driver.suratjalan.antar');
  
     // Map Tracking

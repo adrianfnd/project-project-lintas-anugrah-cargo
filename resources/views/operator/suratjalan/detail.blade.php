@@ -97,6 +97,20 @@
                             </div>
                         </div>
 
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sender_searchbox">Wilayah Pengirim</label>
+                                <p id="sender_location" class="form-control-static"></p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="receiver_searchbox">Wilayah Penerima</label>
+                                <p id="receiver_location" class="form-control-static"></p>
+                            </div>
+                        </div>
+
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div id="loading" style="display: none;">
@@ -121,11 +135,12 @@
                             </div>
                         </div>
 
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
-                            <a href="{{ route('operator.suratjalan.index') }}" class="btn btn-light">Back</a>
+                        <div class="col-md-12">
+                            <div class="form-group" style="margin-top: 50px; margin-bottom: 20px">
+                                <a href="{{ route('operator.suratjalan.index') }}" class="btn btn-light">Back</a>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>

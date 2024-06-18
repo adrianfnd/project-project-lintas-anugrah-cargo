@@ -6,8 +6,6 @@
             <div class="card">
                 <div class="card-body">
                     <p class="card-title">List Data Surat Jalan</p>
-                    <p class="card-description">
-                    </p>
                     <div class="row">
                         <div class="col-12">
                             <div class="table-responsive">
@@ -15,11 +13,9 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Driver ID</th>
-                                            <th>Paket ID</th>
-                                            <th>Status</th>
-                                            <th>Latitude</th>
-                                            <th>Longitude</th>
+                                            <th>Jumlah Paket</th>
+                                            <th>Wilayah Pengirim</th>
+                                            <th>Wilayah Penerima</th>
                                             <th>
                                                 <center>Aksi</center>
                                             </th>
@@ -28,16 +24,13 @@
                                     <tbody>
                                         @foreach ($suratjalans as $index => $suratjalan)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $suratjalan->driver_id }}</td>
-                                                <td>{{ $suratjalan->paket_id }}</td>
-                                                <td>{{ $suratjalan->status }}</td>
-                                                <td>{{ $suratjalan->latitude }}</td>
-                                                <td>{{ $suratjalan->longitude }}</td>
+                                                <td>{{ $suratjalans->firstItem() + $index }}</td>
+                                                <td>{{ count(json_decode($suratjalan->list_paket)) }} Paket</td>
+                                                <td>{{ $suratjalan->sender }}</td>
+                                                <td>{{ $suratjalan->receiver }}</td>
                                                 <td>
                                                     <center>
-                                                        <a
-                                                            href="{{ route('operator.suratjalan.detail', $suratjalan->id) }}">
+                                                        <a href="{{ route('driver.suratjalan.detail', $suratjalan->id) }}">
                                                             <button type="button"
                                                                 class="btn btn-inverse-success btn-rounded btn-icon">
                                                                 <i class="ti-eye"></i>
@@ -46,40 +39,12 @@
                                                     </center>
                                                 </td>
                                             </tr>
-
-                                            <!-- Modal Konfirmasi Hapus -->
-                                            <div class="modal fade" id="deleteModal{{ $suratjalan->id }}" tabindex="-1"
-                                                role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus
-                                                                Data $suratjalan Jalan</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Apakah Anda yakin ingin menghapus data $suratjalan jalan ini?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Batal</button>
-                                                            <form
-                                                                action="{{ route('operator.suratjalan.destroy', $suratjalan->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="d-flex justify-content-end">
+                                    {{ $suratjalans->links('pagination::bootstrap-4') }}
+                                </div>
                             </div>
                         </div>
                     </div>

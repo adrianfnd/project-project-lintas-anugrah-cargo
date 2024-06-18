@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SuratJalan;
+use App\Models\Paket;
+use App\Models\RiwayatPaket;
+use Illuminate\Support\Str;
 
 class SuratJalanDriverController extends Controller
 {
@@ -16,9 +19,15 @@ class SuratJalanDriverController extends Controller
 
     public function detail($id)
     {
-        $suratJalan = SuratJalan::with(['paket', 'driver'])->findOrFail($id);
+        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
 
-        return view('driver.suratjalan.detail', compact('suratJalan'));
+        $paketIds = json_decode($suratjalan->list_paket, true);
+        $paketList = Paket::whereIn('id', $paketIds)->get();
+        $list_paket = $paketList->toArray();
+        $list_paket_ids = array_column($list_paket, 'id');
+        $suratjalan->list_paket = json_encode($list_paket);
+
+        return view('driver.suratjalan.detail', compact('suratjalan', 'list_paket', 'list_paket_ids'));
     }
 
     public function antarPaket($id)
