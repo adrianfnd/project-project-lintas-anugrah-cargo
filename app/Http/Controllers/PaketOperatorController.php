@@ -11,14 +11,11 @@ class PaketOperatorController extends Controller
 {
     public function index()
     {
-        $pakets = Paket::paginate(10);
+        $pakets = Paket::orderByRaw("FIELD(status, 'Diinput', 'Proses', 'Dikirim', 'Sampai')")
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
 
         return view('operator.paket.index', compact('pakets'));
-    }
-
-    public function create()
-    {
-        return view('operator.paket.create');
     }
 
     public function detail($id)
@@ -26,6 +23,11 @@ class PaketOperatorController extends Controller
         $paket = Paket::findOrFail($id);
 
         return view('operator.paket.detail', compact('paket'));
+    }
+
+    public function create()
+    {
+        return view('operator.paket.create');
     }
 
     public function store(Request $request)
@@ -107,7 +109,7 @@ class PaketOperatorController extends Controller
 
     public function edit($id)
     {
-        $paket = Paket::findOrFail($id);
+        $paket = Paket::where('id', $id)->where('status', 'diinput')->firstOrFail();
 
         return view('operator.paket.edit', compact('paket'));
     }
@@ -156,7 +158,7 @@ class PaketOperatorController extends Controller
             'image.max' => 'Ukuran gambar maksimal :max kilobyte.',
         ]);
     
-        $paket = Paket::findOrFail($id);
+        $paket = Paket::where('id', $id)->where('status', 'diinput')->firstOrFail();
     
         $paket->packet_name = $request->packet_name;
         $paket->packet_type = $request->packet_type;
@@ -188,7 +190,7 @@ class PaketOperatorController extends Controller
 
     public function destroy($id)
     {
-        $paket = Paket::findOrFail($id);
+        $paket = Paket::where('id', $id)->where('status', 'diinput')->firstOrFail();
 
         if ($paket->image) {
             Storage::delete('public/pakets/' . $paket->image);

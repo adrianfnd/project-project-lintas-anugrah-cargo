@@ -76,18 +76,20 @@
                                                                 <i class="ti-eye"></i>
                                                             </button>
                                                         </a>
-                                                        <a href="{{ route('operator.paket.edit', $paket->id) }}">
+                                                        @if ($paket->status == 'proses' or $paket->status == 'diinput')
+                                                            <a href="{{ route('operator.paket.edit', $paket->id) }}">
+                                                                <button type="button"
+                                                                    class="btn btn-inverse-primary btn-rounded btn-icon">
+                                                                    <i class="ti-pencil"></i>
+                                                                </button>
+                                                            </a>
                                                             <button type="button"
-                                                                class="btn btn-inverse-primary btn-rounded btn-icon">
-                                                                <i class="ti-pencil"></i>
+                                                                class="btn btn-inverse-danger btn-rounded btn-icon"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteModal{{ $paket->id }}">
+                                                                <i class="ti-trash"></i>
                                                             </button>
-                                                        </a>
-                                                        <button type="button"
-                                                            class="btn btn-inverse-danger btn-rounded btn-icon"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteModal{{ $paket->id }}">
-                                                            <i class="ti-trash"></i>
-                                                        </button>
+                                                        @endif
                                                     </center>
                                                 </td>
                                             </tr>
