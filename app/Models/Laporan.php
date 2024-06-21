@@ -9,6 +9,11 @@ class Laporan extends Model
 {
     use HasFactory;
 
+    protected $table = 'laporan';
+
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'driver_id', 
         'surat_jalan_id', 

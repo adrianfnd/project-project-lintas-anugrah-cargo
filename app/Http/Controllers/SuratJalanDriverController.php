@@ -12,14 +12,20 @@ class SuratJalanDriverController extends Controller
 {
     public function index()
     {
-        $suratjalans = SuratJalan::where('driver_id', auth()->user()->driver->id)->paginate(10);
+        $suratjalans = SuratJalan::where('driver_id', auth()->user()->driver->id)
+                        ->where('status', 'proses')
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
 
         return view('driver.suratjalan.index', compact('suratjalans'));
     }
 
     public function detail($id)
     {
-        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
+        $suratjalan = SuratJalan::with(['driver'])
+                        ->where('id', $id)
+                        ->where('status', 'proses')
+                        ->firstOrFail();
 
         $paketIds = json_decode($suratjalan->list_paket, true);
         $paketList = Paket::whereIn('id', $paketIds)->get();
@@ -32,7 +38,9 @@ class SuratJalanDriverController extends Controller
 
     public function startDelivery($id)
     {
-        $suratJalan = SuratJalan::findOrFail($id);
+        $suratJalan = SuratJalan::where('id', $id)
+                        ->where('status', 'proses')
+                        ->firstOrFail();
         $suratJalan->status = 'dikirim';
         $suratJalan->save();
 

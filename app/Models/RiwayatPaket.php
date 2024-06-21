@@ -9,6 +9,11 @@ class RiwayatPaket extends Model
 {
     use HasFactory;
 
+    protected $table = 'riwayat_paket';
+
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'driver_id', 
         'list_paket', 

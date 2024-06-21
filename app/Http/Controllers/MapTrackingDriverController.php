@@ -3,15 +3,21 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratJalan;
 use App\Models\Paket;
+use App\Models\Driver;
 use App\Models\Laporan;
+use App\Models\RiwayatPaket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MapTrackingDriverController extends Controller
 {
     public function show($id)
     {
-        $suratJalan = SuratJalan::with(['driver'])->findOrFail($id);
+        $suratJalan = SuratJalan::with(['driver'])
+                        ->where('id', $id)
+                        ->where('status', 'dikirim')
+                        ->firstOrFail();
 
         $suratJalan->checkpoint_latitude = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
         $suratJalan->checkpoint_longitude = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
@@ -27,7 +33,9 @@ class MapTrackingDriverController extends Controller
 
     public function addCheckpoint(Request $request, $id)
     {
-        $suratJalan = SuratJalan::findOrFail($id);
+        $suratJalan = SuratJalan::where('id', $id)
+                        ->where('status', 'dikirim')
+                        ->firstOrFail();
 
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
@@ -75,7 +83,16 @@ class MapTrackingDriverController extends Controller
 
     public function finish(Request $request, $id)
     {
-        $suratJalan = SuratJalan::findOrFail($id);
+        // $request->validate([
+        //     'latitude' => 'required',
+        //     'longitude' => 'required',
+        //     'keluhan' => 'nullable|string|max:255',
+        //     'images' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        // ]);
+
+        $suratJalan = SuratJalan::where('id', $id)
+                            ->where('status', 'dikirim')
+                            ->firstOrFail();
 
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
@@ -84,14 +101,15 @@ class MapTrackingDriverController extends Controller
         $receiverLatitude = $suratJalan->receiver_latitude;
         $receiverLongitude = $suratJalan->receiver_longitude;
 
-        // Check lokasi apakah melebihi dari lokasi receiver
+        // Check lokasi apakah dalam radius dari lokasi receiver
         $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
-        if ($distanceFromReceiver > $radius) {
+        if ($distanceFromReceiver < $radius) {
             return response()->json(['success' => false, 'message' => 'Not within receiver radius'], 400);
         }
 
         if ($request->has('keluhan') || $request->hasFile('images')) {
             $laporan = new Laporan();
+            $laporan->id = Str::uuid();
             $laporan->driver_id = $suratJalan->driver_id;
             $laporan->surat_jalan_id = $suratJalan->id;
             $laporan->keluhan = $request->input('keluhan', '');
@@ -99,14 +117,29 @@ class MapTrackingDriverController extends Controller
             if ($request->hasFile('images')) {
                 $images = [];
                 foreach ($request->file('images') as $image) {
-                    $path = $image->store('complaint_images');
-                    $images[] = $path;
+                    $path = $image->store('public/laporan');
+                    $images[] = basename($path);
                 }
                 $laporan->image = json_encode($images);
             }
 
             $laporan->save();
         }
+
+        $riwayatPaket = new RiwayatPaket();
+        $riwayatPaket->id = Str::uuid();
+        $riwayatPaket->driver_id = $suratJalan->driver_id;
+        $riwayatPaket->list_paket = $suratJalan->list_paket;
+        $riwayatPaket->surat_jalan_id = $suratJalan->id;
+        $riwayatPaket->laporan_id = $laporan->id ?? null;
+        $riwayatPaket->status = 'sampai';
+        $riwayatPaket->save();
+
+        $paketIds = json_decode($suratJalan->list_paket, true);
+        Paket::whereIn('id', $paketIds)->update([
+            'surat_jalan_id' => $suratJalan->id,
+            'status' => 'sampai',
+        ]);
 
         $suratJalan->status = 'sampai';
         $suratJalan->save();
@@ -115,7 +148,7 @@ class MapTrackingDriverController extends Controller
         $driver->status = 'menunggu';
         $driver->save();
 
-        return response()->json(['success' => true]);
+        return redirect()->route('driver.suratjalan.index');
     }
 
     private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)

@@ -115,14 +115,19 @@
                             </div>
                         </div>
                     </div>
-                    <div id="complaintForm" style="display: none;">
-                        <label for="keluhan">Keluhan:</label>
-                        <textarea id="keluhan" name="keluhan" class="form-control"></textarea>
-                        <label for="images">Upload Images:</label>
-                        <input type="file" id="images" name="images[]" class="form-control" multiple>
+                    <div id="complaintForm">
+                        <form id="finishForm" action="{{ route('driver.maptracking.finish', $suratJalan->id) }}"
+                            method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <label for="keluhan">Keluhan:</label>
+                            <textarea id="keluhan" name="keluhan" class="form-control"></textarea>
+                            <label for="images">Upload Images:</label>
+                            <input type="file" id="images" name="images[]" class="form-control" multiple>
+                        </form>
                     </div>
                     <button id="checkpointBtn" class="btn btn-primary" style="display: none;">Checkpoint</button>
-                    <button id="finishBtn" class="btn btn-success" style="display: none;">Finish</button>
+                    <button id="finishBtn" class="btn btn-success" onclick="submitFinishForm()"
+                        style="display: none;">Finish</button>
                 </div>
             </div>
         </div>
@@ -134,6 +139,29 @@
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        function submitFinishForm() {
+            radius = 0.001;
+
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                var distance = getDistanceFromLatLonInKm(latitude, longitude, receiverLatitude, receiverLongitude);
+                if (distance < radius) {
+                    document.getElementById('finishForm').submit();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Anda tidak berada dalam radius penerima',
+                    });
+                }
+            }, function(error) {
+                console.error('Error getting location:', error);
+            });
+        }
+    </script>
 
     <script>
         var senderLatitude = "{{ $suratJalan->sender_latitude }}";
