@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use App\Models\User;
+use App\Models\SuratJalan;
 
 class AuthController extends Controller
 {
@@ -25,16 +26,31 @@ class AuthController extends Controller
         ]);
     
         $credentials = $request->only('username', 'password');
-
+    
         if (Auth::attempt($credentials)) {
             $user = Auth::user()->load('role');
-
+    
             if ($user->role->name == 'admin') {
                 return redirect()->route('admin.operator.index');
             } elseif ($user->role->name == 'operator') {
                 return redirect()->route('operator.dashboard');
             } elseif ($user->role->name == 'driver') {
-                return redirect()->route('driver.suratjalan.index');
+                $driver = $user->driver;
+    
+                if ($driver->status == 'dalam perjalanan') {
+                    $suratJalan = SuratJalan::where('status', 'dikirim')
+                        ->where('driver_id', $driver->id)
+                        ->latest()
+                        ->first();
+    
+                    if ($suratJalan) {
+                        return redirect()->route('driver.maptracking.show', ['id' => $suratJalan->id]);
+                    } else {
+                        return redirect()->route('driver.suratjalan.index');
+                    }
+                } else {
+                    return redirect()->route('driver.suratjalan.index');
+                }
             }
         }
     

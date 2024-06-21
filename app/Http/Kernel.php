@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'role' => \App\Http\Middleware\CheckRole::class,
+        'driver_status' => \App\Http\Middleware\CheckDriverStatus::class
     ];
 }

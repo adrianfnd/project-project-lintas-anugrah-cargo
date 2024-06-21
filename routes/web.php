@@ -98,14 +98,19 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 // Driver routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () {
     // Surat Jalan
-    Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
-    Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
-    Route::get('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'startDelivery'])->name('driver.suratjalan.antar');
-
-    Route::get('/maptracking-{id}', [MapTrackingDriverController::class, 'show'])->name('driver.maptracking.show');
-    Route::post('/maptracking-addcheckpoint-{id}', [MapTrackingDriverController::class, 'addCheckpoint'])->name('driver.maptracking.addcheckpoint');
+    Route::middleware('driver_status:menunggu')->group(function () {
+        Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
+        Route::get('suratjalans-detail-{id}', [SuratJalanDriverController::class, 'detail'])->name('driver.suratjalan.detail');
+        Route::get('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'startDelivery'])->name('driver.suratjalan.antar');
+    });
 
     // Riwayat Paket
+    Route::middleware('driver_status:dalam perjalanan')->group(function () {
+        Route::get('/maptracking-{id}', [MapTrackingDriverController::class, 'show'])->name('driver.maptracking.show');
+        Route::post('/maptracking-addcheckpoint-{id}', [MapTrackingDriverController::class, 'addCheckpoint'])->name('driver.maptracking.addcheckpoint');
+        Route::post('/maptracking-finish-{id}', [MapTrackingDriverController::class, 'finish'])->name('driver.maptracking.finish');
+    });
+
     Route::get('riwayat', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayat.index');
     Route::get('riwayat-detail-{id}', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');
     Route::get('riwayat-detail', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');

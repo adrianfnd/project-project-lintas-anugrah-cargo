@@ -56,13 +56,24 @@
     @elseif (Auth::user()->role->name == 'driver')
         <ul class="nav">
             @if (auth()->user()->driver->status == 'dalam perjalanan')
-                <li class="nav-item">
-                    <a class="nav-link" href="">
-                        <i class="feather icon-map menu-icon"></i>
-                        <span class="menu-title">Map Tracking</span>
-                    </a>
-                </li>
+                @php
+                    $driver = auth()->user()->driver;
+                    $suratJalan = \App\Models\SuratJalan::where('status', 'dikirim')
+                        ->where('driver_id', $driver->id)
+                        ->latest()
+                        ->first();
+                @endphp
+
+                @if ($suratJalan)
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('driver.maptracking.show', ['id' => $suratJalan->id]) }}">
+                            <i class="feather icon-map menu-icon"></i>
+                            <span class="menu-title">Map Tracking</span>
+                        </a>
+                    </li>
+                @endif
             @endif
+
             @if (auth()->user()->driver->status == 'menunggu')
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
@@ -80,14 +91,14 @@
                         </ul>
                     </div>
                 </li>
-            @else
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('driver.riwayat.index') }}">
-                        <i class="icon-grid menu-icon"></i>
-                        <span class="menu-title">History</span>
-                    </a>
-                </li>
             @endif
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('driver.riwayat.index') }}">
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">History</span>
+                </a>
+            </li>
         </ul>
     @endif
 </nav>
