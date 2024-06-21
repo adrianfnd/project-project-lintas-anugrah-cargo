@@ -57,8 +57,8 @@ class SuratJalanOperatorController extends Controller
         ]);
     
         $suratJalan = new SuratJalan;
-    
-        $suratJalan->id = Str::uuid();
+
+        $suratJalan->id = (string) Str::uuid();
         $suratJalan->driver_id = $request->input('driver');
         $suratJalan->sender = $request->input('sender');
         $suratJalan->sender_latitude = $request->input('sender_latitude');
@@ -68,22 +68,26 @@ class SuratJalanOperatorController extends Controller
         $suratJalan->receiver_longitude = $request->input('receiver_longitude');
         $suratJalan->list_paket = $request->input('list_paket');
         $suratJalan->status = 'proses';
-    
+        $suratJalan->estimated_delivery_time = $this->calculateEstimatedDeliveryTime(
+            $suratJalan->sender_latitude,
+            $suratJalan->sender_longitude,
+            $suratJalan->receiver_latitude,
+            $suratJalan->receiver_longitude
+        );
+
         $suratJalan->save();
-    
+
         $paketIds = json_decode($request->input('list_paket'), true);
         Paket::whereIn('id', $paketIds)->update([
             'surat_jalan_id' => $suratJalan->id,
             'status' => 'proses'
         ]);
-    
+
         session()->forget('pakets');
-    
+
         return redirect()->route('operator.suratjalan.index')->with('success', 'Surat Jalan berhasil ditambahkan.');
     }
     
-    
-
     public function edit($id)
     {
         $drivers = Driver::where('status', 'menunggu')->get();
@@ -120,7 +124,6 @@ class SuratJalanOperatorController extends Controller
         ]);
     
         $suratJalan = SuratJalan::where('id', $id)->where('status', 'proses')->firstOrFail();
-    
 
         $existingPaketIds = json_decode($suratJalan->list_paket, true);
         Paket::whereIn('id', $existingPaketIds)->update([
@@ -137,9 +140,15 @@ class SuratJalanOperatorController extends Controller
         $suratJalan->receiver_longitude = $request->input('receiver_longitude');
         $suratJalan->list_paket = $request->input('list_paket');
         $suratJalan->status = 'proses';
+        $suratJalan->estimated_delivery_time = $this->calculateEstimatedDeliveryTime(
+            $suratJalan->sender_latitude,
+            $suratJalan->sender_longitude,
+            $suratJalan->receiver_latitude,
+            $suratJalan->receiver_longitude
+        );    
     
         $suratJalan->save();
-
+    
         $newPaketIds = json_decode($request->input('list_paket'), true);
         Paket::whereIn('id', $newPaketIds)->update([
             'surat_jalan_id' => $suratJalan->id,
@@ -165,4 +174,26 @@ class SuratJalanOperatorController extends Controller
 
         return redirect()->route('operator.suratjalan.index')->with('success', 'Data Surat Jalan berhasil dihapus.');
     }
+
+
+    private function calculateEstimatedDeliveryTime($senderLat, $senderLon, $receiverLat, $receiverLon)
+    {
+        $earthRadius = 6371;
+    
+        $latDistance = deg2rad($receiverLat - $senderLat);
+        $lonDistance = deg2rad($receiverLon - $senderLon);
+    
+        $a = sin($latDistance / 2) * sin($latDistance / 2) +
+            cos(deg2rad($senderLat)) * cos(deg2rad($receiverLat)) *
+            sin($lonDistance / 2) * sin($lonDistance / 2);
+    
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $distance = $earthRadius * $c;
+    
+        $speed = 30;
+        $timeInHours = $distance / $speed;
+    
+        return round($timeInHours, 2);
+    }
+
 }

@@ -107,7 +107,7 @@ class MapTrackingDriverController extends Controller
             return response()->json(['success' => false, 'message' => 'Not within receiver radius'], 400);
         }
 
-        if ($request->has('keluhan') || $request->hasFile('images')) {
+        if ($request->has('keluhan') and $request->hasFile('images')) {
             $laporan = new Laporan();
             $laporan->id = Str::uuid();
             $laporan->driver_id = $suratJalan->driver_id;
@@ -144,11 +144,35 @@ class MapTrackingDriverController extends Controller
         $suratJalan->status = 'sampai';
         $suratJalan->save();
 
+        $rating = $this->calculateDriverRating($suratJalan->start_delivery_time, $suratJalan->end_delivery_time, $suratJalan->estimated_delivery_time);
+
         $driver = Driver::findOrFail($suratJalan->driver_id);
+        $driver->rate = $rating;
         $driver->status = 'menunggu';
         $driver->save();
 
         return redirect()->route('driver.suratjalan.index');
+    }
+
+    private function calculateDriverRating($startDeliveryTime, $endDeliveryTime, $estimatedDeliveryTime)
+    {
+        $start = Carbon::parse($startDeliveryTime);
+        $end = Carbon::parse($endDeliveryTime);
+        $estimated = Carbon::parse($estimatedDeliveryTime);
+
+        $hoursDifference = $end->diffInHours($estimated);
+
+        if ($hoursDifference <= 0) {
+            return 5;
+        } elseif ($hoursDifference <= 2) {
+            return 4;
+        } elseif ($hoursDifference <= 4) {
+            return 3;
+        } elseif ($hoursDifference <= 6) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 
     private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)

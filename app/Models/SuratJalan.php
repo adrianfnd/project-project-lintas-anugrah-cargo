@@ -24,9 +24,11 @@ class SuratJalan extends Model
         'receiver',
         'receiver_latitude', 
         'receiver_longitude', 
-        'checkpoint',
         'checkpoint_latitude', 
-        'checkpoint_longitude'
+        'checkpoint_longitude',
+        'start_delivery_time',
+        'estimated_delivery_time',
+        'end_delivery_time',
     ];
 
     public function driver()

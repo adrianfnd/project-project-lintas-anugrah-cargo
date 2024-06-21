@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal('receiver_longitude', 11, 8);
             $table->decimal('weight', 10, 2);
             $table->string('dimensions');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('image');
             $table->string('status');
             $table->uuid('surat_jalan_id')->nullable();

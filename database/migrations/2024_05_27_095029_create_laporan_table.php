@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreign('driver_id')->references('id')->on('drivers');
             $table->uuid('surat_jalan_id');
             $table->foreign('surat_jalan_id')->references('id')->on('surat_jalan');
-            $table->string('keluhan');
-            $table->string('image');
+            $table->string('keluhan')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

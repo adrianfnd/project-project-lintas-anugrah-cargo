@@ -23,9 +23,11 @@ return new class extends Migration
             $table->string('receiver');
             $table->decimal('receiver_latitude', 10, 8);
             $table->decimal('receiver_longitude', 11, 8);
-            $table->string('checkpoint')->nullable();
             $table->string('checkpoint_latitude')->nullable();
             $table->string('checkpoint_longitude')->nullable();
+            $table->dateTime('start_delivery_time')->nullable();
+            $table->float('estimated_delivery_time');
+            $table->dateTime('end_delivery_time')->nullable();
             $table->timestamps();
         });
     }

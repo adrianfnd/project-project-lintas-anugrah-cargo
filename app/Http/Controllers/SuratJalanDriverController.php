@@ -42,6 +42,7 @@ class SuratJalanDriverController extends Controller
                         ->where('status', 'proses')
                         ->firstOrFail();
         $suratJalan->status = 'dikirim';
+        $suratJalan->start_delivery_time = now();
         $suratJalan->save();
 
         $paketIds = json_decode($suratJalan->list_paket, true);
