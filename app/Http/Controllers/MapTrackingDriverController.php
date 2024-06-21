@@ -29,9 +29,19 @@ class MapTrackingDriverController extends Controller
 
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
+        $radius = 0.001; // Radius in degrees (approx 100 meters)
 
         $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
         $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
+
+        foreach ($checkpointLatitudes as $index => $checkpointLatitude) {
+            $checkpointLongitude = $checkpointLongitudes[$index];
+            $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
+
+            if ($distance < $radius) {
+                return response()->json(['success' => false, 'message' => 'Checkpoint already exists at this location'], 400);
+            }
+        }
 
         $checkpointLatitudes[] = $latitude;
         $checkpointLongitudes[] = $longitude;
@@ -41,5 +51,20 @@ class MapTrackingDriverController extends Controller
         $suratJalan->save();
 
         return response()->json(['success' => true]);
+    }
+
+    private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
+    {
+        $latFrom = deg2rad($latitudeFrom);
+        $lonFrom = deg2rad($longitudeFrom);
+        $latTo = deg2rad($latitudeTo);
+        $lonTo = deg2rad($longitudeTo);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+        return $angle * $earthRadius;
     }
 }
