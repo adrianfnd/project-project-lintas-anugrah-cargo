@@ -3,7 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratJalan;
 use App\Models\Paket;
+use App\Models\Laporan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MapTrackingDriverController extends Controller
 {
@@ -71,6 +73,51 @@ class MapTrackingDriverController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function finish(Request $request, $id)
+    {
+        $suratJalan = SuratJalan::findOrFail($id);
+
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+        $radius = 0.001;
+
+        $receiverLatitude = $suratJalan->receiver_latitude;
+        $receiverLongitude = $suratJalan->receiver_longitude;
+
+        // Check lokasi apakah melebihi dari lokasi receiver
+        $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
+        if ($distanceFromReceiver > $radius) {
+            return response()->json(['success' => false, 'message' => 'Not within receiver radius'], 400);
+        }
+
+        if ($request->has('keluhan') || $request->hasFile('images')) {
+            $laporan = new Laporan();
+            $laporan->driver_id = $suratJalan->driver_id;
+            $laporan->surat_jalan_id = $suratJalan->id;
+            $laporan->keluhan = $request->input('keluhan', '');
+
+            if ($request->hasFile('images')) {
+                $images = [];
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('complaint_images');
+                    $images[] = $path;
+                }
+                $laporan->image = json_encode($images);
+            }
+
+            $laporan->save();
+        }
+
+        $suratJalan->status = 'completed';
+        $suratJalan->save();
+
+        $driver = auth()->user()->driver;
+        $driver->status = 'selesai';
+        $driver->save();
+
+        return response()->json(['success' => true]);
+    }
+
     private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
     {
         $latFrom = deg2rad($latitudeFrom);
@@ -86,4 +133,5 @@ class MapTrackingDriverController extends Controller
         return $angle * $earthRadius;
     }
 }
+
 

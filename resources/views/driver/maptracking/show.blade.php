@@ -116,6 +116,13 @@
                         </div>
                     </div>
                     <button id="checkpointBtn" class="btn btn-primary">Checkpoint</button>
+                    <button id="finishBtn" class="btn btn-success" style="display: none;">Done</button>
+                    <div id="complaintForm" style="display: none;">
+                        <label for="keluhan">Keluhan:</label>
+                        <textarea id="keluhan" name="keluhan" class="form-control"></textarea>
+                        <label for="images">Upload Images:</label>
+                        <input type="file" id="images" name="images[]" class="form-control" multiple>
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,7 +219,7 @@
                             text: 'Checkpoint berhasil ditambahkan',
                         });
                         waypoints.splice(waypoints.length - 1, 0, L.latLng(latitude,
-                        longitude)); // Insert checkpoint before the last waypoint (receiver)
+                            longitude));
                         updateRoute();
                         hideLoading();
                     },
@@ -238,5 +245,89 @@
             @endforeach
             updateRoute();
         @endif
+
+        function handleFinish() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    var formData = new FormData();
+                    formData.append('latitude', latitude);
+                    formData.append('longitude', longitude);
+                    formData.append('keluhan', document.getElementById('keluhan').value);
+
+                    var images = document.getElementById('images').files;
+                    for (var i = 0; i < images.length; i++) {
+                        formData.append('images[]', images[i]);
+                    }
+
+                    fetch(`/maptracking/finish/{{ $suratJalan->id }}`, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById('checkpointBtn').style.display = 'none';
+                                document.getElementById('finishBtn').style.display = 'none';
+                                document.querySelector('.info-text').innerText =
+                                    'Paket telah sampai di tujuan!';
+                            } else {
+                                alert(data.message);
+                            }
+                        });
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        document.getElementById('finishBtn').addEventListener('click', handleFinish);
+
+        function checkIfReachedDestination() {
+            var receiverLatitude = {{ $suratJalan->receiver_latitude }};
+            var receiverLongitude = {{ $suratJalan->receiver_longitude }};
+            var radius = 0.001;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    var distance = getDistanceFromLatLonInKm(latitude, longitude, receiverLatitude,
+                        receiverLongitude);
+                    if (distance < radius) {
+                        document.getElementById('checkpointBtn').style.display = 'none';
+                        document.getElementById('finishBtn').style.display = 'block';
+                        document.getElementById('complaintForm').style.display = 'block';
+                    } else {
+                        document.getElementById('finishBtn').style.display = 'none';
+                        document.getElementById('complaintForm').style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            var R = 6371;
+            var dLat = deg2rad(lat2 - lat1);
+            var dLon = deg2rad(lon2 - lon1);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;
+            return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180);
+        }
+
+        setInterval(checkIfReachedDestination, 1000);
     </script>
 @endsection
