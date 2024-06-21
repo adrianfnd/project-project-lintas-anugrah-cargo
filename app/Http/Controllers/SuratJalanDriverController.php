@@ -40,7 +40,7 @@ class SuratJalanDriverController extends Controller
         Paket::whereIn('id', $paketIds)->update(['status' => 'dikirim']);
 
         $driver = auth()->user()->driver;
-        $driver->status = 'dalam_perjalanan';
+        $driver->status = 'dalam perjalanan';
         $driver->save();
 
         return redirect()->route('driver.maptracking.show', $suratJalan->id);

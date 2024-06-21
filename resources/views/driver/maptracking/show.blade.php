@@ -43,22 +43,30 @@
     <div class="content-wrapper">
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
-                <div id="loading" style="display: none;">
-                    <div class="spinner"></div>
-                    Memuat data...
+                <div class="info-header">
+                    <span class="info-icon"><i class="ti-truck"></i></span>
+                    <span class="info-text">Paket sedang dalam perjalanan...</span>
                 </div>
-                <div id="mapid" style="height: 400px;"></div>
                 <div class="info-wrapper">
-                    <div class="info-header">
-                        <span class="info-icon"><i class="ti-truck"></i></span>
-                        <span class="info-text">Your package is on the way.</span>
-                    </div>
                     <div class="info-content">
                         <div class="profile">
-                            <img src="https://via.placeholder.com/50" alt="Driver's profile picture" class="profile-pic">
+                            <img src="{{ $suratJalan->driver->image ? asset('storage/drivers/' . $suratJalan->driver->image) : 'https://via.placeholder.com/50' }}"
+                                alt="Driver's profile picture" class="profile-pic rounded-circle"
+                                style="object-fit: cover; width: 75px; height: 75px;">
                             <div class="profile-details">
                                 <span class="profile-name">{{ $suratJalan->driver->name }}</span>
-                                <span class="profile-rating">4.7 (256)</span>
+                                <span class="profile-rating">
+                                    @if (is_null($suratJalan->driver->rate))
+                                        <span>Rating Belum Tersedia</span>
+                                    @else
+                                        @for ($i = 0; $i < $suratJalan->driver->rate; $i++)
+                                            <i class="fas fa-star"></i>
+                                        @endfor
+                                        @for ($i = $suratJalan->driver->rate; $i < 5; $i++)
+                                            <i class="far fa-star"></i>
+                                        @endfor
+                                    @endif
+                                </span>
                             </div>
                         </div>
                         <div class="delivery-details">
@@ -66,11 +74,49 @@
                             <span class="service-type">Service: Express</span>
                         </div>
                     </div>
-                    <div class="package-photo">
-                        <img src="https://via.placeholder.com/150" alt="Package photo" class="package-pic">
+                    <div id="loading"
+                        style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 8px; text-align: center; font-size: 16px; color: #333;">
+                        <div class="spinner"
+                            style="border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #333; animation: spin 1s ease infinite; margin: 0 auto 10px;">
+                        </div>
+                        Memuat data...
                     </div>
+                    <div id="mapid" style="height: 400px;"></div>
+                    <div class="package-list">
+                        <div class="col-md-12 mt-3">
+                            <div class="form-group">
+                                <div class="table-responsive">
+                                    <label for="list_paket">List Paket</label>
+                                    <table class="table table-bordered" id="paketTable">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Nama Paket</th>
+                                                <th>Jenis Paket</th>
+                                                <th>Pengirim</th>
+                                                <th>Penerima</th>
+                                                <th>Berat (kg)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($list_paket as $index => $paket)
+                                                <tr>
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td>{{ $paket['packet_name'] }}</td>
+                                                    <td>{{ $paket['packet_type'] }}</td>
+                                                    <td>{{ $paket['sender_name'] }}</td>
+                                                    <td>{{ $paket['receiver_name'] }}</td>
+                                                    <td>{{ $paket['weight'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="checkpointBtn" class="btn btn-primary">Checkpoint</button>
                 </div>
-                <button id="checkpointBtn" class="btn btn-primary">Checkpoint</button>
             </div>
         </div>
     </div>
@@ -101,23 +147,20 @@
         var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
 
         var routingControl = null;
+        var waypoints = [
+            L.latLng(senderLatitude, senderLongitude),
+            @if (!empty($suratJalan->checkpoint_latitude))
+                @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
+                    L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}),
+                @endforeach
+            @endif
+            L.latLng(receiverLatitude, receiverLongitude)
+        ];
 
         function updateRoute() {
             if (routingControl) {
                 map.removeControl(routingControl);
             }
-
-            var waypoints = [
-                L.latLng(senderLatitude, senderLongitude)
-            ];
-
-            @if (!empty($suratJalan->checkpoint_latitude))
-                @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
-                    waypoints.push(L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}));
-                @endforeach
-            @endif
-
-            waypoints.push(L.latLng(receiverLatitude, receiverLongitude));
 
             routingControl = L.Routing.control({
                 waypoints: waypoints,
@@ -140,10 +183,9 @@
             loadingElement.style.display = 'none';
         }
 
-        showLoading();
-
-        map.on('load', function() {
+        map.whenReady(function() {
             hideLoading();
+            updateRoute();
         });
 
         checkpointBtn.addEventListener('click', function() {
@@ -169,7 +211,8 @@
                             title: 'Berhasil',
                             text: 'Checkpoint berhasil ditambahkan',
                         });
-                        console.log('Checkpoint added successfully');
+                        waypoints.splice(waypoints.length - 1, 0, L.latLng(latitude,
+                        longitude)); // Insert checkpoint before the last waypoint (receiver)
                         updateRoute();
                         hideLoading();
                     },

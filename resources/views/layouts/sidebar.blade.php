@@ -57,7 +57,7 @@
         <ul class="nav">
             @if (auth()->user()->driver->status == 'dalam perjalanan')
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('driver.maptracking.show') }}">
+                    <a class="nav-link" href="">
                         <i class="feather icon-map menu-icon"></i>
                         <span class="menu-title">Map Tracking</span>
                     </a>
@@ -80,6 +80,7 @@
                         </ul>
                     </div>
                 </li>
+            @else
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('driver.riwayat.index') }}">
                         <i class="icon-grid menu-icon"></i>
