@@ -29,11 +29,29 @@ class MapTrackingDriverController extends Controller
 
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
-        $radius = 0.001; // Radius in degrees (approx 100 meters)
+        $radius = 0.001;
+
+        $senderLatitude = $suratJalan->sender_latitude;
+        $senderLongitude = $suratJalan->sender_longitude;
+        $receiverLatitude = $suratJalan->receiver_latitude;
+        $receiverLongitude = $suratJalan->receiver_longitude;
+
+        // Check lokasi apakah melebihi dari lokasi sender
+        $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
+        if ($distanceFromSender < $radius) {
+            return response()->json(['success' => false, 'message' => 'Checkpoint too close to sender'], 400);
+        }
+
+        // Check lokasi apakah melebihi dari lokasi receiver
+        $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
+        if ($distanceFromReceiver < $radius) {
+            return response()->json(['success' => false, 'message' => 'Checkpoint too close to receiver'], 400);
+        }
 
         $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
         $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
 
+        // Check lokasi apakah melebihi dari lokasi checkpoints sekarang
         foreach ($checkpointLatitudes as $index => $checkpointLatitude) {
             $checkpointLongitude = $checkpointLongitudes[$index];
             $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
@@ -68,3 +86,4 @@ class MapTrackingDriverController extends Controller
         return $angle * $earthRadius;
     }
 }
+
