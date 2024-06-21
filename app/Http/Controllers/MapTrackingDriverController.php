@@ -91,8 +91,8 @@ class MapTrackingDriverController extends Controller
         // ]);
 
         $suratJalan = SuratJalan::where('id', $id)
-                            ->where('status', 'dikirim')
-                            ->firstOrFail();
+                        ->where('status', 'dikirim')
+                        ->firstOrFail();
 
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
@@ -147,7 +147,12 @@ class MapTrackingDriverController extends Controller
         $rating = $this->calculateDriverRating($suratJalan->start_delivery_time, $suratJalan->end_delivery_time, $suratJalan->estimated_delivery_time);
 
         $driver = Driver::findOrFail($suratJalan->driver_id);
-        $driver->rate = $rating;
+        if ($driver->rate !== null) {
+            $newRating = ($driver->rate + $rating) / 2;
+            $driver->rate = round($newRating);
+        } else {
+            $driver->rate = $rating;
+        }
         $driver->status = 'menunggu';
         $driver->save();
 
