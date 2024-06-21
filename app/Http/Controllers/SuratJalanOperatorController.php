@@ -12,7 +12,10 @@ class SuratJalanOperatorController extends Controller
 {
     public function index()
     {
-        $suratjalans = SuratJalan::with(['driver'])->paginate(10);
+        $suratjalans = SuratJalan::with(['driver'])
+                        ->orderByRaw("FIELD(status, 'proses', 'dikirim', 'sampai')")
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
 
         return view('operator.suratjalan.index', compact('suratjalans'));
     }
@@ -86,7 +89,10 @@ class SuratJalanOperatorController extends Controller
         $drivers = Driver::where('status', 'menunggu')->get();
         $pakets = Paket::where('status', 'diinput')->get();
 
-        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
+        $suratjalan = SuratJalan::with(['driver'])
+                        ->where('status', 'proses')
+                        ->where('id', $id)
+                        ->firstOrFail();
 
         $paketIds = json_decode($suratjalan->list_paket, true);
         $paketList = Paket::whereIn('id', $paketIds)->get();
@@ -113,7 +119,7 @@ class SuratJalanOperatorController extends Controller
             'receiver.required' => 'Kolom Penerima harus diisi.',
         ]);
     
-        $suratJalan = SuratJalan::findOrFail($id);
+        $suratJalan = SuratJalan::where('id', $id)->where('status', 'proses')->firstOrFail();
     
 
         $existingPaketIds = json_decode($suratJalan->list_paket, true);
@@ -146,7 +152,7 @@ class SuratJalanOperatorController extends Controller
 
     public function destroy($id)
     {
-        $suratjalan = SuratJalan::findOrFail($id);
+        $suratjalan = SuratJalan::where('id', $id)->where('status', 'proses')->firstOrFail();
 
         $paketIds = json_decode($suratjalan->list_paket, true);
 

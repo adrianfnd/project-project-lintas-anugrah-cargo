@@ -11,7 +11,7 @@ class PaketOperatorController extends Controller
 {
     public function index()
     {
-        $pakets = Paket::orderByRaw("FIELD(status, 'Diinput', 'Proses', 'Dikirim', 'Sampai')")
+        $pakets = Paket::orderByRaw("FIELD(status, 'diinput', 'proses', 'dikirim', 'sampai')")
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
 
