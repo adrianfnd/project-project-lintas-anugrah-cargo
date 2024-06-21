@@ -108,11 +108,11 @@ class MapTrackingDriverController extends Controller
             $laporan->save();
         }
 
-        $suratJalan->status = 'completed';
+        $suratJalan->status = 'sampai';
         $suratJalan->save();
 
-        $driver = auth()->user()->driver;
-        $driver->status = 'selesai';
+        $driver = Driver::findOrFail($suratJalan->driver_id);
+        $driver->status = 'menunggu';
         $driver->save();
 
         return response()->json(['success' => true]);

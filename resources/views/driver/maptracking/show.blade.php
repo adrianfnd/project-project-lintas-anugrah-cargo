@@ -115,14 +115,14 @@
                             </div>
                         </div>
                     </div>
-                    <button id="checkpointBtn" class="btn btn-primary">Checkpoint</button>
-                    <button id="finishBtn" class="btn btn-success" style="display: none;">Done</button>
                     <div id="complaintForm" style="display: none;">
                         <label for="keluhan">Keluhan:</label>
                         <textarea id="keluhan" name="keluhan" class="form-control"></textarea>
                         <label for="images">Upload Images:</label>
                         <input type="file" id="images" name="images[]" class="form-control" multiple>
                     </div>
+                    <button id="checkpointBtn" class="btn btn-primary" style="display: none;">Checkpoint</button>
+                    <button id="finishBtn" class="btn btn-success" style="display: none;">Finish</button>
                 </div>
             </div>
         </div>
@@ -246,48 +246,6 @@
             updateRoute();
         @endif
 
-        function handleFinish() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var latitude = position.coords.latitude;
-                    var longitude = position.coords.longitude;
-
-                    var formData = new FormData();
-                    formData.append('latitude', latitude);
-                    formData.append('longitude', longitude);
-                    formData.append('keluhan', document.getElementById('keluhan').value);
-
-                    var images = document.getElementById('images').files;
-                    for (var i = 0; i < images.length; i++) {
-                        formData.append('images[]', images[i]);
-                    }
-
-                    fetch(`/maptracking/finish/{{ $suratJalan->id }}`, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                document.getElementById('checkpointBtn').style.display = 'none';
-                                document.getElementById('finishBtn').style.display = 'none';
-                                document.querySelector('.info-text').innerText =
-                                    'Paket telah sampai di tujuan!';
-                            } else {
-                                alert(data.message);
-                            }
-                        });
-                });
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
-
-        document.getElementById('finishBtn').addEventListener('click', handleFinish);
-
         function checkIfReachedDestination() {
             var receiverLatitude = {{ $suratJalan->receiver_latitude }};
             var receiverLongitude = {{ $suratJalan->receiver_longitude }};
@@ -305,6 +263,7 @@
                         document.getElementById('finishBtn').style.display = 'block';
                         document.getElementById('complaintForm').style.display = 'block';
                     } else {
+                        document.getElementById('checkpointBtn').style.display = 'block';
                         document.getElementById('finishBtn').style.display = 'none';
                         document.getElementById('complaintForm').style.display = 'none';
                     }
@@ -328,6 +287,7 @@
             return deg * (Math.PI / 180);
         }
 
-        setInterval(checkIfReachedDestination, 1000);
+        setInterval(checkIfReachedDestination, 10000);
+        checkIfReachedDestination();
     </script>
 @endsection
