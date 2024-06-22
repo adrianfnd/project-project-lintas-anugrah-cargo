@@ -20,6 +20,9 @@ class RiwayatPaketOperatorController extends Controller
     public function detail($id)
     {
         $riwayatpaket = RiwayatPaket::with(['driver', 'suratJalan'])->findOrFail($id);
+
+        $riwayatpaket->suratJalan->checkpoint_latitude = json_decode($riwayatpaket->suratJalan->checkpoint_latitude, true) ?? [];
+        $riwayatpaket->suratJalan->checkpoint_longitude = json_decode($riwayatpaket->suratJalan->checkpoint_longitude, true) ?? [];
         
         $paketIds = json_decode($riwayatpaket->list_paket, true);
         $paketList = Paket::whereIn('id', $paketIds)->get();

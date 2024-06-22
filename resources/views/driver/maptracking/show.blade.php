@@ -232,12 +232,12 @@
         var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
 
         var map = L.map('mapid', {
-            dragging: false,
-            touchZoom: false,
-            doubleClickZoom: false,
-            scrollWheelZoom: false,
-            boxZoom: false,
-            zoomControl: false
+            dragging: true,
+            touchZoom: true,
+            doubleClickZoom: true,
+            scrollWheelZoom: true,
+            boxZoom: true,
+            zoomControl: true
         }).setView(mapCenter, mapZoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
