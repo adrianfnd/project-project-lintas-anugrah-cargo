@@ -326,6 +326,7 @@
                             title: 'Gagal',
                             text: xhr.responseJSON.message,
                         });
+                        hideLoading();
                     }
                 });
             }, function(error) {
