@@ -15,41 +15,42 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Image</th>
-                                            <th>Driver ID</th>
-                                            <th>Paket ID</th>
-                                            <th>Surat Jalan ID</th>
+                                            <th>Nama Driver</th>
+                                            <th>Waktu Mulai</th>
+                                            <th>Estimasi</th>
+                                            <th>Waktu Sampai</th>
+                                            <th>Jumlah Paket</th>
                                             <th>Status</th>
                                             <th>
                                                 <center>Aksi</center>
                                             </th>
                                         </tr>
                                     </thead>
-                                    {{-- <tbody>
-                                        {{-- Looping untuk menampilkan data riwayat paket
+                                    <tbody>
                                         @foreach ($riwayatpakets as $index => $riwayatpaket)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                <td><img src="{{ $riwayatpaket->image }}" alt="Image"
-                                                        style="width: 50px; height: auto;"></td>
-                                                <td>{{ $riwayatpaket->driver_id }}</td>
-                                                <td>{{ $riwayatpaket->paket_id }}</td>
-                                                <td>{{ $riwayatpaket->surat_jalan_id }}</td>
+                                                <td>{{ $riwayatpaket->suratJalan->driver->name }}</td>
+                                                <td>{{ $riwayatpaket->suratJalan->start_delivery_time }}</td>
+                                                <td>{{ $riwayatpaket->suratJalan->estimated_delivery_time }}</td>
+                                                <td>{{ $riwayatpaket->suratJalan->end_delivery_time ?? 'Belum sampai' }}
+                                                </td>
+                                                <td>{{ count(json_decode($riwayatpaket->suratJalan->list_paket, true)) }}
+                                                </td>
                                                 <td>{{ $riwayatpaket->status }}</td>
                                                 <td>
                                                     <center>
-                                                        <a href="{{ route('operator.riwayatpaket.detail', $riwayatpaket->id) }}">
+                                                        <a href="{{ route('operator.riwayat.detail', $riwayatpaket->id) }}">
                                                             <button type="button"
                                                                 class="btn btn-inverse-success btn-rounded btn-icon">
                                                                 <i class="ti-eye"></i>
                                                             </button>
                                                         </a>
                                                     </center>
-
                                                 </td>
                                             </tr>
                                         @endforeach
-                                    </tbody> --}}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

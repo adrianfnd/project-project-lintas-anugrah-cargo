@@ -12,17 +12,21 @@ class RiwayatPaketOperatorController extends Controller
 {
     public function index()
     {
-    //     $riwayatpakets = RiwayatPaket::with(['driver', 'paket', 'suratJalan'])->paginate(10);
+        $riwayatpakets = RiwayatPaket::with(['driver', 'suratJalan'])->paginate(10);
         
-    //     return view('operator.riwayatpaket.index', compact('riwayatpakets'));
-    return view('operator.riwayatpaket.index');
-}
+        return view('operator.riwayatpaket.index', compact('riwayatpakets'));
+    }
 
-    public function detail()
+    public function detail($id)
     {
-        // $riwayatpaket = RiwayatPaket::with(['driver', 'paket', 'suratJalan'])->findOrFail($id);
+        $riwayatpaket = RiwayatPaket::with(['driver', 'suratJalan'])->findOrFail($id);
         
-        // return view('operator.riwayatpaket.detail', compact('riwayatpaket'));
-        return view('operator.riwayatpaket.detail');
+        $paketIds = json_decode($riwayatpaket->list_paket, true);
+        $paketList = Paket::whereIn('id', $paketIds)->get();
+        $list_paket = $paketList->toArray();
+        $list_paket_ids = array_column($list_paket, 'id');
+        $riwayatpaket->list_paket = json_encode($list_paket);
+
+        return view('operator.riwayatpaket.detail', compact('riwayatpaket', 'list_paket', 'list_paket_ids'));
     }
 }

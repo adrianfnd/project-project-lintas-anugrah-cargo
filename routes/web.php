@@ -92,7 +92,6 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
         // Riwayat Paket
         Route::get('riwayats', [RiwayatPaketOperatorController::class, 'index'])->name('operator.riwayat.index');
         Route::get('riwayats-detail-{id}', [RiwayatPaketOperatorController::class, 'detail'])->name('operator.riwayat.detail');
-        Route::get('riwayats-detail', [RiwayatPaketOperatorController::class, 'detail'])->name('operator.riwayat.detail');
 });
 
 // Driver routes
@@ -114,5 +113,4 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
 
     Route::get('riwayat', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayat.index');
     Route::get('riwayat-detail-{id}', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');
-    Route::get('riwayat-detail', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');
 });
