@@ -69,7 +69,7 @@
                             <div class="form-group">
                                 <div class="table-responsive">
                                     <label for="list_paket">List Paket</label>
-                                    <table class="table table-bordered" id="paketTable">
+                                    <table class="table table-bordered table-striped" id="paketTable">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>

@@ -9,6 +9,7 @@ use App\Models\RiwayatPaket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class MapTrackingDriverController extends Controller
 {
@@ -31,6 +32,38 @@ class MapTrackingDriverController extends Controller
         return view('driver.maptracking.show', compact('suratJalan', 'list_paket', 'list_paket_ids'));
     }
 
+    public function cancel(Request $request, $id)
+    {
+        $suratJalan = SuratJalan::where('id', $id)
+                        ->where('status', 'dikirim')
+                        ->firstOrFail();
+
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+        $radius = 0.001;
+
+        $senderLatitude = $suratJalan->sender_latitude;
+        $senderLongitude = $suratJalan->sender_longitude;
+
+        // Check lokasi apakah dalam radius dari lokasi sender
+        $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
+        if ($distanceFromSender > $radius) {
+            return response()->json(['success' => false, 'message' => 'Tidak bisa dibatalkan, anda sudah berada diluar radius pengirim.'], 400);
+        }
+
+        $paketIds = json_decode($suratJalan->list_paket, true);
+        Paket::whereIn('id', $paketIds)->update(['status' => 'proses']);
+
+        $driver = Driver::findOrFail($suratJalan->driver_id);
+        $driver->status = 'menunggu';
+        $driver->save();
+
+        $suratJalan->status = 'proses';
+        $suratJalan->save();
+
+        return response()->json(['success' => true, 'message' => 'Pengiriman berhasil dibatalkan.']);
+    }
+
     public function addCheckpoint(Request $request, $id)
     {
         $suratJalan = SuratJalan::where('id', $id)
@@ -49,13 +82,13 @@ class MapTrackingDriverController extends Controller
         // Check lokasi apakah melebihi dari lokasi sender
         $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
         if ($distanceFromSender < $radius) {
-            return response()->json(['success' => false, 'message' => 'Checkpoint too close to sender'], 400);
+            return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari pengirim'], 400);
         }
 
         // Check lokasi apakah melebihi dari lokasi receiver
         $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
         if ($distanceFromReceiver < $radius) {
-            return response()->json(['success' => false, 'message' => 'Checkpoint too close to receiver'], 400);
+            return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari penerima'], 400);
         }
 
         $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
@@ -67,7 +100,7 @@ class MapTrackingDriverController extends Controller
             $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
 
             if ($distance < $radius) {
-                return response()->json(['success' => false, 'message' => 'Checkpoint already exists at this location'], 400);
+                return response()->json(['success' => false, 'message' => 'Anda sudah membuat checkpoint dilokasi ini'], 400);
             }
         }
 
@@ -83,12 +116,15 @@ class MapTrackingDriverController extends Controller
 
     public function finish(Request $request, $id)
     {
-        // $request->validate([
-        //     'latitude' => 'required',
-        //     'longitude' => 'required',
-        //     'keluhan' => 'nullable|string|max:255',
-        //     'images' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        // ]);
+        $request->validate([
+            'keluhan' => 'nullable|string|max:255',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'keluhan.max' => 'Keluhan maksimal 255 karakter.',
+            'images.*.max' => 'File maksimal 2 MB.',
+            'images.*.mimes' => 'File harus berupa jpeg, png, jpg.',
+            'images.*.image' => 'File harus berupa gambar.',
+        ]);
 
         $suratJalan = SuratJalan::where('id', $id)
                         ->where('status', 'dikirim')
@@ -104,7 +140,7 @@ class MapTrackingDriverController extends Controller
         // Check lokasi apakah dalam radius dari lokasi receiver
         $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
         if ($distanceFromReceiver < $radius) {
-            return response()->json(['success' => false, 'message' => 'Not within receiver radius'], 400);
+            return response()->json(['success' => false, 'message' => 'Anda tidak berada didalam radius penerima'], 400);
         }
 
         if ($request->has('keluhan') and $request->hasFile('images')) {
@@ -141,6 +177,7 @@ class MapTrackingDriverController extends Controller
             'status' => 'sampai',
         ]);
 
+        $suratJalan->end_delivery_time = now();
         $suratJalan->status = 'sampai';
         $suratJalan->save();
 
@@ -156,7 +193,7 @@ class MapTrackingDriverController extends Controller
         $driver->status = 'menunggu';
         $driver->save();
 
-        return redirect()->route('driver.suratjalan.index');
+        return redirect()->route('driver.suratjalan.index')->with('success', 'Surat jalan selesai.');
     }
 
     private function calculateDriverRating($startDeliveryTime, $endDeliveryTime, $estimatedDeliveryTime)

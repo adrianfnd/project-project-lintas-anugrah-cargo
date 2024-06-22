@@ -107,6 +107,7 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
     // Riwayat Paket
     Route::middleware('driver_status:dalam perjalanan')->group(function () {
         Route::get('/maptracking-{id}', [MapTrackingDriverController::class, 'show'])->name('driver.maptracking.show');
+        Route::post('/maptracking-cancel-{id}', [MapTrackingDriverController::class, 'cancel'])->name('driver.maptracking.cancel');
         Route::post('/maptracking-addcheckpoint-{id}', [MapTrackingDriverController::class, 'addCheckpoint'])->name('driver.maptracking.addcheckpoint');
         Route::post('/maptracking-finish-{id}', [MapTrackingDriverController::class, 'finish'])->name('driver.maptracking.finish');
     });
