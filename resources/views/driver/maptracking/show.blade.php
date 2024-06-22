@@ -41,93 +41,118 @@
         }
     </style>
     <div class="content-wrapper">
-        <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="info-header">
-                    <span class="info-icon"><i class="ti-truck"></i></span>
-                    <span class="info-text">Paket sedang dalam perjalanan...</span>
-                </div>
-                <div class="info-wrapper">
-                    <div class="info-content">
-                        <div class="profile">
-                            <img src="{{ $suratJalan->driver->image ? asset('storage/drivers/' . $suratJalan->driver->image) : 'https://via.placeholder.com/50' }}"
-                                alt="Driver's profile picture" class="profile-pic rounded-circle"
-                                style="object-fit: cover; width: 75px; height: 75px;">
-                            <div class="profile-details">
-                                <span class="profile-name">{{ $suratJalan->driver->name }}</span>
-                                <span class="profile-rating">
-                                    @if (is_null($suratJalan->driver->rate))
-                                        <span>Rating Belum Tersedia</span>
-                                    @else
-                                        @for ($i = 0; $i < $suratJalan->driver->rate; $i++)
-                                            <i class="fas fa-star"></i>
-                                        @endfor
-                                        @for ($i = $suratJalan->driver->rate; $i < 5; $i++)
-                                            <i class="far fa-star"></i>
-                                        @endfor
-                                    @endif
-                                </span>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="ti-truck mr-2"></i>
+                        <span>Paket sedang dalam perjalanan...</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $suratJalan->driver->image ? asset('storage/drivers/' . $suratJalan->driver->image) : 'https://via.placeholder.com/50' }}"
+                                        alt="Driver's profile picture" class="rounded-circle mr-3"
+                                        style="object-fit: cover; width: 75px; height: 75px;">
+                                    <div>
+                                        <h5 class="mb-0">{{ $suratJalan->driver->name }}</h5>
+                                        <div class="text-muted">
+                                            @if (is_null($suratJalan->driver->rate))
+                                                <span>Rating Belum Tersedia</span>
+                                            @else
+                                                @for ($i = 0; $i < $suratJalan->driver->rate; $i++)
+                                                    <i class="fas fa-star text-warning"></i>
+                                                @endfor
+                                                @for ($i = $suratJalan->driver->rate; $i < 5; $i++)
+                                                    <i class="far fa-star text-warning"></i>
+                                                @endfor
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                                    <p class="mb-2 text-muted">Estimasi waktu pengiriman</p>
+                                    <h3 class="mb-0 font-weight-bold">
+                                        @php
+                                            $hours = floor($suratJalan->estimated_delivery_time);
+                                            $minutes = round(($suratJalan->estimated_delivery_time - $hours) * 60);
+                                            echo $hours . ' jam ' . $minutes . ' menit';
+                                        @endphp
+                                    </h3>
+                                </div>
                             </div>
                         </div>
-                        <div class="delivery-details">
-                            <span class="estimated-time">Estimated time: 23 min</span>
-                            <span class="service-type">Service: Express</span>
+
+                        <div class="position-relative mb-4">
+                            <div id="loading" style="display: none;">
+                                <div class="spinner"></div>
+                                Memuat data...
+                            </div>
+                            <div id="mapid" style="height: 400px;"></div>
                         </div>
-                    </div>
-                    <div id="loading"
-                        style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 8px; text-align: center; font-size: 16px; color: #333;">
-                        <div class="spinner"
-                            style="border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #333; animation: spin 1s ease infinite; margin: 0 auto 10px;">
+
+                        <div class="table-responsive">
+                            <h5>List Paket</h5>
+                            <table class="table table-bordered table-striped" id="paketTable">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Nama Paket</th>
+                                        <th>Jenis Paket</th>
+                                        <th>Pengirim</th>
+                                        <th>Penerima</th>
+                                        <th>Berat (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($list_paket as $index => $paket)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $paket['packet_name'] }}</td>
+                                            <td>{{ $paket['packet_type'] }}</td>
+                                            <td>{{ $paket['sender_name'] }}</td>
+                                            <td>{{ $paket['receiver_name'] }}</td>
+                                            <td>{{ $paket['weight'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        Memuat data...
-                    </div>
-                    <div id="mapid" style="height: 400px;"></div>
-                    <div class="package-list">
-                        <div class="col-md-12 mt-3">
-                            <div class="form-group">
-                                <div class="table-responsive">
-                                    <label for="list_paket">List Paket</label>
-                                    <table class="table table-bordered" id="paketTable">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>Nama Paket</th>
-                                                <th>Jenis Paket</th>
-                                                <th>Pengirim</th>
-                                                <th>Penerima</th>
-                                                <th>Berat (kg)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($list_paket as $index => $paket)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $paket['packet_name'] }}</td>
-                                                    <td>{{ $paket['packet_type'] }}</td>
-                                                    <td>{{ $paket['sender_name'] }}</td>
-                                                    <td>{{ $paket['receiver_name'] }}</td>
-                                                    <td>{{ $paket['weight'] }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+
+                        <div id="complaintForm" class="mt-4" style="display: none;">
+                            <h5>Keluhan</h5>
+                            <form id="finishForm" action="{{ route('driver.maptracking.finish', $suratJalan->id) }}"
+                                method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="keluhan" class="form-label">Keluhan:</label>
+                                    <textarea id="keluhan" name="keluhan" class="form-control" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="images" class="form-label">Upload Images:</label>
+                                    <input type="file" id="images" name="images[]" class="form-control" multiple>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="d-flex flex-column flex-sm-row">
+                                <div class="btn-group-vertical btn-group-sm d-sm-flex flex-sm-row mb-2 mb-sm-0">
+                                    <button id="checkpointBtn" class="btn btn-primary mr-2 mb-2 mb-sm-0 me-sm-2"
+                                        style="border-radius: 50rem; padding: 8px 20px;">Checkpoint</button>
+                                    <button id="finishBtn" class="btn btn-success mr-2 mb-2 mb-sm-0 me-sm-2"
+                                        style="border-radius: 50rem; padding: 8px 20px;" onclick="submitFinishForm()"
+                                        style="display: none;">Finish</button>
+                                    <button id="cancelBtn" class="btn btn-light mb-2 mb-sm-0 me-sm-2"
+                                        style="border-radius: 50rem; padding: 8px 20px;"
+                                        onclick="cancelDelivery()">Cancel</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="complaintForm">
-                        <form id="finishForm" action="{{ route('driver.maptracking.finish', $suratJalan->id) }}"
-                            method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <label for="keluhan">Keluhan:</label>
-                            <textarea id="keluhan" name="keluhan" class="form-control"></textarea>
-                            <label for="images">Upload Images:</label>
-                            <input type="file" id="images" name="images[]" class="form-control" multiple>
-                        </form>
-                    </div>
-                    <button id="checkpointBtn" class="btn btn-primary" style="display: none;">Checkpoint</button>
-                    <button id="finishBtn" class="btn btn-success" onclick="submitFinishForm()"
-                        style="display: none;">Finish</button>
                 </div>
             </div>
         </div>
@@ -140,6 +165,42 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
+        function cancelDelivery() {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                $.ajax({
+                    url: "{{ route('driver.maptracking.cancel', $suratJalan->id) }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        latitude: latitude,
+                        longitude: longitude
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Pengiriman berhasil dibatalkan',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href =
+                                    "{{ route('driver.suratjalan.index') }}";
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: xhr.responseJSON.message,
+                        });
+                    }
+                });
+            });
+        }
+
         function submitFinishForm() {
             radius = 0.001;
 
@@ -154,16 +215,14 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal',
-                        text: 'Anda tidak berada dalam radius penerima',
+                        text: 'Anda tidak berada didalam radius penerima',
                     });
                 }
             }, function(error) {
                 console.error('Error getting location:', error);
             });
         }
-    </script>
 
-    <script>
         var senderLatitude = "{{ $suratJalan->sender_latitude }}";
         var senderLongitude = "{{ $suratJalan->sender_longitude }}";
         var receiverLatitude = "{{ $suratJalan->receiver_latitude }}";
@@ -172,7 +231,14 @@
         var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263, 106.781];
         var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
 
-        var map = L.map('mapid').setView(mapCenter, mapZoom);
+        var map = L.map('mapid', {
+            dragging: false,
+            touchZoom: false,
+            doubleClickZoom: false,
+            scrollWheelZoom: false,
+            boxZoom: false,
+            zoomControl: false
+        }).setView(mapCenter, mapZoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -199,6 +265,9 @@
 
             routingControl = L.Routing.control({
                 waypoints: waypoints,
+                routeWhileDragging: false,
+                addWaypoints: false,
+                draggableWaypoints: false,
                 routeWhileDragging: false,
                 createMarker: function(i, wp, nWps) {
                     return L.marker(wp.latLng).bindPopup(i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" :
@@ -255,14 +324,12 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Gagal',
-                            text: 'Terjadi kesalahan saat menambahkan checkpoint',
+                            text: xhr.responseJSON.message,
                         });
-                        console.error('Error adding checkpoint', xhr);
-                        hideLoading();
                     }
                 });
             }, function(error) {
-                console.error('Error getting location:', error);
+                console.error('Error saat mendapatkan lokasi:', error);
                 hideLoading();
             });
         });
@@ -288,10 +355,12 @@
                         receiverLongitude);
                     if (distance < radius) {
                         document.getElementById('checkpointBtn').style.display = 'none';
+                        document.getElementById('cancelBtn').style.display = 'none';
                         document.getElementById('finishBtn').style.display = 'block';
                         document.getElementById('complaintForm').style.display = 'block';
                     } else {
                         document.getElementById('checkpointBtn').style.display = 'block';
+                        document.getElementById('cancelBtn').style.display = 'block';
                         document.getElementById('finishBtn').style.display = 'none';
                         document.getElementById('complaintForm').style.display = 'none';
                     }
