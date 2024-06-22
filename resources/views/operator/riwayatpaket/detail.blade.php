@@ -66,7 +66,6 @@
                         </div>
                     </div>
 
-                    <!-- List Paket -->
                     <div class="col-md-12 mt-3">
                         <div class="table-responsive">
                             <label for="list_paket">List Paket</label>
@@ -97,33 +96,60 @@
                         </div>
                     </div>
 
-                    <!-- Map -->
-                    <h5>Rute Pengiriman</h5>
-                    <div class="position-relative mb-4">
-                        <div id="loading" style="display: none;">
-                            <div class="spinner"></div>
-                            Memuat data...
+                    <div class="col-md-12 mt-3">
+                        <div class="position-relative mb-4">
+                            <div id="loading" style="display: none;">
+                                <div class="spinner"></div>
+                                Memuat data...
+                            </div>
+                            <div id="mapid" style="height: 400px;"></div>
                         </div>
-                        <div id="mapid" style="height: 400px;"></div>
                     </div>
 
-                    <!-- Laporan -->
-                    <h5>Laporan</h5>
                     @if ($riwayatpaket->laporan)
-                        <p><strong>Keluhan:</strong> {{ $riwayatpaket->laporan->keluhan }}</p>
-                        @if ($riwayatpaket->laporan->image)
-                            <h6>Gambar Laporan:</h6>
-                            <div class="row">
-                                @foreach (json_decode($riwayatpaket->laporan->image, true) as $image)
-                                    <div class="col-md-3 mb-3">
-                                        <img src="{{ asset('storage/laporan/' . $image) }}" alt="Laporan Image"
-                                            class="img-fluid">
+                        <div class="col-md-12 mt-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <label>Laporan Masalah</label>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <h6><strong>Keluhan:</strong></h6>
+                                            <p>{{ $riwayatpaket->laporan->keluhan }}</p>
+                                        </div>
                                     </div>
-                                @endforeach
+                                    @if ($riwayatpaket->laporan->image)
+                                        <div class="row">
+                                            <div class="col-md-12 mb-3">
+                                                <h6><strong>Gambar Laporan:</strong></h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            @foreach (json_decode($riwayatpaket->laporan->image, true) as $image)
+                                                <div class="col-md-3 col-sm-6 mb-3">
+                                                    <a href="{{ asset('storage/laporan/' . $image) }}" target="_blank">
+                                                        <div
+                                                            style="width: 100%; padding-top: 100%; position: relative; overflow: hidden;">
+                                                            <img src="{{ asset('storage/laporan/' . $image) }}"
+                                                                alt="Laporan Image"
+                                                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                                                                class="img-thumbnail">
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                        @endif
+                        </div>
                     @else
-                        <p>Tidak ada laporan untuk pengiriman ini.</p>
+                        <div class="col-md-12 mt-3">
+                            <div class="alert alert-info">
+                                Tidak ada laporan untuk pengiriman ini.
+                            </div>
+                        </div>
                     @endif
 
                     <div class="form-group mt-4">

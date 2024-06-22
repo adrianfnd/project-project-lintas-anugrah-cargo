@@ -20,7 +20,9 @@
                                             <th>Estimasi</th>
                                             <th>Waktu Sampai</th>
                                             <th>Jumlah Paket</th>
-                                            <th>Status</th>
+                                            <th>
+                                                <center>Status</center>
+                                            </th>
                                             <th>
                                                 <center>Aksi</center>
                                             </th>
@@ -36,8 +38,22 @@
                                                 <td>{{ $riwayatpaket->suratJalan->end_delivery_time ?? 'Belum sampai' }}
                                                 </td>
                                                 <td>{{ count(json_decode($riwayatpaket->suratJalan->list_paket, true)) }}
+                                                    Paket
                                                 </td>
-                                                <td>{{ $riwayatpaket->status }}</td>
+                                                <td>
+                                                    <center>
+                                                        @if ($riwayatpaket->suratjalan->status == 'proses')
+                                                            <span
+                                                                class="badge badge-info">{{ ucfirst($riwayatpaket->suratjalan->status) }}</span>
+                                                        @elseif ($riwayatpaket->suratjalan->status == 'dikirim')
+                                                            <span
+                                                                class="badge badge-warning">{{ ucfirst($riwayatpaket->suratjalan->status) }}</span>
+                                                        @elseif ($riwayatpaket->suratjalan->status == 'sampai')
+                                                            <span
+                                                                class="badge badge-success">{{ ucfirst($riwayatpaket->suratjalan->status) }}</span>
+                                                        @else
+                                                            <span class="badge badge-danger">Status tidak diketahui</span>
+                                                        @endif
                                                 <td>
                                                     <center>
                                                         <a href="{{ route('operator.riwayat.detail', $riwayatpaket->id) }}">
