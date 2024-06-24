@@ -14,6 +14,7 @@ class SuratJalanOperatorController extends Controller
     {
         $suratjalans = SuratJalan::with(['driver'])
                         ->orderByRaw("FIELD(status, 'proses', 'dikirim', 'sampai')")
+                        ->where('status', 'proses')
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
 
@@ -22,7 +23,10 @@ class SuratJalanOperatorController extends Controller
 
     public function detail($id)
     {
-        $suratjalan = SuratJalan::with(['driver'])->findOrFail($id);
+        $suratjalan = SuratJalan::with(['driver'])
+                        ->where('id', $id)
+                        ->where('status', 'proses')
+                        ->firstOrFail();
 
         $paketIds = json_decode($suratjalan->list_paket, true);
         $paketList = Paket::whereIn('id', $paketIds)->get();

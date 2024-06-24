@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\RiwayatPaket;
 use App\Models\Driver;
 use App\Models\Paket;
 use App\Models\SuratJalan;
+use Illuminate\Http\Request;
 
 class RiwayatPaketOperatorController extends Controller
 {
     public function index()
     {
-        $riwayatpakets = RiwayatPaket::with(['driver', 'suratJalan'])->paginate(10);
+        $riwayatpakets = RiwayatPaket::with(['driver', 'suratJalan'])
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
         
         return view('operator.riwayatpaket.index', compact('riwayatpakets'));
     }
