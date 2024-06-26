@@ -122,33 +122,10 @@
                             </table>
                         </div>
 
-                        <div id="complaintForm" class="mt-4" style="display: none;">
-                            <h5>Keluhan</h5>
-                            <form id="finishForm" action="{{ route('driver.maptracking.finish', $suratJalan->id) }}"
-                                method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="keluhan" class="form-label">Keluhan:</label>
-                                    <textarea id="keluhan" name="keluhan" class="form-control" rows="3"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="images" class="form-label">Upload Images:</label>
-                                    <input type="file" id="images" name="images[]" class="form-control" multiple>
-                                </div>
-                            </form>
-                        </div>
-
                         <div class="mt-4">
                             <div class="d-flex flex-column flex-sm-row">
                                 <div class="btn-group-vertical btn-group-sm d-sm-flex flex-sm-row mb-2 mb-sm-0">
-                                    <button id="checkpointBtn" class="btn btn-primary mr-2 mb-2 mb-sm-0 me-sm-2"
-                                        style="border-radius: 50rem; padding: 8px 20px;">Checkpoint</button>
-                                    <button id="finishBtn" class="btn btn-success mr-2 mb-2 mb-sm-0 me-sm-2"
-                                        style="border-radius: 50rem; padding: 8px 20px;" onclick="submitFinishForm()"
-                                        style="display: none;">Finish</button>
-                                    <button id="cancelBtn" class="btn btn-light mb-2 mb-sm-0 me-sm-2"
-                                        style="border-radius: 50rem; padding: 8px 20px;"
-                                        onclick="cancelDelivery()">Cancel</button>
+                                    <a href="{{ route('operator.maptracking.index') }}" class="btn btn-light">Back</a>
                                 </div>
                             </div>
                         </div>
@@ -156,236 +133,96 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Include Leaflet and Leaflet Routing Machine -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
-        function cancelDelivery() {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
+        <!-- Include Leaflet and Leaflet Routing Machine -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <script>
+            var senderLatitude = "{{ $suratJalan->sender_latitude }}";
+            var senderLongitude = "{{ $suratJalan->sender_longitude }}";
+            var receiverLatitude = "{{ $suratJalan->receiver_latitude }}";
+            var receiverLongitude = "{{ $suratJalan->receiver_longitude }}";
 
-                $.ajax({
-                    url: "{{ route('driver.maptracking.cancel', $suratJalan->id) }}",
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        latitude: latitude,
-                        longitude: longitude
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Pengiriman berhasil dibatalkan',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href =
-                                    "{{ route('driver.suratjalan.index') }}";
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: xhr.responseJSON.message,
-                        });
-                    }
+            var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263, 106.781];
+            var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
+
+            var map = L.map('mapid', {
+                dragging: true,
+                touchZoom: true,
+                doubleClickZoom: true,
+                scrollWheelZoom: true,
+                boxZoom: true,
+                zoomControl: true
+            }).setView(mapCenter, mapZoom);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            function getAddress(lat, lng, callback) {
+                fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&accept-language=id`
+                    )
+                    .then(response => response.json())
+                    .then(data => callback(data.display_name))
+                    .catch(error => console.log('Error:', error));
+            }
+
+            function createMarker(lat, lng, label) {
+                getAddress(lat, lng, function(address) {
+                    L.marker([lat, lng]).addTo(map).bindPopup(`${label}: ${address}`).openPopup();
                 });
-            });
-        }
+            }
 
-        function submitFinishForm() {
-            radius = 0.001;
+            createMarker(senderLatitude, senderLongitude, "Sender");
+            createMarker(receiverLatitude, receiverLongitude, "Receiver");
 
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
+            var waypoints = [
+                L.latLng(senderLatitude, senderLongitude),
+                @if (!empty($suratJalan->checkpoint_latitude))
+                    @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
+                        L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}),
+                    @endforeach
+                @endif
+                L.latLng(receiverLatitude, receiverLongitude)
+            ];
 
-                var distance = getDistanceFromLatLonInKm(latitude, longitude, receiverLatitude, receiverLongitude);
-                if (distance < radius) {
-                    document.getElementById('finishForm').submit();
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: 'Anda tidak berada didalam radius penerima',
-                    });
+            function updateRoute() {
+                if (routingControl) {
+                    map.removeControl(routingControl);
                 }
-            }, function(error) {
-                console.error('Error getting location:', error);
+
+                routingControl = L.Routing.control({
+                    waypoints: waypoints,
+                    routeWhileDragging: false,
+                    addWaypoints: false,
+                    draggableWaypoints: false,
+                    createMarker: function(i, wp, nWps) {
+                        var label = i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" : "Checkpoint");
+                        getAddress(wp.latLng.lat, wp.latLng.lng, function(address) {
+                            L.marker(wp.latLng).bindPopup(`${label}: ${address}`).addTo(map);
+                        });
+                        return L.marker(wp.latLng);
+                    },
+                }).addTo(map);
+            }
+
+            var routingControl = null;
+
+            map.whenReady(function() {
+                updateRoute();
             });
-        }
 
-        var senderLatitude = "{{ $suratJalan->sender_latitude }}";
-        var senderLongitude = "{{ $suratJalan->sender_longitude }}";
-        var receiverLatitude = "{{ $suratJalan->receiver_latitude }}";
-        var receiverLongitude = "{{ $suratJalan->receiver_longitude }}";
-
-        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263, 106.781];
-        var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
-
-        var map = L.map('mapid', {
-            dragging: true,
-            touchZoom: true,
-            doubleClickZoom: true,
-            scrollWheelZoom: true,
-            boxZoom: true,
-            zoomControl: true
-        }).setView(mapCenter, mapZoom);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
-        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
-
-        var routingControl = null;
-        var waypoints = [
-            L.latLng(senderLatitude, senderLongitude),
             @if (!empty($suratJalan->checkpoint_latitude))
                 @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
-                    L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}),
+                    createMarker({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}, "Checkpoint");
                 @endforeach
             @endif
-            L.latLng(receiverLatitude, receiverLongitude)
-        ];
 
-        function updateRoute() {
-            if (routingControl) {
-                map.removeControl(routingControl);
-            }
-
-            routingControl = L.Routing.control({
-                waypoints: waypoints,
-                routeWhileDragging: false,
-                addWaypoints: false,
-                draggableWaypoints: false,
-                routeWhileDragging: false,
-                createMarker: function(i, wp, nWps) {
-                    return L.marker(wp.latLng).bindPopup(i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" :
-                        "Checkpoint"));
-                },
-            }).addTo(map);
-        }
-
-        var checkpointBtn = document.getElementById('checkpointBtn');
-        var loadingElement = document.getElementById('loading');
-
-        function showLoading() {
-            loadingElement.style.display = 'block';
-        }
-
-        function hideLoading() {
-            loadingElement.style.display = 'none';
-        }
-
-        map.whenReady(function() {
-            hideLoading();
-            updateRoute();
-        });
-
-        checkpointBtn.addEventListener('click', function() {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
-
-                var checkpoint = L.marker([latitude, longitude]).addTo(map);
-
-                showLoading();
-
-                $.ajax({
-                    url: "{{ route('driver.maptracking.addcheckpoint', $suratJalan->id) }}",
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        latitude: latitude,
-                        longitude: longitude
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Checkpoint berhasil ditambahkan',
-                        });
-                        waypoints.splice(waypoints.length - 1, 0, L.latLng(latitude,
-                            longitude));
-                        updateRoute();
-                        hideLoading();
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: xhr.responseJSON.message,
-                        });
-                        hideLoading();
-                    }
-                });
-            }, function(error) {
-                console.error('Error saat mendapatkan lokasi:', error);
-                hideLoading();
-            });
-        });
-
-        @if (!empty($suratJalan->checkpoint_latitude))
-            @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
-                L.marker([{{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}]).addTo(map);
-            @endforeach
-            updateRoute();
-        @endif
-
-        function checkIfReachedDestination() {
-            var receiverLatitude = {{ $suratJalan->receiver_latitude }};
-            var receiverLongitude = {{ $suratJalan->receiver_longitude }};
-            var radius = 0.001;
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var latitude = position.coords.latitude;
-                    var longitude = position.coords.longitude;
-
-                    var distance = getDistanceFromLatLonInKm(latitude, longitude, receiverLatitude,
-                        receiverLongitude);
-                    if (distance < radius) {
-                        document.getElementById('checkpointBtn').style.display = 'none';
-                        document.getElementById('cancelBtn').style.display = 'none';
-                        document.getElementById('finishBtn').style.display = 'block';
-                        document.getElementById('complaintForm').style.display = 'block';
-                    } else {
-                        document.getElementById('checkpointBtn').style.display = 'block';
-                        document.getElementById('cancelBtn').style.display = 'block';
-                        document.getElementById('finishBtn').style.display = 'none';
-                        document.getElementById('complaintForm').style.display = 'none';
-                    }
-                });
-            }
-        }
-
-        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-            var R = 6371;
-            var dLat = deg2rad(lat2 - lat1);
-            var dLon = deg2rad(lon2 - lon1);
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            var d = R * c;
-            return d;
-        }
-
-        function deg2rad(deg) {
-            return deg * (Math.PI / 180);
-        }
-
-        setInterval(checkIfReachedDestination, 10000);
-        checkIfReachedDestination();
-    </script>
-@endsection
+            setInterval(checkIfReachedDestination, 10000);
+            checkIfReachedDestination();
+        </script>
+    @endsection

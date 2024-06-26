@@ -5,7 +5,7 @@
         <div class="col-13 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <p class="card-title">List Data Surat Jalan</p>
+                    <p class="card-title">List Data Tracking Surat Jalan</p>
                     <div class="row">
                         <div class="col-12">
                             <div class="table-responsive">

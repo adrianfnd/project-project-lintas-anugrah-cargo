@@ -11,7 +11,6 @@ class MaptrackingOperatorController extends Controller
     public function index()
     {
         $suratjalans = SuratJalan::with(['driver'])
-                        ->orderByRaw("FIELD(status, 'proses', 'dikirim', 'sampai')")
                         ->where('status', 'dikirim')
                         ->orderBy('created_at', 'desc')
                         ->paginate(10);
