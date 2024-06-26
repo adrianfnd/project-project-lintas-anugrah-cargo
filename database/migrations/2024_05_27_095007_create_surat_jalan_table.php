@@ -28,6 +28,7 @@ return new class extends Migration
             $table->dateTime('start_delivery_time')->nullable();
             $table->float('estimated_delivery_time');
             $table->dateTime('end_delivery_time')->nullable();
+            $table->integer('rate')->nullable();
             $table->timestamps();
         });
     }

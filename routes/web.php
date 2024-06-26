@@ -66,6 +66,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function () {
         // Dashboard
         Route::get('dashboard', [DashboardOperatorController::class, 'dashboard'])->name('operator.dashboard');
+        Route::get('/dashboard-operator/chart-paket', [DashboardOperatorController::class, 'getChartDataPaket'])->name('operator.chart.paket');
+        Route::get('/dashboard-operator/chart-performance', [DashboardOperatorController::class, 'getChartDataPerformance'])->name('operator.chart.performance');
 
         // Driver
         Route::get('drivers', [DriverOperatorController::class, 'index'])->name('operator.driver.index');

@@ -29,6 +29,7 @@ class SuratJalan extends Model
         'start_delivery_time',
         'estimated_delivery_time',
         'end_delivery_time',
+        'rate'
     ];
 
     public function driver()

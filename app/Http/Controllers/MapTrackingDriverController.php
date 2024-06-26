@@ -177,11 +177,12 @@ class MapTrackingDriverController extends Controller
             'status' => 'sampai',
         ]);
 
+        $rating = $this->calculateDriverRating($suratJalan->start_delivery_time, $suratJalan->end_delivery_time, $suratJalan->estimated_delivery_time);
+
         $suratJalan->end_delivery_time = now();
         $suratJalan->status = 'sampai';
+        $suratJalan->rate = $rating;
         $suratJalan->save();
-
-        $rating = $this->calculateDriverRating($suratJalan->start_delivery_time, $suratJalan->end_delivery_time, $suratJalan->estimated_delivery_time);
 
         $driver = Driver::findOrFail($suratJalan->driver_id);
         if ($driver->rate !== null) {
