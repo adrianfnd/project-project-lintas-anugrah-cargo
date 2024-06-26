@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\OperatorAdminController;
 use App\Http\Controllers\DriverAdminController;
 
@@ -11,10 +10,11 @@ use App\Http\Controllers\DashboardOperatorController;
 use App\Http\Controllers\DriverOperatorController;
 use App\Http\Controllers\PaketOperatorController;
 use App\Http\Controllers\SuratJalanOperatorController;
+use App\Http\Controllers\MapTrackingOperatorController;
 use App\Http\Controllers\RiwayatPaketOperatorController;
 
-
-use App\Http\Controllers\DashboardDriverController;
+use App\Http\Controllers\ProfileDriverController;
+use App\Http\Controllers\DriverDriverController;
 use App\Http\Controllers\SuratJalanDriverController;
 use App\Http\Controllers\MapTrackingDriverController;
 use App\Http\Controllers\RiwayatPaketDriverController;
@@ -89,6 +89,10 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
         Route::put('suratjalans-{id}', [SuratJalanOperatorController::class, 'update'])->name('operator.suratjalan.update');
         Route::delete('suratjalans-{id}', [SuratJalanOperatorController::class, 'destroy'])->name('operator.suratjalan.destroy');
 
+        // Map Tracking
+        Route::get('/maptracking', [MaptrackingOperatorController::class, 'index'])->name('operator.maptracking.index');
+        Route::get('/maptracking-detail-{id}', [MaptrackingOperatorController::class, 'detail'])->name('operator.maptracking.detail');
+
         // Riwayat Paket
         Route::get('riwayats', [RiwayatPaketOperatorController::class, 'index'])->name('operator.riwayat.index');
         Route::get('riwayats-detail-{id}', [RiwayatPaketOperatorController::class, 'detail'])->name('operator.riwayat.detail');
@@ -96,6 +100,10 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 
 // Driver routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () {
+    // Profile
+    Route::get('profile', [ProfileDriverController::class, 'show'])->name('driver.profile.show');
+    Route::post('profile', [ProfileDriverController::class, 'update'])->name('driver.profile.update');
+
     // Surat Jalan
     Route::middleware('driver_status:menunggu')->group(function () {
         Route::get('suratjalans', [SuratJalanDriverController::class, 'index'])->name('driver.suratjalan.index');
@@ -103,7 +111,7 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
         Route::get('suratjalans-antar-{id}', [SuratJalanDriverController::class, 'startDelivery'])->name('driver.suratjalan.antar');
     });
 
-    // Riwayat Paket
+    // Map Tracking
     Route::middleware('driver_status:dalam perjalanan')->group(function () {
         Route::get('/maptracking-{id}', [MapTrackingDriverController::class, 'show'])->name('driver.maptracking.show');
         Route::post('/maptracking-cancel-{id}', [MapTrackingDriverController::class, 'cancel'])->name('driver.maptracking.cancel');
@@ -111,6 +119,7 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
         Route::post('/maptracking-finish-{id}', [MapTrackingDriverController::class, 'finish'])->name('driver.maptracking.finish');
     });
 
+    // Riwayat Paket
     Route::get('riwayat', [RiwayatPaketDriverController::class, 'index'])->name('driver.riwayat.index');
     Route::get('riwayat-detail-{id}', [RiwayatPaketDriverController::class, 'detail'])->name('driver.riwayat.detail');
 });

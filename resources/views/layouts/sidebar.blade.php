@@ -47,6 +47,12 @@
                 </div>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('operator.maptracking.index') }}">
+                    <i class="feather icon-map menu-icon"></i>
+                    <span class="menu-title">Map Tracking</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('operator.riwayat.index') }}">
                     <i class="icon-grid menu-icon"></i>
                     <span class="menu-title">History</span>

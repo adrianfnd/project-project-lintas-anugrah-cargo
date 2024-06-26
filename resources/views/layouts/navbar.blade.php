@@ -68,9 +68,23 @@
             </li> --}}
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <img src="{{ asset('assets') }}/images/faces/face_detault.png" alt="profile" />
+                    @if (Auth::user()->role->name == 'driver')
+                        @php
+                            $driver = Auth::user()->driver;
+                        @endphp
+                        <img src="{{ $driver->image ? asset('storage/drivers/' . $driver->image) : 'https://via.placeholder.com/200' }}"
+                            alt="profile" />
+                    @else
+                        <img src="{{ asset('assets') }}/images/faces/face_detault.png" alt="profile" />
+                    @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    @if (Auth::user()->role->name == 'driver')
+                        <a class="dropdown-item" href="{{ route('driver.profile.show') }}">
+                            <i class="ti-user text-primary"></i>
+                            Profile
+                        </a>
+                    @endif
                     <a class="dropdown-item" href="{{ route('logout') }}">
                         <i class="ti-power-off text-primary"></i>
                         Logout
