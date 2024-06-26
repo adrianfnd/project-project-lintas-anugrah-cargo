@@ -153,7 +153,7 @@
                     @endif
 
                     <div class="form-group mt-4">
-                        <a href="{{ route('operator.riwayat.index') }}" class="btn btn-light">Kembali</a>
+                        <a href="{{ route('operator.riwayat.index') }}" class="btn btn-light">Back</a>
                     </div>
                 </div>
             </div>
@@ -187,8 +187,21 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
-        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+        function getAddress(lat, lng, callback) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`)
+                .then(response => response.json())
+                .then(data => callback(data.display_name))
+                .catch(error => console.log('Error:', error));
+        }
+
+        function createMarker(lat, lng, label) {
+            getAddress(lat, lng, function(address) {
+                L.marker([lat, lng]).addTo(map).bindPopup(`${label}: ${address}`).openPopup();
+            });
+        }
+
+        createMarker(senderLatitude, senderLongitude, "Sender");
+        createMarker(receiverLatitude, receiverLongitude, "Receiver");
 
         var routingControl = null;
         var waypoints = [
@@ -212,8 +225,11 @@
                 addWaypoints: false,
                 draggableWaypoints: false,
                 createMarker: function(i, wp, nWps) {
-                    return L.marker(wp.latLng).bindPopup(i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" :
-                        "Checkpoint"));
+                    var label = i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" : "Checkpoint");
+                    getAddress(wp.latLng.lat, wp.latLng.lng, function(address) {
+                        L.marker(wp.latLng).bindPopup(`${label}: ${address}`).addTo(map);
+                    });
+                    return L.marker(wp.latLng);
                 },
             }).addTo(map);
         }
@@ -236,9 +252,10 @@
 
         @if (!empty($riwayatpaket->suratJalan->checkpoint_latitude))
             @foreach ($riwayatpaket->suratJalan->checkpoint_latitude as $index => $latitude)
-                L.marker([{{ $latitude }}, {{ $riwayatpaket->suratJalan->checkpoint_longitude[$index] }}]).addTo(map);
+                createMarker({{ $latitude }}, {{ $riwayatpaket->suratJalan->checkpoint_longitude[$index] }},
+                    "Checkpoint");
             @endforeach
-            updateRoute();
         @endif
     </script>
+
 @endsection
