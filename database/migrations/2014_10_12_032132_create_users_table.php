@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('admin_id')->nullable();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
+            $table->uuid('manager_operasional_id')->nullable();
+            $table->foreign('manager_operasional_id')->references('id')->on('managers_operasional')->onDelete('cascade');
             $table->uuid('operator_id')->nullable();
             $table->foreign('operator_id')->references('id')->on('operators')->onDelete('cascade');
             $table->uuid('driver_id')->nullable();

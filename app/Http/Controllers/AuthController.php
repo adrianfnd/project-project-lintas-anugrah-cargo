@@ -32,6 +32,8 @@ class AuthController extends Controller
     
             if ($user->role->name == 'admin') {
                 return redirect()->route('admin.operator.index');
+            } elseif ($user->role->name == 'manager_operasional') {
+                return redirect()->route('manager-operasional.dashboard'); 
             } elseif ($user->role->name == 'operator') {
                 return redirect()->route('operator.dashboard');
             } elseif ($user->role->name == 'driver') {

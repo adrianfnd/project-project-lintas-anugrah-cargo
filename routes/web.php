@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OperatorAdminController;
 use App\Http\Controllers\DriverAdminController;
 
+use App\Http\Controllers\DashboardManagerOperasionalController;
+
 use App\Http\Controllers\DashboardOperatorController;
 use App\Http\Controllers\DriverOperatorController;
 use App\Http\Controllers\PaketOperatorController;
@@ -60,6 +62,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('drivers-edit-{id}', [DriverAdminController::class, 'edit'])->name('admin.driver.edit');
     Route::put('drivers-{id}', [DriverAdminController::class, 'update'])->name('admin.driver.update');
     Route::delete('drivers-{id}', [DriverAdminController::class, 'destroy'])->name('admin.driver.destroy');
+});
+
+// Manager Operasional routes
+Route::middleware(['auth', 'role:manager_operasional'])->prefix('manager-operasional')->group(function () {
+    // Dashboard
+    Route::get('dashboard', [DashboardManagerOperasionalController::class, 'dashboard'])->name('manager-operasional.dashboard');
+    Route::get('/dashboard-manager-operasional/chart-paket', [DashboardManagerOperasionalController::class, 'getChartDataPaket'])->name('manager-operasional.chart.paket');
+    Route::get('/dashboard-manager-operasional/chart-performance', [DashboardManagerOperasionalController::class, 'getChartDataPerformance'])->name('manager-operasional.chart.performance');
 });
 
 // Operator routes

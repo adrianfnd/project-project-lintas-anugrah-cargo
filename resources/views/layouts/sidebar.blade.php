@@ -19,6 +19,15 @@
                 </div>
             </li>
         </ul>
+    @elseif (Auth::user()->role->name == 'manager_operasional')
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('manager-operasional.dashboard') }}">
+                    <i class="icon-grid menu-icon"></i>
+                    <span class="menu-title">Dashboard</span>
+                </a>
+            </li>
+        </ul>
     @elseif (Auth::user()->role->name == 'operator')
         <ul class="nav">
             <li class="nav-item">

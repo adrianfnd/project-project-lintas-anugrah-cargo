@@ -35,6 +35,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'admin_id', 
+        'manager_operasional_id',
         'operator_id', 
         'driver_id', 
         'name', 
@@ -67,6 +68,11 @@ class User extends Authenticatable
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+
+    public function manager_operasional()
+    {
+        return $this->belongsTo(ManagerOperasional::class);
     }
 
     public function operator()

@@ -39,6 +39,30 @@ class UsersTableSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        $managerOperasionalId = Str::uuid()->toString();
+        DB::table('managers_operasional')->insert([
+            'id' => $managerOperasionalId,
+            'created_by' => $adminId,
+            'name' => 'Manager Operasional User',
+            'phone_number' => '1234567890',
+            'address' => 'Manager Operasional Address',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('users')->insert([
+            'id' => Str::uuid()->toString(),
+            'manager_operasional_id' => $managerOperasionalId,
+            'name' => 'Manager Operasional User',
+            'username' => 'manageroperasional',
+            'email' => 'manageroperasional@lintasanugrahcargo.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'role_id' => 2,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $operatorId = Str::uuid()->toString();
         DB::table('operators')->insert([
             'id' => $operatorId,
@@ -61,7 +85,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'operator@lintasanugrahcargo.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role_id' => 2,
+            'role_id' => 3,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -89,7 +113,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'driver@lintasanugrahcargo.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role_id' => 3,
+            'role_id' => 4,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

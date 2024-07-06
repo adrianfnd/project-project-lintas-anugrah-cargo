@@ -84,7 +84,7 @@ class OperatorAdminController extends Controller
         $user->email = $request->email;
         $user->email_verified_at = now();
         $user->password = bcrypt($request->password);
-        $user->role_id = 2;
+        $user->role_id = 3;
         $user->save();
 
         return redirect()->route('admin.operator.index')->with('success', 'Data Operator berhasil ditambahkan.');

@@ -24,13 +24,20 @@ class RolesTableSeeder extends Seeder
             ],
             [
                 'id' => 2,
+                'name' => 'manager_operasional',
+                'description' => 'Manager Operasional role',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 3,
                 'name' => 'operator',
                 'description' => 'Operator role',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'id' => 3,
+                'id' => 4,
                 'name' => 'driver',
                 'description' => 'Driver role',
                 'created_at' => now(),

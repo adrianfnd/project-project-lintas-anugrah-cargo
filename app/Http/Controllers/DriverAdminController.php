@@ -105,7 +105,7 @@ class DriverAdminController extends Controller
         $user->email = $request->email;
         $user->email_verified_at = now();
         $user->password = bcrypt($request->phone_number);
-        $user->role_id = 3;
+        $user->role_id = 4;
         $user->save();
 
         return redirect()->route('admin.driver.index')->with('success', 'Data Driver berhasil ditambahkan.');
