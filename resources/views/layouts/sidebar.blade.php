@@ -52,7 +52,9 @@
                         <li class="nav-item"> <a class="nav-link" href="{{ route('operator.suratjalan.index') }}">Surat
                                 Jalan</a>
                         </li>
-                    </ul>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('operator.checkpoint.index') }}">Checkpoint</a>
+                        </li>
                 </div>
             </li>
             <li class="nav-item">

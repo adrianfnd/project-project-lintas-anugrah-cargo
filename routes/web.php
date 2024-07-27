@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardOperatorController;
 use App\Http\Controllers\DriverOperatorController;
 use App\Http\Controllers\PaketOperatorController;
 use App\Http\Controllers\SuratJalanOperatorController;
+use App\Http\Controllers\CheckpointOperatorController;
 use App\Http\Controllers\MapTrackingOperatorController;
 use App\Http\Controllers\RiwayatPaketOperatorController;
 
@@ -100,6 +101,11 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
         Route::get('suratjalans-edit-{id}', [SuratJalanOperatorController::class, 'edit'])->name('operator.suratjalan.edit');
         Route::put('suratjalans-{id}', [SuratJalanOperatorController::class, 'update'])->name('operator.suratjalan.update');
         Route::delete('suratjalans-{id}', [SuratJalanOperatorController::class, 'destroy'])->name('operator.suratjalan.destroy');
+
+        // Checkpoint
+        Route::get('/checkpoints', [CheckpointOperatorController::class, 'index'])->name('operator.checkpoint.index');
+        Route::post('/checkpoints', [CheckpointOperatorController::class, 'store'])->name('operator.checkpoint.store');
+        Route::delete('/checkpoints/{checkpoint}', [CheckpointOperatorController::class, 'destroy'])->name('operator.checkpoint.destroy');
 
         // Map Tracking
         Route::get('/maptracking', [MaptrackingOperatorController::class, 'index'])->name('operator.maptracking.index');
