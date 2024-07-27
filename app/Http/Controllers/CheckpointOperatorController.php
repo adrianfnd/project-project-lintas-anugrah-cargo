@@ -18,9 +18,16 @@ class CheckpointOperatorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            'address' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'address' => 'required|string',
+        ], [
+            'latitude.required' => 'Latitude harus diisi.',
+            'latitude.numeric' => 'Latitude harus berupa angka.',
+            'longitude.required' => 'Longitude harus diisi.',
+            'longitude.numeric' => 'Longitude harus berupa angka.',
+            'address.required' => 'Address harus diisi.',
+            'address.string' => 'Address harus berupa teks.',
         ]);
 
         try {
