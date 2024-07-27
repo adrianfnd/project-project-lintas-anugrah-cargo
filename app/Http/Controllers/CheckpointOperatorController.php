@@ -23,21 +23,29 @@ class CheckpointOperatorController extends Controller
             'address' => 'required|string|max:255',
         ]);
 
-        $checkpoint = new Checkpoint();
-        $checkpoint->id = Str::uuid();
-        $checkpoint->latitude = $request->latitude;
-        $checkpoint->longitude = $request->longitude;
-        $checkpoint->address = $request->address;
-        $checkpoint->save();
+        try {
+            $checkpoint = new Checkpoint();
+            $checkpoint->id = Str::uuid();
+            $checkpoint->latitude = $request->latitude;
+            $checkpoint->longitude = $request->longitude;
+            $checkpoint->address = $request->address;
+            $checkpoint->save();
 
-        return response()->json(['success' => true, 'checkpoint' => $checkpoint]);
+            return response()->json(['success' => true, 'checkpoint' => $checkpoint, 'message' => 'Checkpoint berhasil disimpan.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal menyimpan checkpoint: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy($id)
     {
-        $checkpoint = Checkpoint::findOrFail($id);
-        $checkpoint->delete();
+        try {
+            $checkpoint = Checkpoint::findOrFail($id);
+            $checkpoint->delete();
 
-        return redirect()->route('operator.checkpoint.index')->with('success', 'Checkpoint berhasil dihapus.');
+            return redirect()->route('operator.checkpoint.index')->with('success', 'Checkpoint berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('operator.checkpoint.index')->with('error', 'Gagal menghapus checkpoint: ' . $e->getMessage());
+        }
     }
 }

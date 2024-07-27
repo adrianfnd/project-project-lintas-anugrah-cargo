@@ -114,7 +114,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = L.map('map').setView([-6.2088, 106.8456], 10);
-            var marker;
+            var currentMarker = null;
+            var newMarker = null;
             var saveButton = document.getElementById('saveCheckpoint');
             var cancelButton = document.getElementById('cancelCheckpoint');
             var searchMap = document.getElementById('searchMap');
@@ -126,26 +127,20 @@
             }).addTo(map);
 
             function createMarker(lat, lng, draggable = false, rowId = null) {
-                if (marker) {
-                    map.removeLayer(marker);
+                if (newMarker) {
+                    map.removeLayer(newMarker);
                 }
-                marker = L.marker([lat, lng], {
+                newMarker = L.marker([lat, lng], {
                     draggable: draggable
                 }).addTo(map);
-
-                if (rowId) {
-                    marker.on('click', function() {
-                        document.getElementById(rowId).click();
-                    });
-                }
 
                 if (draggable) {
                     saveButton.style.display = 'inline-block';
                     cancelButton.style.display = 'inline-block';
 
-                    marker.on('dragend', function(e) {
-                        var position = marker.getLatLng();
-                        marker.setLatLng(position, {
+                    newMarker.on('dragend', function(e) {
+                        var position = newMarker.getLatLng();
+                        newMarker.setLatLng(position, {
                             draggable: 'true'
                         }).bindPopup(position).update();
                         saveButton.style.display = 'inline-block';
@@ -159,7 +154,7 @@
                     .addTo(map)
                     .bindPopup("{{ $checkpoint->address }}")
                     .on('click', function() {
-                        document.getElementById('checkpoint-row-{{ $checkpoint->id }}').click();
+                        document.getElementById('checkpoint-row{{ $checkpoint->id }}').click();
                     });
             @endforeach
 
@@ -168,9 +163,9 @@
             });
 
             saveButton.addEventListener('click', function() {
-                if (marker) {
-                    var lat = marker.getLatLng().lat;
-                    var lng = marker.getLatLng().lng;
+                if (newMarker) {
+                    var lat = newMarker.getLatLng().lat;
+                    var lng = newMarker.getLatLng().lng;
 
                     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
                         .then(response => response.json())
@@ -186,9 +181,9 @@
             });
 
             cancelButton.addEventListener('click', function() {
-                if (marker) {
-                    map.removeLayer(marker);
-                    marker = null;
+                if (newMarker) {
+                    map.removeLayer(newMarker);
+                    newMarker = null;
                 }
                 saveButton.style.display = 'none';
                 cancelButton.style.display = 'none';
@@ -217,7 +212,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
-                                text: 'Checkpoint berhasil disimpan.',
+                                text: data.message,
                                 showConfirmButton: false,
                                 timer: 1500
                             }).then(() => {
