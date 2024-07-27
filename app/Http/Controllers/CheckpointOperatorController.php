@@ -10,7 +10,8 @@ class CheckpointOperatorController extends Controller
 {
     public function index()
     {
-        $checkpoints = Checkpoint::paginate(10); // Menambahkan pagination dengan 10 item per halaman
+        $checkpoints = Checkpoint::paginate(10);
+    
         return view('operator.checkpoint.index', compact('checkpoints'));
     }
 
@@ -37,6 +38,6 @@ class CheckpointOperatorController extends Controller
         $checkpoint = Checkpoint::findOrFail($id);
         $checkpoint->delete();
 
-        return redirect()->route('operator.checkpoint.index')->with('success', 'Checkpoint deleted successfully.');
+        return redirect()->route('operator.checkpoint.index')->with('success', 'Checkpoint berhasil dihapus.');
     }
 }

@@ -104,8 +104,8 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function
 
         // Checkpoint
         Route::get('/checkpoints', [CheckpointOperatorController::class, 'index'])->name('operator.checkpoint.index');
-        Route::post('/checkpoints', [CheckpointOperatorController::class, 'store'])->name('operator.checkpoint.store');
-        Route::delete('/checkpoints/{checkpoint}', [CheckpointOperatorController::class, 'destroy'])->name('operator.checkpoint.destroy');
+        Route::post('/checkpoints', [CheckpointOperatorController::class, 'test'])->name('operator.checkpoint.store');
+        Route::delete('/checkpoints/{checkpoint}', [CheckpointOperatorController::class, 'yes'])->name('operator.checkpoint.destroy');
 
         // Map Tracking
         Route::get('/maptracking', [MaptrackingOperatorController::class, 'index'])->name('operator.maptracking.index');
