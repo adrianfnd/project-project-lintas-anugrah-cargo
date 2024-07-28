@@ -75,26 +75,26 @@ class MapTrackingDriverController extends Controller
     
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
-        $radius = 0.001; // This is approximately 111 meters
+        $radius = 0.001;
     
         $senderLatitude = $suratJalan->sender_latitude;
         $senderLongitude = $suratJalan->sender_longitude;
         $receiverLatitude = $suratJalan->receiver_latitude;
         $receiverLongitude = $suratJalan->receiver_longitude;
     
-        // Check if location is too close to sender
+        // Check lokasi apakah dalam radius dari lokasi sender
         $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
         if ($distanceFromSender < $radius) {
             return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari pengirim'], 400);
         }
     
-        // Check if location is too close to receiver
+        // Check lokasi apakah dalam radius dari lokasi receiver
         $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
         if ($distanceFromReceiver < $radius) {
             return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari penerima'], 400);
         }
     
-        // Check if the location is within the radius of any checkpoint in the checkpoints table
+        // Check lokasi apakah dalam radius dari lokasi checkpoint
         $nearbyCheckpoint = Checkpoint::select('*')
             ->selectRaw('( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?)) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
             ->having('distance', '<', $radius)
@@ -107,7 +107,7 @@ class MapTrackingDriverController extends Controller
         $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
         $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
     
-        // Check if location is too close to existing checkpoints
+        // Check lokasi apakah terlalu dekat dari checkpoint sebelumnya
         foreach ($checkpointLatitudes as $index => $checkpointLatitude) {
             $checkpointLongitude = $checkpointLongitudes[$index];
             $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
