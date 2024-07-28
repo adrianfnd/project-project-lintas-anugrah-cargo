@@ -241,11 +241,29 @@
         }).setView(mapCenter, mapZoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
         var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+
+        // Add markers for all checkpoints from the checkpoints table
+        var checkpointIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        @foreach ($checkpoints as $index => $checkpoint)
+            L.marker([{{ $checkpoint->latitude }}, {{ $checkpoint->longitude }}], {
+                    icon: checkpointIcon
+                })
+                .addTo(map)
+                .bindPopup("Checkpoint {{ $index + 1 }}: {{ $checkpoint->address }}");
+        @endforeach
 
         var routingControl = null;
         var waypoints = [
@@ -257,6 +275,52 @@
             @endif
             L.latLng(receiverLatitude, receiverLongitude)
         ];
+
+        var map = L.map('mapid', {
+            dragging: true,
+            touchZoom: true,
+            doubleClickZoom: true,
+            scrollWheelZoom: true,
+            boxZoom: true,
+            zoomControl: true
+        }).setView(mapCenter, mapZoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
+        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+
+        // Add markers for all checkpoints from the checkpoints table
+        var checkpointIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        @foreach ($checkpoints as $checkpoint)
+            L.marker([{{ $checkpoint->latitude }}, {{ $checkpoint->longitude }}], {
+                    icon: checkpointIcon
+                })
+                .addTo(map)
+                .bindPopup("Checkpoint: {{ $checkpoint->address }}");
+        @endforeach
+
+        var routingControl = null;
+        var waypoints = [
+            L.latLng(senderLatitude, senderLongitude),
+            @if (!empty($suratJalan->checkpoint_latitude))
+                @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
+                    L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}),
+                @endforeach
+            @endif
+            L.latLng(receiverLatitude, receiverLongitude)
+        ];
+
 
         function updateRoute() {
             if (routingControl) {
