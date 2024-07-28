@@ -16,8 +16,8 @@ return new class extends Migration
             $table->uuid('surat_jalan_id');
             $table->foreign('surat_jalan_id')->references('id')->on('surat_jalan')->onDelete('cascade');
             $table->string('information');
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->dateTime('checkpoint_time');
             $table->timestamps();
         });

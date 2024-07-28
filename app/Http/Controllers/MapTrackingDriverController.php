@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratJalan;
+use App\Models\SuratJalanInfo;
 use App\Models\Paket;
 use App\Models\Driver;
 use App\Models\Laporan;
@@ -31,6 +32,15 @@ class MapTrackingDriverController extends Controller
         $list_paket = $paketList->toArray();
         $list_paket_ids = array_column($list_paket, 'id');
         $suratJalan->list_paket = json_encode($list_paket);
+
+        // Informasi Tracking surat jalan
+        SuratJalanInfo::create([
+            'surat_jalan_id' => $suratJalan->id,
+            'information' => 'Pengiriman dimulai',
+            'latitude' => $suratJalan->checkpoint_latitude[count($suratJalan->checkpoint_latitude) - 1] ?? $suratJalan->sender_latitude,
+            'longitude' => $suratJalan->checkpoint_longitude[count($suratJalan->checkpoint_longitude) - 1] ?? $suratJalan->sender_longitude,
+            'checkpoint_time' => now(),
+        ]);
     
         return view('driver.maptracking.show', compact('suratJalan', 'list_paket', 'list_paket_ids', 'checkpoints'));
     }    
@@ -63,6 +73,15 @@ class MapTrackingDriverController extends Controller
 
         $suratJalan->status = 'proses';
         $suratJalan->save();
+
+        // Informasi Tracking surat jalan
+        SuratJalanInfo::create([
+            'surat_jalan_id' => $suratJalan->id,
+            'information' => 'Pengiriman dibatalkan',
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'checkpoint_time' => now(),
+        ]);
 
         return response()->json(['success' => true, 'message' => 'Pengiriman berhasil dibatalkan.']);
     }
@@ -123,6 +142,15 @@ class MapTrackingDriverController extends Controller
     //     $suratJalan->checkpoint_latitude = json_encode($checkpointLatitudes);
     //     $suratJalan->checkpoint_longitude = json_encode($checkpointLongitudes);
     //     $suratJalan->save();
+    
+    //     // Informasi Tracking surat jalan
+    //     SuratJalanInfo::create([
+    //         'surat_jalan_id' => $suratJalan->id,
+    //         'information' => 'Checkpoint ditambahkan',
+    //         'latitude' => $latitude,
+    //         'longitude' => $longitude,
+    //         'checkpoint_time' => now(),
+    //     ]);
     
     //     return response()->json(['success' => true]);
     // }
@@ -186,7 +214,7 @@ class MapTrackingDriverController extends Controller
 
         SuratJalanInfo::create([
             'surat_jalan_id' => $suratJalan->id,
-            'information' => 'Checkpoint dilewati',
+            'information' => 'Checkpoint dilewati ' . $nearbyCheckpoint->name,
             'latitude' => $nearbyCheckpoint->latitude,
             'longitude' => $nearbyCheckpoint->longitude,
             'checkpoint_time' => now(),
@@ -275,6 +303,15 @@ class MapTrackingDriverController extends Controller
         $driver->status = 'menunggu';
         $driver->save();
 
+        // Informasi Tracking surat jalan
+        SuratJalanInfo::create([
+            'surat_jalan_id' => $suratJalan->id,
+            'information' => 'Pengiriman selesai',
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'checkpoint_time' => now(),
+        ]);
+
         return redirect()->route('driver.suratjalan.index')->with('success', 'Surat jalan selesai.');
     }
 
@@ -314,5 +351,3 @@ class MapTrackingDriverController extends Controller
         return $angle * $earthRadius;
     }
 }
-
-
