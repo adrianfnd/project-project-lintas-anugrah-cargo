@@ -57,6 +57,16 @@
                             <option value="yearly">Tahun</option>
                         </select>
                         <canvas id="performance-chart"></canvas>
+                        <div class="mt-3 text-muted">
+                            <p><strong>Catatan:</strong></p>
+                            <ul>
+                                <li>Grafik ini menampilkan rata-rata rating ketepatan waktu pengiriman.</li>
+                                <li>Untuk tampilan bulanan, data dikelompokkan per minggu; untuk tahunan, data menunjukkan
+                                    total paket per bulan.</li>
+                                <li>Garis grafik menunjukkan rata-rata rating</li>
+                                <li>Nilai maksimum: 5</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,6 +81,17 @@
                             <option value="yearly">Tahun</option>
                         </select>
                         <canvas id="paket-chart"></canvas>
+                        <div class="mt-3 text-muted">
+                            <p><strong>Catatan:</strong></p>
+                            <ul>
+                                <li>Grafik ini menampilkan jumlah paket yang diproses.</li>
+                                <li>Untuk tampilan bulanan, data dikelompokkan per minggu; untuk tahunan, data menunjukkan
+                                    total paket per bulan.</li>
+                                <li>Batang grafik menunjukkan volume paket, memberikan gambaran tentang pengiriman.
+                                </li>
+                                <li>Nilai maksimum: 100</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

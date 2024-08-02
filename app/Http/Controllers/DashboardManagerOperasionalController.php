@@ -88,10 +88,8 @@ class DashboardManagerOperasionalController extends Controller
                 $averageRate = SuratJalan::whereBetween('created_at', [$startOfWeek, $endOfWeek])
                     ->avg('rate');
 
-                $performanceScore = $averageRate ? ($averageRate / 5) * 100 : 0;
-
                 $labels[] = "Minggu $week";
-                $data[] = round($performanceScore, 2);
+                $data[] = round($averageRate, 2);
             }
         } elseif ($period == 'yearly') {
             for ($month = 1; $month <= 12; $month++) {
@@ -99,10 +97,8 @@ class DashboardManagerOperasionalController extends Controller
                     ->whereMonth('created_at', $month)
                     ->avg('rate');
 
-                $performanceScore = $averageRate ? ($averageRate / 5) * 100 : 0;
-
                 $labels[] = Carbon::create($now->year, $month, 1)->format('M');
-                $data[] = round($performanceScore, 2);
+                $data[] = round($averageRate, 2);
             }
         }
 
