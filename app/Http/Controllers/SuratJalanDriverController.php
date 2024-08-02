@@ -57,8 +57,8 @@ class SuratJalanDriverController extends Controller
         SuratJalanInfo::create([
             'surat_jalan_id' => $suratJalan->id,
             'information' => 'Pengiriman dimulai',
-            'latitude' => $suratJalan->checkpoint_latitude[count($suratJalan->checkpoint_latitude) - 1] ?? $suratJalan->sender_latitude,
-            'longitude' => $suratJalan->checkpoint_longitude[count($suratJalan->checkpoint_longitude) - 1] ?? $suratJalan->sender_longitude,
+            'latitude' => $suratJalan->sender_latitude,
+            'longitude' => $suratJalan->sender_longitude,
             'checkpoint_time' => now(),
         ]);
 

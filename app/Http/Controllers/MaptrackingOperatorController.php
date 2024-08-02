@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratJalan;
+use App\Models\SuratJalanInfo;
 use App\Models\Paket;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,10 @@ class MaptrackingOperatorController extends Controller
                         ->where('status', 'dikirim')
                         ->firstOrFail();
 
+        $suratJalanInfos = SuratJalanInfo::where('surat_jalan_id', $id)
+                        ->orderBy('checkpoint_time', 'desc')
+                        ->get();
+
         $suratJalan->checkpoint_latitude = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
         $suratJalan->checkpoint_longitude = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
 
@@ -34,6 +39,6 @@ class MaptrackingOperatorController extends Controller
         $list_paket_ids = array_column($list_paket, 'id');
         $suratJalan->list_paket = json_encode($list_paket);
 
-        return view('operator.maptracking.show', compact('suratJalan', 'list_paket', 'list_paket_ids'));
+        return view('operator.maptracking.show', compact('suratJalan', 'list_paket', 'list_paket_ids', 'suratJalanInfos'));
     }
 }

@@ -122,6 +122,30 @@
                             </table>
                         </div>
 
+                        <div class="mt-5">
+                            <h5 class="mb-4">Informasi Tracking</h5>
+                            <ul class="list-group list-group-flush">
+                                @foreach ($suratJalanInfos as $info)
+                                    <li class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">{{ $info->information }}</h6>
+                                            <small class="text-muted">
+                                                <i class="far fa-clock"></i>
+                                                {{ $info->checkpoint_time }}
+                                            </small>
+                                        </div>
+                                        <p class="mb-1 location-info" data-lat="{{ $info->latitude }}"
+                                            data-lon="{{ $info->longitude }}">
+                                            <i class="fas fa-spinner fa-spin"></i> Memuat lokasi...
+                                        </p>
+                                        @if ($loop->first)
+                                            <span class="badge bg-success">Lokasi Terkini</span>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
                         <div class="mt-4">
                             <div class="d-flex flex-column flex-sm-row">
                                 <div class="btn-group-vertical btn-group-sm d-sm-flex flex-sm-row mb-2 mb-sm-0">
@@ -141,6 +165,33 @@
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
+            function getLocationName(lat, lon, element) {
+                fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=id`
+                        )
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.display_name) {
+                            element.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${data.display_name}`;
+                        } else {
+                            element.innerHTML = `<i class="fas fa-map-marker-alt"></i> Lokasi tidak ditemukan`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        element.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Gagal memuat lokasi`;
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const locationInfos = document.querySelectorAll('.location-info');
+                locationInfos.forEach(info => {
+                    const lat = info.dataset.lat;
+                    const lon = info.dataset.lon;
+                    getLocationName(lat, lon, info);
+                });
+            });
+
             var senderLatitude = "{{ $suratJalan->sender_latitude }}";
             var senderLongitude = "{{ $suratJalan->sender_longitude }}";
             var receiverLatitude = "{{ $suratJalan->receiver_latitude }}";

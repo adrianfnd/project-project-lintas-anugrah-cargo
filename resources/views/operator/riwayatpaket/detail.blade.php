@@ -106,6 +106,36 @@
                         </div>
                     </div>
 
+                    <div class="col-md-12 mt-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <label>Informasi Tracking</label>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    @foreach ($suratJalanInfos as $info)
+                                        <li class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">{{ $info->information }}</h6>
+                                                <small class="text-muted">
+                                                    <i class="far fa-clock"></i>
+                                                    {{ $info->checkpoint_time }}
+                                                </small>
+                                            </div>
+                                            <p class="mb-1 location-info" data-lat="{{ $info->latitude }}"
+                                                data-lon="{{ $info->longitude }}">
+                                                <i class="fas fa-spinner fa-spin"></i> Memuat lokasi...
+                                            </p>
+                                            @if ($loop->first)
+                                                <span class="badge bg-success">Paket Sampai</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     @if ($riwayatpaket->laporan)
                         <div class="col-md-12 mt-3">
                             <div class="card">
@@ -166,6 +196,33 @@
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script>
+        function getLocationName(lat, lon, element) {
+            fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=id`
+                )
+                .then(response => response.json())
+                .then(data => {
+                    if (data.display_name) {
+                        element.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${data.display_name}`;
+                    } else {
+                        element.innerHTML = `<i class="fas fa-map-marker-alt"></i> Lokasi tidak ditemukan`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    element.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Gagal memuat lokasi`;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const locationInfos = document.querySelectorAll('.location-info');
+            locationInfos.forEach(info => {
+                const lat = info.dataset.lat;
+                const lon = info.dataset.lon;
+                getLocationName(lat, lon, info);
+            });
+        });
+
         var senderLatitude = "{{ $riwayatpaket->suratJalan->sender_latitude }}";
         var senderLongitude = "{{ $riwayatpaket->suratJalan->sender_longitude }}";
         var receiverLatitude = "{{ $riwayatpaket->suratJalan->receiver_latitude }}";
