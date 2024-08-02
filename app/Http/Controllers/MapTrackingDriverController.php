@@ -91,6 +91,7 @@ class MapTrackingDriverController extends Controller
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
         $radius = 0.001;
+        $checkpointRadius = 5;
     
         $senderLatitude = $suratJalan->sender_latitude;
         $senderLongitude = $suratJalan->sender_longitude;
@@ -112,9 +113,9 @@ class MapTrackingDriverController extends Controller
         // Check lokasi apakah dalam radius dari lokasi checkpoint
         $nearbyCheckpoint = Checkpoint::select('*')
             ->selectRaw('( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?)) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
-            ->having('distance', '<', $radius)
+            ->having('distance', '<', $checkpointRadius)
             ->first();
-    
+
         if (!$nearbyCheckpoint) {
             return response()->json(['success' => false, 'message' => 'Lokasi tidak berada dalam radius checkpoint yang valid'], 400);
         }

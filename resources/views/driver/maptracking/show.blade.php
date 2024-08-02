@@ -342,11 +342,9 @@
                             icon: 'success',
                             title: 'Berhasil',
                             text: 'Checkpoint berhasil ditambahkan',
+                        }).then((result) => {
+                            window.location.reload();
                         });
-                        waypoints.splice(waypoints.length - 1, 0, L.latLng(latitude,
-                            longitude));
-                        updateRoute();
-                        hideLoading();
                     },
                     error: function(xhr) {
                         Swal.fire({
