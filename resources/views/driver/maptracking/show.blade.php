@@ -165,6 +165,208 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
+        var senderLatitude = "{{ $suratJalan->sender_latitude }}";
+        var senderLongitude = "{{ $suratJalan->sender_longitude }}";
+        var receiverLatitude = "{{ $suratJalan->receiver_latitude }}";
+        var receiverLongitude = "{{ $suratJalan->receiver_longitude }}";
+
+        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263, 106.781];
+        var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
+
+        var map = L.map('mapid', {
+            dragging: true,
+            touchZoom: true,
+            doubleClickZoom: true,
+            scrollWheelZoom: true,
+            boxZoom: true,
+            zoomControl: true
+        }).setView(mapCenter, mapZoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
+        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
+
+        var greenCheckpointIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var redCheckpointIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        @foreach ($checkpoints as $checkpoint)
+            L.marker([{{ $checkpoint->latitude }}, {{ $checkpoint->longitude }}], {
+                    icon: greenCheckpointIcon
+                })
+                .addTo(map)
+                .bindPopup("Checkpoint: {{ $checkpoint->address }}");
+        @endforeach
+
+        var routingControl = null;
+        var waypoints = [
+            L.latLng(senderLatitude, senderLongitude),
+            @if (!empty($suratJalan->checkpoint_latitude))
+                @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
+                    L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}),
+                @endforeach
+            @endif
+            L.latLng(receiverLatitude, receiverLongitude)
+        ];
+
+        function updateRoute() {
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl = L.Routing.control({
+                waypoints: waypoints,
+                routeWhileDragging: false,
+                addWaypoints: false,
+                draggableWaypoints: false,
+                routeWhileDragging: false,
+                createMarker: function(i, wp, nWps) {
+                    if (i === 0) {
+                        return L.marker(wp.latLng).bindPopup("Sender");
+                    } else if (i === nWps - 1) {
+                        return L.marker(wp.latLng).bindPopup("Receiver");
+                    } else {
+                        return L.marker(wp.latLng, {
+                            icon: redCheckpointIcon
+                        }).bindPopup("Checkpoint");
+                    }
+                },
+            }).addTo(map);
+        }
+
+        var checkpointBtn = document.getElementById('checkpointBtn');
+        var loadingElement = document.getElementById('loading');
+
+        function showLoading() {
+            loadingElement.style.display = 'block';
+        }
+
+        function hideLoading() {
+            loadingElement.style.display = 'none';
+        }
+
+        map.whenReady(function() {
+            hideLoading();
+            updateRoute();
+        });
+
+        checkpointBtn.addEventListener('click', function() {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                var checkpoint = L.marker([latitude, longitude], {
+                    icon: redCheckpointIcon
+                }).addTo(map);
+
+                showLoading();
+
+                $.ajax({
+                    url: "{{ route('driver.maptracking.addcheckpoint', $suratJalan->id) }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        latitude: latitude,
+                        longitude: longitude
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Checkpoint berhasil ditambahkan',
+                        });
+                        waypoints.splice(waypoints.length - 1, 0, L.latLng(latitude,
+                            longitude));
+                        updateRoute();
+                        hideLoading();
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: xhr.responseJSON.message,
+                        });
+                        hideLoading();
+                    }
+                });
+            }, function(error) {
+                console.error('Error saat mendapatkan lokasi:', error);
+                hideLoading();
+            });
+        });
+
+        @if (!empty($suratJalan->checkpoint_latitude))
+            @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
+                L.marker([{{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}], {
+                    icon: redCheckpointIcon
+                }).addTo(map);
+            @endforeach
+            updateRoute();
+        @endif
+
+        function checkIfReachedDestination() {
+            var receiverLatitude = {{ $suratJalan->receiver_latitude }};
+            var receiverLongitude = {{ $suratJalan->receiver_longitude }};
+            var radius = 0.001;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    var distance = getDistanceFromLatLonInKm(latitude, longitude, receiverLatitude,
+                        receiverLongitude);
+                    if (distance < radius) {
+                        document.getElementById('checkpointBtn').style.display = 'none';
+                        document.getElementById('cancelBtn').style.display = 'none';
+                        document.getElementById('finishBtn').style.display = 'block';
+                        document.getElementById('complaintForm').style.display = 'block';
+                    } else {
+                        document.getElementById('checkpointBtn').style.display = 'block';
+                        document.getElementById('cancelBtn').style.display = 'block';
+                        document.getElementById('finishBtn').style.display = 'none';
+                        document.getElementById('complaintForm').style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            var R = 6371;
+            var dLat = deg2rad(lat2 - lat1);
+            var dLon = deg2rad(lon2 - lon1);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;
+            return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180);
+        }
+
+        setInterval(checkIfReachedDestination, 10000);
+        checkIfReachedDestination();
+
         function cancelDelivery() {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var latitude = position.coords.latitude;
@@ -222,188 +424,5 @@
                 console.error('Error getting location:', error);
             });
         }
-
-        var senderLatitude = "{{ $suratJalan->sender_latitude }}";
-        var senderLongitude = "{{ $suratJalan->sender_longitude }}";
-        var receiverLatitude = "{{ $suratJalan->receiver_latitude }}";
-        var receiverLongitude = "{{ $suratJalan->receiver_longitude }}";
-
-        var mapCenter = senderLatitude && senderLongitude ? [senderLatitude, senderLongitude] : [-6.263, 106.781];
-        var mapZoom = senderLatitude && senderLongitude ? 7 : 7;
-
-        var map = L.map('mapid', {
-            dragging: true,
-            touchZoom: true,
-            doubleClickZoom: true,
-            scrollWheelZoom: true,
-            boxZoom: true,
-            zoomControl: true
-        }).setView(mapCenter, mapZoom);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        var senderMarker = L.marker([senderLatitude, senderLongitude]).addTo(map);
-        var receiverMarker = L.marker([receiverLatitude, receiverLongitude]).addTo(map);
-
-        // Add markers for all checkpoints from the checkpoints table
-        var checkpointIcon = L.icon({
-            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
-
-        @foreach ($checkpoints as $checkpoint)
-            L.marker([{{ $checkpoint->latitude }}, {{ $checkpoint->longitude }}], {
-                    icon: checkpointIcon
-                })
-                .addTo(map)
-                .bindPopup("Checkpoint: {{ $checkpoint->address }}");
-        @endforeach
-
-        var routingControl = null;
-        var waypoints = [
-            L.latLng(senderLatitude, senderLongitude),
-            @if (!empty($suratJalan->checkpoint_latitude))
-                @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
-                    L.latLng({{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}),
-                @endforeach
-            @endif
-            L.latLng(receiverLatitude, receiverLongitude)
-        ];
-
-        function updateRoute() {
-            if (routingControl) {
-                map.removeControl(routingControl);
-            }
-
-            routingControl = L.Routing.control({
-                waypoints: waypoints,
-                routeWhileDragging: false,
-                addWaypoints: false,
-                draggableWaypoints: false,
-                routeWhileDragging: false,
-                createMarker: function(i, wp, nWps) {
-                    return L.marker(wp.latLng).bindPopup(i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" :
-                        "Checkpoint"));
-                },
-            }).addTo(map);
-        }
-
-        var checkpointBtn = document.getElementById('checkpointBtn');
-        var loadingElement = document.getElementById('loading');
-
-        function showLoading() {
-            loadingElement.style.display = 'block';
-        }
-
-        function hideLoading() {
-            loadingElement.style.display = 'none';
-        }
-
-        map.whenReady(function() {
-            hideLoading();
-            updateRoute();
-        });
-
-        checkpointBtn.addEventListener('click', function() {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
-
-                var checkpoint = L.marker([latitude, longitude]).addTo(map);
-
-                showLoading();
-
-                $.ajax({
-                    url: "{{ route('driver.maptracking.addcheckpoint', $suratJalan->id) }}",
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        latitude: latitude,
-                        longitude: longitude
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Checkpoint berhasil ditambahkan',
-                        });
-                        waypoints.splice(waypoints.length - 1, 0, L.latLng(latitude,
-                            longitude));
-                        updateRoute();
-                        hideLoading();
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: xhr.responseJSON.message,
-                        });
-                        hideLoading();
-                    }
-                });
-            }, function(error) {
-                console.error('Error saat mendapatkan lokasi:', error);
-                hideLoading();
-            });
-        });
-
-        @if (!empty($suratJalan->checkpoint_latitude))
-            @foreach ($suratJalan->checkpoint_latitude as $index => $latitude)
-                L.marker([{{ $latitude }}, {{ $suratJalan->checkpoint_longitude[$index] }}]).addTo(map);
-            @endforeach
-            updateRoute();
-        @endif
-
-        function checkIfReachedDestination() {
-            var receiverLatitude = {{ $suratJalan->receiver_latitude }};
-            var receiverLongitude = {{ $suratJalan->receiver_longitude }};
-            var radius = 0.001;
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var latitude = position.coords.latitude;
-                    var longitude = position.coords.longitude;
-
-                    var distance = getDistanceFromLatLonInKm(latitude, longitude, receiverLatitude,
-                        receiverLongitude);
-                    if (distance < radius) {
-                        document.getElementById('checkpointBtn').style.display = 'none';
-                        document.getElementById('cancelBtn').style.display = 'none';
-                        document.getElementById('finishBtn').style.display = 'block';
-                        document.getElementById('complaintForm').style.display = 'block';
-                    } else {
-                        document.getElementById('checkpointBtn').style.display = 'block';
-                        document.getElementById('cancelBtn').style.display = 'block';
-                        document.getElementById('finishBtn').style.display = 'none';
-                        document.getElementById('complaintForm').style.display = 'none';
-                    }
-                });
-            }
-        }
-
-        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-            var R = 6371;
-            var dLat = deg2rad(lat2 - lat1);
-            var dLon = deg2rad(lon2 - lon1);
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            var d = R * c;
-            return d;
-        }
-
-        function deg2rad(deg) {
-            return deg * (Math.PI / 180);
-        }
-
-        setInterval(checkIfReachedDestination, 10000);
-        checkIfReachedDestination();
     </script>
 @endsection
