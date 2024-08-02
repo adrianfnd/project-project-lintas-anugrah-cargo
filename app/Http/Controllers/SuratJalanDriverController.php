@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SuratJalan;
+use App\Models\SuratJalanInfo;
 use App\Models\Paket;
 use App\Models\RiwayatPaket;
 use Illuminate\Support\Str;
@@ -51,6 +52,15 @@ class SuratJalanDriverController extends Controller
         $driver = auth()->user()->driver;
         $driver->status = 'dalam perjalanan';
         $driver->save();
+
+        // Informasi Tracking surat jalan
+        SuratJalanInfo::create([
+            'surat_jalan_id' => $suratJalan->id,
+            'information' => 'Pengiriman dimulai',
+            'latitude' => $suratJalan->checkpoint_latitude[count($suratJalan->checkpoint_latitude) - 1] ?? $suratJalan->sender_latitude,
+            'longitude' => $suratJalan->checkpoint_longitude[count($suratJalan->checkpoint_longitude) - 1] ?? $suratJalan->sender_longitude,
+            'checkpoint_time' => now(),
+        ]);
 
         return redirect()->route('driver.maptracking.show', $suratJalan->id);
     }

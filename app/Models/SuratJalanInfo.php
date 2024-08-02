@@ -13,7 +13,7 @@ class SuratJalanInfo extends Model
 
     protected $fillable = [
         'surat_jalan_id',
-        'checkpoint_name',
+        'information',
         'latitude',
         'longitude',
         'checkpoint_time'

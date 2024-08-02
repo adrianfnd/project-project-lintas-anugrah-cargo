@@ -32,15 +32,6 @@ class MapTrackingDriverController extends Controller
         $list_paket = $paketList->toArray();
         $list_paket_ids = array_column($list_paket, 'id');
         $suratJalan->list_paket = json_encode($list_paket);
-
-        // Informasi Tracking surat jalan
-        SuratJalanInfo::create([
-            'surat_jalan_id' => $suratJalan->id,
-            'information' => 'Pengiriman dimulai',
-            'latitude' => $suratJalan->checkpoint_latitude[count($suratJalan->checkpoint_latitude) - 1] ?? $suratJalan->sender_latitude,
-            'longitude' => $suratJalan->checkpoint_longitude[count($suratJalan->checkpoint_longitude) - 1] ?? $suratJalan->sender_longitude,
-            'checkpoint_time' => now(),
-        ]);
     
         return view('driver.maptracking.show', compact('suratJalan', 'list_paket', 'list_paket_ids', 'checkpoints'));
     }    
@@ -86,142 +77,143 @@ class MapTrackingDriverController extends Controller
         return response()->json(['success' => true, 'message' => 'Pengiriman berhasil dibatalkan.']);
     }
 
-    // public function addCheckpoint(Request $request, $id)
-    // {
-    //     $suratJalan = SuratJalan::where('id', $id)
-    //                     ->where('status', 'dikirim')
-    //                     ->firstOrFail();
-    
-    //     $latitude = $request->input('latitude');
-    //     $longitude = $request->input('longitude');
-    //     $radius = 0.001;
-    
-    //     $senderLatitude = $suratJalan->sender_latitude;
-    //     $senderLongitude = $suratJalan->sender_longitude;
-    //     $receiverLatitude = $suratJalan->receiver_latitude;
-    //     $receiverLongitude = $suratJalan->receiver_longitude;
-    
-    //     // Check lokasi apakah dalam radius dari lokasi sender
-    //     $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
-    //     if ($distanceFromSender < $radius) {
-    //         return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari pengirim'], 400);
-    //     }
-    
-    //     // Check lokasi apakah dalam radius dari lokasi receiver
-    //     $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
-    //     if ($distanceFromReceiver < $radius) {
-    //         return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari penerima'], 400);
-    //     }
-    
-    //     // Check lokasi apakah dalam radius dari lokasi checkpoint
-    //     $nearbyCheckpoint = Checkpoint::select('*')
-    //         ->selectRaw('( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?)) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
-    //         ->having('distance', '<', $radius)
-    //         ->first();
-    
-    //     if (!$nearbyCheckpoint) {
-    //         return response()->json(['success' => false, 'message' => 'Lokasi tidak berada dalam radius checkpoint yang valid'], 400);
-    //     }
-    
-    //     $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
-    //     $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
-    
-    //     // Check lokasi apakah terlalu dekat dari checkpoint sebelumnya
-    //     foreach ($checkpointLatitudes as $index => $checkpointLatitude) {
-    //         $checkpointLongitude = $checkpointLongitudes[$index];
-    //         $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
-    
-    //         if ($distance < $radius) {
-    //             return response()->json(['success' => false, 'message' => 'Anda sudah membuat checkpoint dilokasi ini'], 400);
-    //         }
-    //     }
-    
-    //     $checkpointLatitudes[] = $latitude;
-    //     $checkpointLongitudes[] = $longitude;
-    
-    //     $suratJalan->checkpoint_latitude = json_encode($checkpointLatitudes);
-    //     $suratJalan->checkpoint_longitude = json_encode($checkpointLongitudes);
-    //     $suratJalan->save();
-    
-    //     // Informasi Tracking surat jalan
-    //     SuratJalanInfo::create([
-    //         'surat_jalan_id' => $suratJalan->id,
-    //         'information' => 'Checkpoint ditambahkan',
-    //         'latitude' => $latitude,
-    //         'longitude' => $longitude,
-    //         'checkpoint_time' => now(),
-    //     ]);
-    
-    //     return response()->json(['success' => true]);
-    // }
-
     public function addCheckpoint(Request $request, $id)
     {
         $suratJalan = SuratJalan::where('id', $id)
                         ->where('status', 'dikirim')
                         ->firstOrFail();
-
+    
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
         $radius = 0.001;
-
+    
         $senderLatitude = $suratJalan->sender_latitude;
         $senderLongitude = $suratJalan->sender_longitude;
         $receiverLatitude = $suratJalan->receiver_latitude;
         $receiverLongitude = $suratJalan->receiver_longitude;
-
+    
         // Check lokasi apakah dalam radius dari lokasi sender
         $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
         if ($distanceFromSender < $radius) {
             return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari pengirim'], 400);
         }
-
+    
         // Check lokasi apakah dalam radius dari lokasi receiver
         $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
         if ($distanceFromReceiver < $radius) {
             return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari penerima'], 400);
         }
-
+    
         // Check lokasi apakah dalam radius dari lokasi checkpoint
         $nearbyCheckpoint = Checkpoint::select('*')
             ->selectRaw('( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?)) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
             ->having('distance', '<', $radius)
             ->first();
-
+    
         if (!$nearbyCheckpoint) {
             return response()->json(['success' => false, 'message' => 'Lokasi tidak berada dalam radius checkpoint yang valid'], 400);
         }
-
+    
         $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
         $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
-
+    
         // Check lokasi apakah terlalu dekat dari checkpoint sebelumnya
         foreach ($checkpointLatitudes as $index => $checkpointLatitude) {
             $checkpointLongitude = $checkpointLongitudes[$index];
             $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
-
+    
             if ($distance < $radius) {
                 return response()->json(['success' => false, 'message' => 'Anda sudah membuat checkpoint dilokasi ini'], 400);
             }
         }
-
-        $checkpointLatitudes[] = $nearbyCheckpoint->latitude;
-        $checkpointLongitudes[] = $nearbyCheckpoint->longitude;
-
+    
+        $checkpointLatitudes[] = $latitude;
+        $checkpointLongitudes[] = $longitude;
+    
         $suratJalan->checkpoint_latitude = json_encode($checkpointLatitudes);
         $suratJalan->checkpoint_longitude = json_encode($checkpointLongitudes);
         $suratJalan->save();
-
+    
+        // Informasi Tracking surat jalan
         SuratJalanInfo::create([
             'surat_jalan_id' => $suratJalan->id,
             'information' => 'Checkpoint dilewati ' . $nearbyCheckpoint->name,
-            'latitude' => $nearbyCheckpoint->latitude,
-            'longitude' => $nearbyCheckpoint->longitude,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
             'checkpoint_time' => now(),
         ]);
-
+    
         return response()->json(['success' => true]);
     }
+
+    // public function addCheckpoint(Request $request, $id)
+    // {
+    //     $suratJalan = SuratJalan::where('id', $id)
+    //                     ->where('status', 'dikirim')
+    //                     ->firstOrFail();
+
+    //     $latitude = $request->input('latitude');
+    //     $longitude = $request->input('longitude');
+    //     $radius = 0.001;
+
+    //     $senderLatitude = $suratJalan->sender_latitude;
+    //     $senderLongitude = $suratJalan->sender_longitude;
+    //     $receiverLatitude = $suratJalan->receiver_latitude;
+    //     $receiverLongitude = $suratJalan->receiver_longitude;
+
+    //     // Check lokasi apakah dalam radius dari lokasi sender
+    //     $distanceFromSender = $this->haversineGreatCircleDistance($latitude, $longitude, $senderLatitude, $senderLongitude);
+    //     if ($distanceFromSender < $radius) {
+    //         return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari pengirim'], 400);
+    //     }
+
+    //     // Check lokasi apakah dalam radius dari lokasi receiver
+    //     $distanceFromReceiver = $this->haversineGreatCircleDistance($latitude, $longitude, $receiverLatitude, $receiverLongitude);
+    //     if ($distanceFromReceiver < $radius) {
+    //         return response()->json(['success' => false, 'message' => 'Checkpoint terlalu dekat dari penerima'], 400);
+    //     }
+
+    //     // Check lokasi apakah dalam radius dari lokasi checkpoint
+    //     $nearbyCheckpoint = Checkpoint::select('*')
+    //         ->selectRaw('( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?)) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
+    //         ->having('distance', '<', $radius)
+    //         ->first();
+
+    //     if (!$nearbyCheckpoint) {
+    //         return response()->json(['success' => false, 'message' => 'Lokasi tidak berada dalam radius checkpoint yang valid'], 400);
+    //     }
+
+    //     $checkpointLatitudes = json_decode($suratJalan->checkpoint_latitude, true) ?? [];
+    //     $checkpointLongitudes = json_decode($suratJalan->checkpoint_longitude, true) ?? [];
+
+    //     // Check lokasi apakah terlalu dekat dari checkpoint sebelumnya
+    //     foreach ($checkpointLatitudes as $index => $checkpointLatitude) {
+    //         $checkpointLongitude = $checkpointLongitudes[$index];
+    //         $distance = $this->haversineGreatCircleDistance($latitude, $longitude, $checkpointLatitude, $checkpointLongitude);
+
+    //         if ($distance < $radius) {
+    //             return response()->json(['success' => false, 'message' => 'Anda sudah membuat checkpoint dilokasi ini'], 400);
+    //         }
+    //     }
+
+    //     $checkpointLatitudes[] = $nearbyCheckpoint->latitude;
+    //     $checkpointLongitudes[] = $nearbyCheckpoint->longitude;
+
+    //     $suratJalan->checkpoint_latitude = json_encode($checkpointLatitudes);
+    //     $suratJalan->checkpoint_longitude = json_encode($checkpointLongitudes);
+    //     $suratJalan->save();
+
+    //     // Informasi Tracking surat jalan
+    //     SuratJalanInfo::create([
+    //         'surat_jalan_id' => $suratJalan->id,
+    //         'information' => 'Checkpoint dilewati ' . $nearbyCheckpoint->name,
+    //         'latitude' => $nearbyCheckpoint->latitude,
+    //         'longitude' => $nearbyCheckpoint->longitude,
+    //         'checkpoint_time' => now(),
+    //     ]);
+
+    //     return response()->json(['success' => true]);
+    // }
 
     public function finish(Request $request, $id)
     {
