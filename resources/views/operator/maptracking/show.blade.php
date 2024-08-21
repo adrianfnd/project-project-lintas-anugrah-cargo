@@ -168,7 +168,7 @@
             function getLocationName(lat, lon, element) {
                 fetch(
                         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=id`
-                        )
+                    )
                     .then(response => response.json())
                     .then(data => {
                         if (data.display_name) {
@@ -224,9 +224,28 @@
 
             function createMarker(lat, lng, label) {
                 getAddress(lat, lng, function(address) {
-                    L.marker([lat, lng]).addTo(map).bindPopup(`${label}: ${address}`).openPopup();
+                    var markerColor;
+                    if (label === "Sender") {
+                        markerColor = 'blue';
+                    } else if (label === "Receiver") {
+                        markerColor = 'red';
+                    } else {
+                        markerColor = 'green';
+                    }
+
+                    var marker = L.marker([lat, lng], {
+                        icon: L.icon({
+                            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
+                        })
+                    }).addTo(map).bindPopup(`${label}: ${address}`).openPopup();
                 });
             }
+
 
             createMarker(senderLatitude, senderLongitude, "Sender");
             createMarker(receiverLatitude, receiverLongitude, "Receiver");
@@ -253,10 +272,27 @@
                     draggableWaypoints: false,
                     createMarker: function(i, wp, nWps) {
                         var label = i === 0 ? "Sender" : (i === nWps - 1 ? "Receiver" : "Checkpoint");
-                        getAddress(wp.latLng.lat, wp.latLng.lng, function(address) {
-                            L.marker(wp.latLng).bindPopup(`${label}: ${address}`).addTo(map);
-                        });
-                        return L.marker(wp.latLng);
+                        var markerColor;
+                        if (label === "Sender") {
+                            markerColor = 'blue';
+                        } else if (label === "Receiver") {
+                            markerColor = 'red';
+                        } else {
+                            markerColor = 'green';
+                        }
+
+                        var marker = L.marker(wp.latLng, {
+                            icon: L.icon({
+                                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34],
+                                shadowSize: [41, 41]
+                            })
+                        }).bindPopup(`${label}: ${wp.latLng}`).addTo(map);
+
+                        return marker;
                     },
                 }).addTo(map);
             }

@@ -236,8 +236,8 @@ class MapTrackingDriverController extends Controller
         SuratJalanInfo::create([
             'surat_jalan_id' => $suratJalan->id,
             'information' => 'Pengiriman selesai',
-            'latitude' => $latitude,
-            'longitude' => $longitude,
+            'latitude' => $suratJalan->receiver_latitude,
+            'longitude' => $suratJalan->receiver_longitude,
             'checkpoint_time' => now(),
         ]);
 
