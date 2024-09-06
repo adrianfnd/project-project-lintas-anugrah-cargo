@@ -104,7 +104,7 @@ class DriverAdminController extends Controller
         $user->username = $request->username;
         $user->email = $request->email;
         $user->email_verified_at = now();
-        $user->password = bcrypt($request->phone_number);
+        $user->password = bcrypt($request->password);
         $user->role_id = 4;
         $user->save();
 

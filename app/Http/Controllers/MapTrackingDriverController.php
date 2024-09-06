@@ -248,17 +248,20 @@ class MapTrackingDriverController extends Controller
     {
         $start = Carbon::parse($startDeliveryTime);
         $end = Carbon::parse($endDeliveryTime);
-        $estimated = Carbon::parse($estimatedDeliveryTime);
+        
+        $estimatedDuration = floatval($estimatedDeliveryTime);
 
-        $hoursDifference = $end->diffInHours($estimated);
+        $actualDuration = $end->diffInMinutes($start) / 60;
 
-        if ($hoursDifference <= 0) {
+        $difference = $actualDuration - $estimatedDuration;
+        
+        if ($difference <= 0) {
             return 5;
-        } elseif ($hoursDifference <= 2) {
+        } elseif ($difference <= 2) {
             return 4;
-        } elseif ($hoursDifference <= 4) {
+        } elseif ($difference <= 4) {
             return 3;
-        } elseif ($hoursDifference <= 6) {
+        } elseif ($difference <= 6) {
             return 2;
         } else {
             return 1;
