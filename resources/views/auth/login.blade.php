@@ -64,7 +64,7 @@
                                             Keep me signed in
                                         </label>
                                     </div>
-                                    <a href="#" class="auth-link text-black">Forgot password?</a>
+                                    {{-- <a href="#" class="auth-link text-black">Forgot password?</a> --}}
                                 </div>
                             </form>
                         </div>
